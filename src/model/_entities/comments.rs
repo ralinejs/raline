@@ -21,7 +21,7 @@ pub struct Model {
     pub rid: Option<i64>,
     pub sticky: bool,
     pub status: CommentStatus,
-    pub star: Option<i32>,
+    pub star: i32,
     #[sea_orm(column_type = "Text", nullable)]
     pub ua: Option<String>,
     pub url: Option<String>,

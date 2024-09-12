@@ -14,7 +14,7 @@ create table comments (
     rid bigint default null,
     sticky boolean not null default 'false',
     status comment_status not null,
-    star int default null,
+    star int not null default 0,
     ua text,
     url varchar(255) default null,
     created_at timestamp not null default current_timestamp,
@@ -26,7 +26,7 @@ create sequence view_counter_seq;
 create table view_counter (
     id bigint not null default nextval ('view_counter_seq'),
     times int not null default 0,
-    url varchar(255) not null default '',
+    url varchar(255) not null,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp,
     primary key (id)
