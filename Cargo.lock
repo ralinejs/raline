@@ -2973,6 +2973,7 @@ dependencies = [
  "spring",
  "spring-sea-orm",
  "spring-web",
+ "tokio",
 ]
 
 [[package]]

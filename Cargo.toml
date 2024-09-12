@@ -5,6 +5,7 @@ edition = "2021"
 publish = ["crates-io"]
 
 [dependencies]
+tokio = { version = "1", features = ["full"] }
 spring = "0.1.1"
 spring-web = "0.1.1"
 spring-sea-orm = { version = "0.1.3", features = ["postgres", "with-web"] }
