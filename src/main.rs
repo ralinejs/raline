@@ -1,6 +1,8 @@
+mod config;
+mod dto;
 mod http;
-mod utils;
 mod model;
+mod utils;
 
 use spring::App;
 use spring_mail::MailPlugin;

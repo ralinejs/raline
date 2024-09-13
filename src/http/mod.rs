@@ -1,3 +1,5 @@
+mod user;
+
 use spring_web::{
     axum::{
         body,

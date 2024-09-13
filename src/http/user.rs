@@ -3,7 +3,7 @@ use crate::{
     dto::user::{
         RegisterReq, ResetPasswdReq, SendEmailReq, SetNameReq, UserResp, ValidateCodeEmailTemplate,
     },
-    model::{account_user, prelude::AccountUser, sea_orm_active_enums::ProductEdition},
+    model::{prelude::Users, users},
     utils::{
         jwt::{self, Claims},
         mail,
@@ -41,15 +41,15 @@ async fn register(
         }
     }
 
-    let user = AccountUser::find()
-        .filter(account_user::Column::Email.eq(&body.email))
+    let user = Users::find()
+        .filter(users::Column::Email.eq(&body.email))
         .one(&db)
         .await
         .context("select user from db failed")?;
     if user.is_some() {
         return Err(KnownWebError::bad_request("邮箱已被注册"))?;
     }
-    let user = account_user::ActiveModel {
+    let user = users::ActiveModel {
         id: NotSet,
         locked: Set(false),
         edition: Set(ProductEdition::L0),
@@ -71,15 +71,11 @@ async fn current_user(
     claims: Claims,
     Component(db): Component<DbConn>,
 ) -> Result<impl IntoResponse> {
-    let user = AccountUser::find_by_id(claims.uid)
+    let user = Users::find_by_id(claims.uid)
         .one(&db)
         .await
         .with_context(|| format!("find user by id#{}", claims.uid))?
         .ok_or_else(|| KnownWebError::not_found("用户不存在"))?;
-
-    if user.email != claims.email {
-        Err(KnownWebError::forbidden("Token数据有误"))?;
-    }
 
     Ok(Json(UserResp::from(user)))
 }
@@ -139,14 +135,14 @@ async fn reset_password(
         Err(KnownWebError::bad_request("验证码错误"))?;
     }
 
-    let u = AccountUser::find()
-        .filter(account_user::Column::Email.eq(&req.email))
+    let u = Users::find()
+        .filter(users::Column::Email.eq(&req.email))
         .one(&db)
         .await
         .with_context(|| format!("query user by email failed: {}", req.email))?
         .ok_or_else(|| KnownWebError::not_found("用户不存在"))?;
 
-    let u = account_user::ActiveModel {
+    let u = users::ActiveModel {
         id: Set(u.id),
         passwd: Set(req.passwd),
         last_login: Set(Some(client_ip.to_string())),
@@ -167,17 +163,13 @@ async fn set_name(
     Component(db): Component<DbConn>,
     Json(req): Json<SetNameReq>,
 ) -> Result<impl IntoResponse> {
-    let u = AccountUser::find_by_id(claims.uid)
+    let u = Users::find_by_id(claims.uid)
         .one(&db)
         .await
         .with_context(|| format!("query user by id#{} failed", claims.uid))?
         .ok_or_else(|| KnownWebError::not_found("用户不存在"))?;
 
-    if claims.email != u.email {
-        Err(KnownWebError::forbidden("Token数据有误"))?;
-    }
-
-    let u = account_user::ActiveModel {
+    let u = users::ActiveModel {
         id: Set(u.id),
         name: Set(req.name),
         ..Default::default()
