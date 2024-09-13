@@ -1,5 +1,7 @@
-use sea_orm::sea_query::IntoCondition;
+use sea_orm::{sea_query::IntoCondition, ColumnTrait};
 use serde::Deserialize;
+
+use crate::model::view_counter;
 
 #[derive(Debug, Deserialize)]
 pub struct ViewCountQuery {
@@ -14,6 +16,9 @@ pub enum Path {
 
 impl IntoCondition for Path {
     fn into_condition(self) -> sea_orm::Condition {
-        todo!()
+        match self {
+            Self::Single(path) => view_counter::Column::Url.eq(path).into_condition(),
+            Self::List(paths) => view_counter::Column::Url.is_in(paths).into_condition(),
+        }
     }
 }

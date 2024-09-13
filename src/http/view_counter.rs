@@ -1,8 +1,7 @@
 use crate::model::prelude::ViewCounter;
 use crate::{dto::view_counter::ViewCountQuery, model::view_counter};
 use anyhow::Context;
-use sea_orm::sqlx::query::QueryAs;
-use sea_orm::{EntityTrait, QueryFilter, QuerySelect};
+use sea_orm::{DeriveColumn, EntityTrait, EnumIter, QueryFilter, QuerySelect};
 use spring_sea_orm::DbConn;
 use spring_web::{
     axum::{response::IntoResponse, Json},
@@ -10,6 +9,11 @@ use spring_web::{
     extractor::{Component, Query},
     get, post,
 };
+
+#[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
+enum QueryAs {
+    Times,
+}
 
 #[get("/view")]
 async fn get_view_count(
@@ -22,7 +26,7 @@ async fn get_view_count(
     };
     let result: Vec<i32> = ViewCounter::find()
         .select_only()
-        .column(view_counter::Column::Times)
+        .column_as(view_counter::Column::Times, QueryAs::Times)
         .filter(path)
         .into_values::<_, QueryAs>()
         .all(&db)
@@ -37,14 +41,7 @@ async fn post_view_count(
     Component(db): Component<DbConn>,
     Json(req): Json<ViewCountQuery>,
 ) -> Result<impl IntoResponse> {
-    // let u = users::ActiveModel {
-    //     id: Set(u.id),
-    //     username: Set(req.name),
-    //     ..Default::default()
-    // }
-    // .update(&db)
-    // .await
-    // .with_context(|| format!("change name for user#{} failed", u.id))?;
+    
 
     Ok(Json(true))
 }
