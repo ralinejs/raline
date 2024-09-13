@@ -1,4 +1,7 @@
-use crate::model::users;
+use crate::model::{
+    sea_orm_active_enums::{UserGender, UserType},
+    users,
+};
 use askama::Template;
 use sea_orm::prelude::DateTime;
 use serde::{Deserialize, Serialize};
@@ -26,6 +29,13 @@ pub struct RegisterReq {
 
     #[validate(length(max = 8, message = "验证码过长"))]
     pub validate_code: String,
+
+    #[serde(default = "default_gender")]
+    pub gender: UserGender,
+}
+
+fn default_gender() -> UserGender {
+    UserGender::Unknown
 }
 
 #[derive(Debug, Validate, Deserialize)]
@@ -63,8 +73,13 @@ pub struct UserResp {
     pub modified: DateTime,
     pub name: String,
     pub email: Option<String>,
-    pub locked: bool,
-    pub last_login: Option<String>,
+    pub gender: UserGender,
+    pub r#type: UserType,
+    pub url: Option<String>,
+    pub avatar: Option<String>,
+    pub mfa: bool,
+    pub created_at: DateTime,
+    pub updated_at: DateTime,
 }
 
 impl From<users::Model> for UserResp {
@@ -75,7 +90,13 @@ impl From<users::Model> for UserResp {
             modified: user.updated_at,
             name: user.username,
             email: user.email,
-            last_login: user.last_login,
+            gender: user.gender,
+            r#type: user.r#type,
+            url: user.url,
+            avatar: user.avatar,
+            mfa: user.mfa,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
         }
     }
 }

@@ -3,7 +3,7 @@ use crate::{
     dto::user::{
         RegisterReq, ResetPasswdReq, SendEmailReq, SetNameReq, UserResp, ValidateCodeEmailTemplate,
     },
-    model::{prelude::Users, users},
+    model::{prelude::Users, sea_orm_active_enums::UserType, users},
     utils::{
         jwt::{self, Claims},
         mail,
@@ -27,7 +27,6 @@ use spring_web::{extractor::Config, get, patch, post};
 async fn register(
     Component(mut redis): Component<Redis>,
     Component(db): Component<DbConn>,
-    SecureClientIp(client_ip): SecureClientIp,
     Json(body): Json<RegisterReq>,
 ) -> Result<Json<UserResp>> {
     let code = get_validate_code(&mut redis, &body.email).await?;
@@ -51,12 +50,12 @@ async fn register(
     }
     let user = users::ActiveModel {
         id: NotSet,
-        locked: Set(false),
-        edition: Set(ProductEdition::L0),
-        name: Set(body.name),
-        email: Set(body.email),
-        passwd: Set(body.passwd),
-        last_login: Set(Some(client_ip.to_string())),
+        username: Set(body.name),
+        email: Set(Some(body.email)),
+        password: Set(Some(body.passwd)),
+        gender: Set(body.gender),
+        r#type: Set(UserType::Normal),
+        mfa: Set(false),
         ..Default::default()
     }
     .insert(&db)
@@ -124,7 +123,6 @@ async fn reset_validate_code(
 async fn reset_password(
     Component(mut redis): Component<Redis>,
     Component(db): Component<DbConn>,
-    SecureClientIp(client_ip): SecureClientIp,
     Json(req): Json<ResetPasswdReq>,
 ) -> Result<impl IntoResponse> {
     let code = get_validate_code(&mut redis, &req.email)
@@ -144,8 +142,7 @@ async fn reset_password(
 
     let u = users::ActiveModel {
         id: Set(u.id),
-        passwd: Set(req.passwd),
-        last_login: Set(Some(client_ip.to_string())),
+        password: Set(Some(req.passwd)),
         ..Default::default()
     }
     .update(&db)
@@ -171,7 +168,7 @@ async fn set_name(
 
     let u = users::ActiveModel {
         id: Set(u.id),
-        name: Set(req.name),
+        username: Set(req.name),
         ..Default::default()
     }
     .update(&db)
