@@ -1,4 +1,5 @@
 mod user;
+mod view_counter;
 
 use spring_web::{
     axum::{
