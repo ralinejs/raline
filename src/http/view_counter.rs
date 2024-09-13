@@ -1,3 +1,4 @@
+use crate::dto::view_counter::SetViewCount;
 use crate::model::prelude::ViewCounter;
 use crate::{dto::view_counter::ViewCountQuery, model::view_counter};
 use anyhow::Context;
@@ -39,9 +40,11 @@ async fn get_view_count(
 #[post("/view")]
 async fn post_view_count(
     Component(db): Component<DbConn>,
-    Json(req): Json<ViewCountQuery>,
+    Json(req): Json<SetViewCount>,
 ) -> Result<impl IntoResponse> {
-    
+    let count = ViewCounter::increase_by_path(&db, req.path)
+        .await
+        .context("increase view count failed")?;
 
-    Ok(Json(true))
+    Ok(Json(count))
 }

@@ -22,3 +22,18 @@ impl IntoCondition for Path {
         }
     }
 }
+
+#[derive(Debug, Deserialize)]
+pub struct SetViewCount {
+    pub path: String,
+    pub action: SetCountAction,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub enum SetCountAction {
+    #[default]
+    #[serde(rename = "asc")]
+    Asc,
+    #[serde(rename = "desc")]
+    Desc,
+}
