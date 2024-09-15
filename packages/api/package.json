@@ -7,7 +7,7 @@
     "raline"
   ],
   "repository": {
-    "url": "https://github.com/raline/raline",
+    "url": "https://github.com/ralinejs/raline",
     "directory": "packages/api"
   },
   "license": "MIT",
@@ -42,5 +42,11 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.1",
+    "rollup": "^4.21.3",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-esbuild": "^6.1.1"
   }
 }
