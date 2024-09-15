@@ -63,13 +63,10 @@ pub struct SetNameReq {
 #[derive(Debug, Serialize)]
 pub struct UserResp {
     pub id: i64,
-    pub created: DateTime,
-    pub modified: DateTime,
     pub name: String,
     pub email: Option<String>,
     pub gender: UserGender,
     pub r#type: UserType,
-    pub url: Option<String>,
     pub avatar: Option<String>,
     pub mfa: bool,
     pub created_at: DateTime,
@@ -80,13 +77,10 @@ impl From<users::Model> for UserResp {
     fn from(user: users::Model) -> Self {
         Self {
             id: user.id,
-            created: user.created_at,
-            modified: user.updated_at,
             name: user.username,
             email: user.email,
             gender: user.gender,
             r#type: user.r#type,
-            url: user.url,
             avatar: user.avatar,
             mfa: user.mfa,
             created_at: user.created_at,

@@ -15,7 +15,6 @@ pub struct Model {
     pub email: Option<String>,
     pub gender: UserGender,
     pub r#type: UserType,
-    pub url: Option<String>,
     pub avatar: Option<String>,
     pub mfa: bool,
     pub created_at: DateTime,
