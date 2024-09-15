@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - .github/workflows/release-api.yml
+      - .github/workflows/release-api.yaml
       - packages/api/**
 
 permissions:
@@ -24,6 +24,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
+          version: 9
           run_install: false
 
       - name: Install Node.js
