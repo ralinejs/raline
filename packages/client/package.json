@@ -83,7 +83,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^11.0.3",
-    "@raline/api": "1.0.0-alpha.1",
+    "@raline/api": "0.0.1",
     "autosize": "^6.0.1",
     "marked": "^14.1.1",
     "marked-highlight": "^2.1.4",
