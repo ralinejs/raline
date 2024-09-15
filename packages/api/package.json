@@ -34,7 +34,7 @@
   ],
   "scripts": {
     "build": "rollup -c rollup.config.ts --configPlugin esbuild",
-    "clean": "rimraf ./dist",
+    "clean": "rm -rf ./dist",
     "prepublishOnly": "pnpm clean && pnpm build"
   },
   "engines": {

@@ -5,3 +5,7 @@ gen-model:
 ## build release binary
 release:
     cargo build --release
+
+## publish api
+publish-api:
+    pnpm --dir=packages/api install && pnpm --dir=packages/api prepublishOnly

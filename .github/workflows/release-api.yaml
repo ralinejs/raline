@@ -1,0 +1,44 @@
+name: "publish @raline/api"
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/release-api.yml
+      - packages/api/**
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install Just
+        uses: extractions/setup-just@v2
+        with:
+          just-version: '1.4.0'
+      - name: Build with just
+        run: just publish-api
+
+      - name: Publish NPM
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./packages/api
