@@ -43,7 +43,6 @@ create table users (
     email varchar(255) null,
     gender user_gender not null,
     type user_type not null,
-    url varchar(255) default null,
     avatar varchar(255) default null,
     mfa boolean not null default 'false',
     created_at timestamp not null default current_timestamp,

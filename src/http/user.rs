@@ -3,7 +3,11 @@ use crate::{
     dto::user::{
         RegisterReq, ResetPasswdReq, SendEmailReq, SetNameReq, UserResp, ValidateCodeEmailTemplate,
     },
-    model::{prelude::Users, sea_orm_active_enums::UserType, users},
+    model::{
+        prelude::Users,
+        sea_orm_active_enums::{UserGender, UserType},
+        users,
+    },
     utils::{
         jwt::{self, Claims},
         mail,
@@ -53,7 +57,7 @@ async fn register(
         username: Set(body.name),
         email: Set(Some(body.email)),
         password: Set(Some(body.passwd)),
-        gender: Set(body.gender),
+        gender: Set(UserGender::Unknown),
         r#type: Set(UserType::Normal),
         mfa: Set(false),
         ..Default::default()

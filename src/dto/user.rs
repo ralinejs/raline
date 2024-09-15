@@ -30,12 +30,6 @@ pub struct RegisterReq {
     #[validate(length(max = 8, message = "验证码过长"))]
     pub validate_code: String,
 
-    #[serde(default = "default_gender")]
-    pub gender: UserGender,
-}
-
-fn default_gender() -> UserGender {
-    UserGender::Unknown
 }
 
 #[derive(Debug, Validate, Deserialize)]
