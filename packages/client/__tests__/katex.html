@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>raline KaTeX 案例</title>
+    <link rel="stylesheet" href="../dist/raline.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/katex@v0.16/dist/katex.min.css"
+    />
+  </head>
+  <body>
+    <div id="raline" style="max-width: 800px; margin: 0 auto"></div>
+    <script type="module">
+      import { init } from '../dist/raline.js';
+      import katex from 'https://unpkg.com/katex@0.16/dist/katex.mjs';
+
+      init({
+        el: '#raline',
+        serverURL: 'https://raline.vercel.app',
+        path: '/',
+        lang: 'en-US',
+        texRenderer: (blockmode, tex) =>
+          katex.renderToString(tex, {
+            displayMode: blockmode,
+            throwOnError: false,
+          }),
+      });
+    </script>
+  </body>
+</html>

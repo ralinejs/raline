@@ -1,0 +1,129 @@
+.wl-emoji-popup {
+  position: absolute;
+  inset-inline-start: 1.25em;
+  top: 100%;
+  z-index: 10;
+
+  display: none;
+
+  width: 100%;
+  max-width: 526px;
+  border: var(--raline-border);
+  border-radius: 6px;
+
+  background: var(--raline-bg-color);
+  box-shadow: var(--raline-box-shadow);
+
+  &.display {
+    display: block;
+  }
+
+  button {
+    display: inline-block;
+    vertical-align: middle;
+
+    width: 2em;
+    margin: 0.125em;
+    padding: 0;
+    border-width: 0;
+
+    background: transparent;
+
+    font-size: inherit;
+    line-height: 2;
+    text-align: center;
+
+    cursor: pointer;
+
+    &:hover {
+      background: var(--raline-bg-color-hover);
+    }
+  }
+
+  .wl-emoji {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 1.5em;
+    max-height: 1.5em;
+  }
+
+  .wl-tab-wrapper {
+    overflow-y: auto;
+    max-height: 145px;
+    padding: 0.5em;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track-piece:vertical {
+      -webkit-border-radius: 6px;
+      border-radius: 6px;
+      background: rgb(0 0 0 / 10%);
+    }
+
+    &::-webkit-scrollbar-thumb:vertical {
+      width: 6px;
+      -webkit-border-radius: 6px;
+      border-radius: 6px;
+      background: var(--raline-theme-color);
+    }
+  }
+
+  .wl-tabs {
+    position: relative;
+    overflow-x: auto;
+    padding: 0 6px;
+    white-space: nowrap;
+
+    &::before {
+      content: ' ';
+
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      z-index: 2;
+
+      height: 1px;
+
+      background: var(--raline-border-color);
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track-piece:horizontal {
+      -webkit-border-radius: 6px;
+      border-radius: 6px;
+      background: rgb(0 0 0 / 10%);
+    }
+
+    &::-webkit-scrollbar-thumb:horizontal {
+      height: 6px;
+      -webkit-border-radius: 6px;
+      border-radius: 6px;
+      background: var(--raline-theme-color);
+    }
+  }
+
+  .wl-tab {
+    position: relative;
+    margin: 0;
+    padding: 0 0.5em;
+
+    &.active {
+      z-index: 3;
+
+      border: 1px solid var(--raline-border-color);
+      border-top-width: 0;
+      border-bottom-right-radius: 6px;
+      border-bottom-left-radius: 6px;
+
+      background: var(--raline-bg-color);
+    }
+  }
+}

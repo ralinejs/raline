@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rootDir": "./src"
+  },
+  "include": ["./src/**/*.ts", "./src/**/*.vue"]
+}

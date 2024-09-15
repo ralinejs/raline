@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>raline init test</title>
+    <link rel="stylesheet" href="../dist/raline.css" />
+  </head>
+  <body>
+    阅读量: <span id="/" class="raline-pageview-count"></span> 评论数:
+    <span id="/" class="raline-comment-count"></span>
+    <div id="raline" style="max-width: 800px; margin: 0 auto"></div>
+    <script type="module">
+      import { init } from '../dist/raline.js';
+
+      init({
+        el: '#raline',
+        serverURL: 'https://ralinejs.comment.lithub.cc',
+        lang: 'en-US',
+        path: '/',
+        pageview: true,
+        reactions: true,
+        emoji: [
+          '//unpkg.com/@raline/emojis@1.1.0/bilibili',
+          '//unpkg.com/@raline/emojis@1.1.0/qq',
+        ],
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+{
+  "name": "@raline/client",
+  "version": "3.3.1",
+  "description": "client for raline comment system",
+  "keywords": [
+    "valine",
+    "raline",
+    "comment",
+    "blog"
+  ],
+  "repository": {
+    "url": "https://github.com/raline/raline",
+    "directory": "packages/client"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Mr.Hope",
+    "email": "mister-hope@outlook.com",
+    "url": "https://mister-hope.com"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/slim.d.ts",
+      "default": "./dist/slim.js"
+    },
+    "./component": {
+      "types": "./dist/component.d.ts",
+      "default": "./dist/component.js"
+    },
+    "./full": {
+      "types": "./dist/raline.d.ts",
+      "import": "./dist/raline.js",
+      "default": "./dist/raline.umd.js"
+    },
+    "./comment": {
+      "types": "./dist/comment.d.ts",
+      "import": "./dist/comment.js",
+      "default": "./dist/comment.umd.js"
+    },
+    "./pageview": {
+      "types": "./dist/pageview.d.ts",
+      "import": "./dist/pageview.js",
+      "default": "./dist/pageview.umd.js"
+    },
+    "./style": "./dist/raline.css",
+    "./meta": "./dist/raline-meta.css",
+    "./raline.css": "./dist/raline.css",
+    "./raline-meta.css": "./dist/raline-meta.css",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/slim.js",
+  "module": "./dist/slim.js",
+  "browser": "./dist/raline.umd.js",
+  "types": "./dist/slim.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm rollup && pnpm style",
+    "clean": "rimraf ./dist",
+    "dev": "vite",
+    "prepublishOnly": "pnpm clean && pnpm build",
+    "rollup": "rollup -c rollup.config.ts --configPlugin esbuild",
+    "style": "pnpm style:main && pnpm style:meta",
+    "style:main": "sass ./src/styles/index.scss ./dist/raline.css --style=compressed",
+    "style:meta": "sass ./src/styles/meta.scss ./dist/raline-meta.css --style=compressed"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "maintained node versions",
+      "not dead",
+      "not ie 11",
+      "not op_mini all",
+      "last 2 years"
+    ],
+    "development": [
+      "last 2 chrome version",
+      "last 2 firefox version",
+      "last 2 safari version"
+    ]
+  },
+  "dependencies": {
+    "@vueuse/core": "^11.0.3",
+    "@raline/api": "1.0.0-alpha.8",
+    "autosize": "^6.0.1",
+    "marked": "^14.1.1",
+    "marked-highlight": "^2.1.4",
+    "recaptcha-v3": "^1.11.3",
+    "vue": "^3.5.3"
+  },
+  "devDependencies": {
+    "@babel/core": "7.25.2",
+    "@babel/preset-env": "7.25.4",
+    "@giphy/js-types": "5.1.0",
+    "@types/autosize": "4.0.3",
+    "@vitejs/plugin-vue": "5.1.3",
+    "user-agent-data-types": "0.4.2",
+    "vite": "5.4.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "provenance": true
+  }
+}

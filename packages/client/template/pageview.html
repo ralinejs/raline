@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>raline pageview test</title>
+  </head>
+  <body>
+    阅读量: <span id="/" class="raline-pageview-count"></span>
+    <script type="module">
+      import { pageviewCount } from '../src/entries/pageview.ts';
+
+      pageviewCount({
+        serverURL:
+          import.meta.env.SERVERURL || 'https://ralinejs.comment.lithub.cc',
+        path: '/',
+      });
+    </script>
+  </body>
+</html>

@@ -2143,6 +2143,36 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
 
 [[package]]
+name = "raline-server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "askama",
+ "axum-client-ip",
+ "axum-extra",
+ "axum-valid",
+ "itertools",
+ "jsonwebtoken",
+ "lazy_static",
+ "pem 3.0.4",
+ "problemdetails",
+ "rand",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "serde_with",
+ "spring",
+ "spring-mail",
+ "spring-redis",
+ "spring-sea-orm",
+ "spring-web",
+ "strum",
+ "tokio",
+ "tracing",
+ "validator",
+]
+
+[[package]]
 name = "rand"
 version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3752,36 +3782,6 @@ name = "version_check"
 version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
-
-[[package]]
-name = "waline-server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "askama",
- "axum-client-ip",
- "axum-extra",
- "axum-valid",
- "itertools",
- "jsonwebtoken",
- "lazy_static",
- "pem 3.0.4",
- "problemdetails",
- "rand",
- "sea-orm",
- "serde",
- "serde_json",
- "serde_with",
- "spring",
- "spring-mail",
- "spring-redis",
- "spring-sea-orm",
- "spring-web",
- "strum",
- "tokio",
- "tracing",
- "validator",
-]
 
 [[package]]
 name = "wasi"
