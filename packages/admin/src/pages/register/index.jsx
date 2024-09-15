@@ -38,7 +38,10 @@ export default function () {
     if (!email) {
       return setError(t("please input email"));
     }
-    const link = e.target.link.value;
+    const code = e.target.code.value;
+    if (!code) {
+      return setError(t("minimum 6 characters required"));
+    }
     const password = e.target.password.value;
     const passwordAgain = e.target["password-again"].value;
 
@@ -50,10 +53,11 @@ export default function () {
       setSubmitting(true);
       const token = await execute("login");
       const resp = await dispatch.user.register({
-        display_name: nick,
+        name: nick,
         email,
         url: link,
-        password,
+        passwd: password,
+        validate_code: code,
         recaptchaV3: window.recaptchaV3Key ? token : undefined,
         turnstile: window.turnstileKey ? token : undefined,
       });
