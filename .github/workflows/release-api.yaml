@@ -38,6 +38,7 @@ jobs:
         uses: extractions/setup-just@v2
         with:
           just-version: '1.4.0'
+
       - name: Build with just
         run: just publish-api
 
