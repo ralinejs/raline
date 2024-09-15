@@ -82,9 +82,11 @@ export default function () {
                 placeholder={t("verification code")}
                 className="text-l w-60"
               />
-              <button className="btn btn-l w-40 primary">
-                {t("send code")}
-              </button>
+              <input
+                type="button"
+                className="btn btn-l w-40 primary"
+                value={t("send code")}
+              />
             </p>
             <p>
               <label htmlFor="password" className="sr-only">

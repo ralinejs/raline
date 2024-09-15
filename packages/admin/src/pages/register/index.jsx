@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import Header from "../../components/Header.jsx";
 import { useCaptcha } from "../../components/useCaptcha.js";
+import { sendRegisterCode } from "../../services/user.js";
 
 export default function () {
   const { t } = useTranslation();
@@ -23,6 +24,16 @@ export default function () {
       navigate("/ui", { replace: true });
     }
   }, [navigate]);
+
+  const onSendCode = async function (e) {
+    await sendRegisterCode();
+    let timeout = 60;
+    function stopwatch() {
+      console.log(e.target);
+      e.target.value = timeout;
+    }
+    setTimeout(stopwatch, 1000);
+  };
 
   const onSubmit = async function (e) {
     e.preventDefault();
@@ -124,7 +135,12 @@ export default function () {
                 placeholder={t("verification code")}
                 className="text-l w-60"
               />
-              <button className="btn btn-l w-40 primary">{t("send code")}</button>
+              <input
+                type="button"
+                className="btn btn-l w-40 primary"
+                value={t("send code")}
+                onClick={onSendCode}
+              />
             </p>
             <p>
               <label htmlFor="password" className="sr-only">

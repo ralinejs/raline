@@ -24,3 +24,7 @@ export function getUserList({ page }) {
 export function updateUser({ id, ...data }) {
   return request({ url: `user/${id}`, method: 'PUT', body: data });
 }
+
+export function sendRegisterCode(email) {
+  return request({ url: `user/register-validate-code`, method: 'POST', body: { email } });
+}

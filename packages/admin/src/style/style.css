@@ -234,22 +234,22 @@ select {
   display: flex;
 }
 
-.input-group>input {
+.input-group>input[type='text'] {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-.input-group>input:focus {
+.input-group>input[type='text']:focus {
   outline: none;
 }
 
-.input-group>input:focus {
+.input-group>input[type='text']:focus {
   border-color: black;
   border-radius: 4px 0 0 4px;
   box-shadow: inset 0px 0px 0px 1px black;
 }
 
-.input-group>input+button {
+.input-group>input[type='button'] {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
