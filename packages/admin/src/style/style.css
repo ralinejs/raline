@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 /* vim: set et sw=2 ts=2 sts=2 fdm=marker ff=unix fenc=utf8 */
 /** Typecho 后台样式 @author  Typecho Team @since   2008-09-26 @update  2013-11-02 @link    http://www.typecho.org/ @version 0.9 */
 /** Typecho 全局样式 */
@@ -47,7 +48,8 @@ a.balloon-button {
   background: #d8e7ee;
   font-size: 0.85714em;
   text-align: center;
-  text-decoration: none; /** 修正ie中文不对齐 */
+  text-decoration: none;
+  /** 修正ie中文不对齐 */
   zoom: 1;
   -moz-border-radius: 30px;
   -webkit-border-radius: 30px;
@@ -226,6 +228,30 @@ select {
 .primary:disabled {
   background-color: #508cab;
   cursor: default;
+}
+
+.input-group {
+  display: flex;
+}
+
+.input-group>input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-group>input:focus {
+  outline: none;
+}
+
+.input-group>input:focus {
+  border-color: black;
+  border-radius: 4px 0 0 4px;
+  box-shadow: inset 0px 0px 0px 1px black;
+}
+
+.input-group>input+button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .btn-group {
@@ -742,7 +768,7 @@ select {
 .typecho-login {
   display: table-cell;
   padding: 30px 0 100px;
-  /* width: 280px; */
+  width: 280px;
   text-align: center;
   vertical-align: middle;
 }
@@ -1510,7 +1536,9 @@ a.operate-reply {
   height: 16px;
 }
 
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+
   .icons-sprite,
   .icons-icon-delete,
   .icons-icon-edit,
@@ -1546,101 +1574,133 @@ a.operate-reply {
     background-repeat: no-repeat;
     background-size: 24px 256px;
   }
+
   .icons-icon-delete {
     background-position: 0 -16px;
   }
+
   .icons-icon-edit {
     background-position: 0 -112px;
   }
+
   .icons-icon-exlink {
     background-position: 0 -32px;
   }
+
   .icons-icon-upload-active {
     background-position: 0 -232px;
   }
+
   .icons-icon-upload {
     background-position: 0 -208px;
   }
+
   .icons-icon-upload:active,
   .icons-icon-upload.icon-upload-active {
     background-position: 0 -232px;
   }
+
   .icons-mime-application {
     background-position: 0 -80px;
   }
+
   .icons-mime-archive {
     background-position: 0 -96px;
   }
+
   .icons-mime-audio {
     background-position: 0 0;
   }
+
   .icons-mime-html {
     background-position: 0 -128px;
   }
+
   .icons-mime-image {
     background-position: 0 -144px;
   }
+
   .icons-mime-office {
     background-position: 0 -160px;
   }
+
   .icons-mime-script {
     background-position: 0 -176px;
   }
+
   .icons-mime-text {
     background-position: 0 -64px;
   }
+
   .icons-mime-unknow {
     background-position: 0 -48px;
   }
+
   .icons-mime-video {
     background-position: 0 -192px;
   }
+
   .i-edit {
     background-position: 0 -112px;
   }
+
   .i-delete {
     background-position: 0 -16px;
   }
+
   .i-upload {
     background-position: 0 -208px;
   }
+
   .i-upload:active,
   .i-upload.icon-upload-active {
     background-position: 0 -232px;
   }
+
   .i-upload-active {
     background-position: 0 -232px;
   }
+
   .i-exlink {
     background-position: 0 -32px;
   }
+
   .mime-office {
     background-position: 0 -160px;
   }
+
   .mime-text {
     background-position: 0 -64px;
   }
+
   .mime-image {
     background-position: 0 -144px;
   }
+
   .mime-html {
     background-position: 0 -128px;
   }
+
   .mime-archive {
     background-position: 0 -96px;
   }
+
   .mime-application {
     background-position: 0 -80px;
   }
+
   .mime-audio {
     background-position: 0 0;
   }
+
   .mime-script {
     background-position: 0 -176px;
   }
+
   .mime-video {
     background-position: 0 -192px;
   }
+
   .mime-unknow {
     background-position: 0 -48px;
   }
@@ -2197,6 +2257,7 @@ a.operate-reply {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }

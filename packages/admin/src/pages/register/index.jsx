@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
-import Header from '../../components/Header.jsx';
-import { useCaptcha } from '../../components/useCaptcha.js';
+import Header from "../../components/Header.jsx";
+import { useCaptcha } from "../../components/useCaptcha.js";
 
 export default function () {
   const { t } = useTranslation();
@@ -20,7 +20,7 @@ export default function () {
 
   useEffect(() => {
     if (user && user.email) {
-      navigate('/ui', { replace: true });
+      navigate("/ui", { replace: true });
     }
   }, [navigate]);
 
@@ -31,16 +31,16 @@ export default function () {
     const nick = e.target.nick.value;
 
     if (!nick || nick.length < 2) {
-      return setError(t('nickname illegal'));
+      return setError(t("nickname illegal"));
     }
     const email = e.target.email.value;
 
     if (!email) {
-      return setError(t('please input email'));
+      return setError(t("please input email"));
     }
     const link = e.target.link.value;
     const password = e.target.password.value;
-    const passwordAgain = e.target['password-again'].value;
+    const passwordAgain = e.target["password-again"].value;
 
     if (!password || !passwordAgain || passwordAgain !== password) {
       return setError(t("passwords don't match"));
@@ -48,7 +48,7 @@ export default function () {
 
     try {
       setSubmitting(true);
-      const token = await execute('login');
+      const token = await execute("login");
       const resp = await dispatch.user.register({
         display_name: nick,
         email,
@@ -59,9 +59,9 @@ export default function () {
       });
 
       if (resp && resp.verify) {
-        alert(t('register success! please go to your mailbox to verify it!'));
+        alert(t("register success! please go to your mailbox to verify it!"));
       }
-      navigate('/ui/login');
+      navigate("/ui/login");
     } catch (e) {
       setError(e.message);
     } finally {
@@ -75,9 +75,9 @@ export default function () {
       <div
         className="message popup notice"
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
-          display: error ? 'block' : 'none',
+          display: error ? "block" : "none",
         }}
       >
         <ul>{error ? <li>{error}</li> : null}</ul>
@@ -87,62 +87,63 @@ export default function () {
           <form method="post" name="login" role="form" onSubmit={onSubmit}>
             <p>
               <label htmlFor="nick" className="sr-only">
-                {t('nickname')}
+                {t("nickname")}
               </label>
               <input
                 type="text"
                 id="nick"
                 name="nick"
-                placeholder={t('nickname')}
+                placeholder={t("nickname")}
                 className="text-l w-100"
               />
             </p>
             <p>
               <label htmlFor="email" className="sr-only">
-                {t('email')}
+                {t("email")}
               </label>
               <input
                 type="text"
                 id="email"
                 name="email"
-                placeholder={t('email')}
+                placeholder={t("email")}
                 className="text-l w-100"
               />
             </p>
-            <p>
-              <label htmlFor="link" className="sr-only">
-                {t('website')}
+            <p className="input-group">
+              <label htmlFor="code" className="sr-only">
+                {t("verification code")}
               </label>
               <input
                 type="text"
-                id="link"
-                name="link"
-                placeholder={t('website')}
-                className="text-l w-100"
+                id="code"
+                name="code"
+                placeholder={t("verification code")}
+                className="text-l w-60"
               />
+              <button className="btn btn-l w-40 primary">{t("send code")}</button>
             </p>
             <p>
               <label htmlFor="password" className="sr-only">
-                {t('password')}
+                {t("password")}
               </label>
               <input
                 type="password"
                 id="password"
                 name="password"
                 className="text-l w-100"
-                placeholder={t('password')}
+                placeholder={t("password")}
               />
             </p>
             <p>
               <label htmlFor="password-again" className="sr-only">
-                {t('password again')}
+                {t("password again")}
               </label>
               <input
                 type="password"
                 id="password-again"
                 name="password-again"
                 className="text-l w-100"
-                placeholder={t('password again')}
+                placeholder={t("password again")}
               />
             </p>
             <p className="captcha-container" />
@@ -152,14 +153,14 @@ export default function () {
                 disabled={submitting}
                 className="btn btn-l w-100 primary"
               >
-                {t('register')}
+                {t("register")}
               </button>
             </p>
           </form>
 
           <p className="more-link">
-            <Link to="/ui">{t('back to home')}</Link> •{' '}
-            <Link to="/ui/login">{t('register.login')}</Link>
+            <Link to="/ui">{t("back to home")}</Link> •{" "}
+            <Link to="/ui/login">{t("register.login")}</Link>
           </p>
         </div>
       </div>

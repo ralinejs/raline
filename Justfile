@@ -9,3 +9,7 @@ release:
 ## publish api
 publish-api:
     pnpm --dir=packages/api install && pnpm --dir=packages/api prepublishOnly
+
+## admin dev
+admin-dev:
+    pnpm --dir=packages/admin dev
