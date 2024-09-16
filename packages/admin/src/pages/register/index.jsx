@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ export default function () {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const formRef = useRef();
   const user = useSelector((state) => state.user);
   const [error, setError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -26,13 +27,24 @@ export default function () {
   }, [navigate]);
 
   const onSendCode = async function (e) {
-    await sendRegisterCode();
+    let email = formRef.current.email.value;
+    if (!email) {
+      return setError(t("please input email"));
+    }
+    await sendRegisterCode(email);
     let timeout = 60;
     function stopwatch() {
-      console.log(e.target);
-      e.target.value = timeout;
+      if (timeout <= 0) {
+        e.target.value = t("send code");
+        e.target.disabled = false;
+      } else {
+        e.target.value = `${timeout}s`;
+        e.target.disabled = true;
+        timeout--;
+        setTimeout(stopwatch, 1000);
+      }
     }
-    setTimeout(stopwatch, 1000);
+    stopwatch();
   };
 
   const onSubmit = async function (e) {
@@ -66,7 +78,6 @@ export default function () {
       const resp = await dispatch.user.register({
         name: nick,
         email,
-        url: link,
         passwd: password,
         validate_code: code,
         recaptchaV3: window.recaptchaV3Key ? token : undefined,
@@ -99,7 +110,13 @@ export default function () {
       </div>
       <div className="typecho-login-wrap">
         <div className="typecho-login">
-          <form method="post" name="login" role="form" onSubmit={onSubmit}>
+          <form
+            ref={formRef}
+            method="post"
+            name="login"
+            role="form"
+            onSubmit={onSubmit}
+          >
             <p>
               <label htmlFor="nick" className="sr-only">
                 {t("nickname")}

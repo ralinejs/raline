@@ -86,7 +86,6 @@
   "new password": "新密码",
   "reset password": "重置密码",
   "find password success! please go to your mailbox to reset it!": "重置密码邮件发送成功，请去邮箱中查收！",
-  "find password error! try again later": "重置密码邮件发送失败，请稍后再试！",
   "set administrator": "成为管理员",
   "set guest": "成为普通用户",
   "set label": "设置专属标签",

@@ -117,8 +117,6 @@ export default function () {
       </div>
       <div className="typecho-login-wrap">
         <div className="typecho-login">
-          {/* <h1><a href="http://raline.js.org" className="i-logo">raline</a></h1> */}
-
           <form method="post" name="login" role="form" onSubmit={onSubmit}>
             <p>
               <label htmlFor="email" className="sr-only">

@@ -2837,9 +2837,9 @@ dependencies = [
 
 [[package]]
 name = "spring-mail"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35822ed2206091f1533c4f9fcc9de16454c965eb3cac2614851e2c9bc12dd277"
+checksum = "5dfa7caff1df0e409b99f0d6b241a54c193a6a9777e348b9a9b7ae5d9b0f1c2d"
 dependencies = [
  "anyhow",
  "lettre",
@@ -2881,9 +2881,9 @@ dependencies = [
 
 [[package]]
 name = "spring-web"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8ef7a18cad3c7f044325df6b93a87dc777dc9e631ad8677055a04cbf890485f"
+checksum = "004ff0a4e32ad4e29873e56c26deb1e5e612c01f719ff16e65bf53ecd957f907"
 dependencies = [
  "anyhow",
  "axum",

@@ -25,10 +25,10 @@ export async function register(user) {
   return request({ url: 'user', method: 'POST', body: user });
 }
 
-export async function forgot({ email }) {
+export async function forgot({ email, passwd, validate_code }) {
   return request({
-    url: 'user/password',
-    method: 'PUT',
-    body: { email },
+    url: 'user/passwd',
+    method: 'POST',
+    body: { email, passwd, validate_code },
   });
 }

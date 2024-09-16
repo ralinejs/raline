@@ -3,6 +3,7 @@ host = "smtp.163.com"                                                      # SMT
 port = 465                                                                 # SMTP server port number
 secure = true                                                              # Response timeout, in milliseconds
 auth = { user = "hff1996723@163.com", password = "${MAIL_AUTH_PASSWORD}" } # Authentication information
+stub = true
 
 [email]
 from = "hff1996723@163.com"

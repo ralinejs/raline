@@ -86,7 +86,6 @@
   "new password": "New Password",
   "reset password": "Reset Password",
   "find password success! please go to your mailbox to reset it!": "The reset password email has been sent successfully, please check it in your mailbox!",
-  "find password error! try again later": "Failed to send reset password email, please try again later!",
   "set administrator": "Set Admin",
   "set guest": "Set Guest",
   "set label": "Set Label",

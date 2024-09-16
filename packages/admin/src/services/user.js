@@ -28,3 +28,7 @@ export function updateUser({ id, ...data }) {
 export function sendRegisterCode(email) {
   return request({ url: `user/register-validate-code`, method: 'POST', body: { email } });
 }
+
+export function sendResetCode(email) {
+  return request({ url: `user/reset-validate-code`, method: 'POST', body: { email } });
+}

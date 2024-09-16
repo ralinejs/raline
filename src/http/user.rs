@@ -17,6 +17,7 @@ use crate::{
 use anyhow::Context;
 use axum_client_ip::SecureClientIp;
 use sea_orm::{ActiveModelTrait, ActiveValue::NotSet, ColumnTrait, EntityTrait, QueryFilter, Set};
+use serde_json::json;
 use spring_mail::Mailer;
 use spring_redis::Redis;
 use spring_sea_orm::DbConn;
@@ -154,8 +155,9 @@ async fn reset_password(
     .with_context(|| format!("user#{} change password failed", u.id))?;
 
     let claims = Claims::new(u);
+    let token = jwt::encode(claims)?;
 
-    Ok(jwt::encode(claims)?)
+    Ok(Json(json!({ "token": token })))
 }
 
 #[patch("/user/name")]

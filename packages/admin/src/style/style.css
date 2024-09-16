@@ -186,7 +186,7 @@ select {
 .btn:disabled,
 #ui-datepicker-div .ui-datepicker-current:disabled,
 #ui-datepicker-div .ui-datepicker-close:disabled {
-  color: #999;
+  color: #ccc;
 }
 
 .btn-xs,

@@ -39,26 +39,11 @@ export default async function request(url, opts = {}) {
   );
 
   if (!resp.ok) {
-    if (resp.status === 401) {
-      throw new Error(401);
-    }
-
-    let result;
-
-    try {
-      result = await resp.json();
-    } catch {
-      // ignore
-    }
-
-    throw new Error(`${resp.status}: ${result?.errmsg || resp.statusText}`);
+    const { title, detail } = await resp.json();
+    throw new Error(`${resp.status} - ${title}: ${detail}`);
   }
 
   const result = await resp.json();
-
-  if (result.errno !== 0) {
-    throw new Error(result.errmsg);
-  }
 
   const __version = resp.headers.get('x-raline-version');
 
