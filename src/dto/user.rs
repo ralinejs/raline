@@ -54,9 +54,14 @@ pub struct SendEmailReq {
 }
 
 #[derive(Debug, Validate, Deserialize)]
-pub struct SetNameReq {
+pub struct UpdateUserReq {
     #[validate(length(max = 30, message = "用户名不能超过30个字符"))]
-    pub name: String,
+    pub name: Option<String>,
+    pub gender: Option<UserGender>,
+    #[validate(length(max = 32, message = "密码过长"))]
+    pub password: Option<String>,
+    #[validate(url, length(max = 250, message = "密码过长"))]
+    pub avatar: Option<String>,
 }
 
 #[derive(Debug, Serialize)]

@@ -18,17 +18,16 @@ export default function () {
   const onProfileUpdate = async function (e) {
     e.preventDefault();
 
-    const display_name = e.target.screenName.value;
-    const url = e.target.url.value;
-    const label = e.target.label.value;
+    const name = e.target.name.value;
+    const gender = e.target.gender.value;
 
-    if (!display_name || !url) {
+    if (!name || !gender) {
       return alert(t("nickname and homepage are required"));
     }
 
     setProfileUpdating(true);
     try {
-      await dispatch.user.updateProfile({ display_name, url, label });
+      await dispatch.user.updateProfile({ name, gender });
     } catch (e) {
       alert(e);
     } finally {
@@ -123,12 +122,12 @@ export default function () {
                 <form method="post" onSubmit={onProfileUpdate}>
                   <ul className="typecho-option">
                     <li>
-                      <label className="typecho-label" htmlFor="screenName-0-1">
+                      <label className="typecho-label" htmlFor="name">
                         {t("nickname")}
                       </label>
                       <input
-                        id="screenName-0-1"
-                        name="screenName"
+                        id="name"
+                        name="name"
                         type="text"
                         className="text"
                         defaultValue={user.name}
@@ -152,22 +151,6 @@ export default function () {
                         <option value="Male">{t("male")}</option>
                         <option value="Female">{t("female")}</option>
                       </select>
-                    </li>
-                  </ul>
-
-                  <ul className="typecho-option">
-                    <li>
-                      <label className="typecho-label" htmlFor="url-0-2">
-                        {t("exclusive label")}
-                      </label>
-                      <input
-                        id="url-0-2"
-                        name="label"
-                        type="text"
-                        className="text"
-                        defaultValue={user.label}
-                      />
-                      <p className="description"></p>
                     </li>
                   </ul>
 

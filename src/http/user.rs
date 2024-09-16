@@ -1,7 +1,7 @@
 use crate::{
     config::mail::Email,
     dto::user::{
-        RegisterReq, ResetPasswdReq, SendEmailReq, SetNameReq, UserResp, UserRespWithToken,
+        RegisterReq, ResetPasswdReq, SendEmailReq, UpdateUserReq, UserResp, UserRespWithToken,
         ValidateCodeEmailTemplate,
     },
     model::{
@@ -24,6 +24,7 @@ use spring_web::{
     axum::{response::IntoResponse, Json},
     error::{KnownWebError, Result},
     extractor::Component,
+    put,
 };
 use spring_web::{extractor::Config, patch, post};
 
@@ -145,11 +146,11 @@ async fn reset_password(
     Ok(Json(UserRespWithToken::new(u, token)))
 }
 
-#[patch("/user/name")]
-async fn set_name(
+#[put("/user")]
+async fn update_user(
     claims: Claims,
     Component(db): Component<DbConn>,
-    Json(req): Json<SetNameReq>,
+    Json(req): Json<UpdateUserReq>,
 ) -> Result<impl IntoResponse> {
     let u = Users::find_by_id(claims.uid)
         .one(&db)
@@ -159,7 +160,22 @@ async fn set_name(
 
     let u = users::ActiveModel {
         id: Set(u.id),
-        username: Set(req.name),
+        username: match req.name {
+            Some(name) => Set(name),
+            None => NotSet,
+        },
+        gender: match req.gender {
+            Some(gender) => Set(gender),
+            None => NotSet,
+        },
+        password: match req.password {
+            Some(password) => Set(Some(password)),
+            None => NotSet,
+        },
+        avatar: match req.avatar {
+            Some(avatar) => Set(Some(avatar)),
+            None => NotSet,
+        },
         ..Default::default()
     }
     .update(&db)
@@ -168,5 +184,5 @@ async fn set_name(
 
     tracing::debug!("user#{} change name success", u.id);
 
-    Ok(Json(true))
+    Ok(Json(UserResp::from(u)))
 }
