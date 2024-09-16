@@ -1,12 +1,12 @@
 use crate::{
-    dto::user::{AuthenticationToken, UserRespWithToken},
+    dto::user::{AuthenticationToken, UserResp, UserRespWithToken},
     model::{prelude::Users, users},
     utils::jwt::{self, Claims},
 };
 use anyhow::Context;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use spring_sea_orm::DbConn;
-use spring_web::{axum::response::IntoResponse, post};
+use spring_web::{axum::response::IntoResponse, get, post};
 use spring_web::{
     axum::Json,
     error::{KnownWebError, Result},
@@ -40,4 +40,18 @@ async fn login(
     let token = jwt::encode(claims)?;
 
     Ok(Json(UserRespWithToken::new(user, token)))
+}
+
+#[get("/token")]
+async fn current_user(
+    claims: Claims,
+    Component(db): Component<DbConn>,
+) -> Result<impl IntoResponse> {
+    let user = Users::find_by_id(claims.uid)
+        .one(&db)
+        .await
+        .with_context(|| format!("find user by id#{}", claims.uid))?
+        .ok_or_else(|| KnownWebError::not_found("用户不存在"))?;
+
+    Ok(Json(UserResp::from(user)))
 }

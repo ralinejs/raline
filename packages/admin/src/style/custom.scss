@@ -13,25 +13,6 @@ div[tabindex='-1'] {
   margin-right: 16px;
 }
 
-.account-item .account-unbind svg {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-
-  display: none;
-
-  border: 1px solid #999;
-  border-radius: 50%;
-
-  background: #fff;
-
-  cursor: pointer;
-}
-
-.account-item:hover .account-unbind svg {
-  display: block;
-}
-
 .account-item.github a path,
 .account-item.twitter circle,
 .account-item.facebook a path,

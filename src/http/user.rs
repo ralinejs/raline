@@ -25,7 +25,7 @@ use spring_web::{
     error::{KnownWebError, Result},
     extractor::Component,
 };
-use spring_web::{extractor::Config, get, patch, post};
+use spring_web::{extractor::Config, patch, post};
 
 #[post("/user")]
 async fn register(
@@ -67,20 +67,6 @@ async fn register(
     .context("user insert failed")?;
 
     Ok(Json(user.into()))
-}
-
-#[get("/user")]
-async fn current_user(
-    claims: Claims,
-    Component(db): Component<DbConn>,
-) -> Result<impl IntoResponse> {
-    let user = Users::find_by_id(claims.uid)
-        .one(&db)
-        .await
-        .with_context(|| format!("find user by id#{}", claims.uid))?
-        .ok_or_else(|| KnownWebError::not_found("用户不存在"))?;
-
-    Ok(Json(UserResp::from(user)))
 }
 
 #[post("/user/register-validate-code")]

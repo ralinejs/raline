@@ -1,12 +1,12 @@
-import cls from 'classnames';
-import React, { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import cls from "classnames";
+import React, { useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 
-import TwoFactorAuth from './twoFactorAuth.jsx';
-import Header from '../../components/Header.jsx';
-import * as Icons from '../../components/icon/index.js';
-import { updateProfile } from '../../services/user.js';
+import TwoFactorAuth from "./twoFactorAuth.jsx";
+import Header from "../../components/Header.jsx";
+import * as Icons from "../../components/icon/index.js";
+import { updateProfile } from "../../services/user.js";
 
 export default function () {
   const [isPasswordUpdating, setPasswordUpdating] = useState(false);
@@ -23,7 +23,7 @@ export default function () {
     const label = e.target.label.value;
 
     if (!display_name || !url) {
-      return alert(t('nickname and homepage are required'));
+      return alert(t("nickname and homepage are required"));
     }
 
     setProfileUpdating(true);
@@ -43,7 +43,7 @@ export default function () {
     const confirm = e.target.confirm.value;
 
     if (!password || !confirm) {
-      return alert(t('please input password'));
+      return alert(t("please input password"));
     }
 
     if (password !== confirm) {
@@ -55,15 +55,10 @@ export default function () {
     setPasswordUpdating(false);
   };
 
-  const unbind = async function (type) {
-    await updateProfile({ [type]: '' });
-    location.reload();
-  };
-
   const changeAvatar = async function (e) {
     e.preventDefault();
 
-    const url = prompt(t('please input avatar url'));
+    const url = prompt(t("please input avatar url"));
 
     if (!url) {
       return;
@@ -78,14 +73,14 @@ export default function () {
   if (!baseUrl) {
     const match = location.pathname.match(/(.*?\/)ui/);
 
-    baseUrl = match ? match[1] : '/';
+    baseUrl = match ? match[1] : "/";
   }
   const qs = new URLSearchParams(location.search);
   let token =
-    window.TOKEN || sessionStorage.getItem('TOKEN') || qs.get('token');
+    window.TOKEN || sessionStorage.getItem("TOKEN") || qs.get("token");
 
   if (!token) {
-    token = localStorage.getItem('TOKEN');
+    token = localStorage.getItem("TOKEN");
   }
 
   return (
@@ -94,14 +89,14 @@ export default function () {
       <div className="main">
         <div className="body container">
           <div className="typecho-page-title">
-            <h2>{t('setting')}</h2>
+            <h2>{t("setting")}</h2>
           </div>
           <div className="row typecho-page-main">
             <div className="col-mb-12 col-tb-3">
               <p>
                 <a
-                  href="javascript:void(0)"
-                  title={t('change avatar')}
+                  href="#"
+                  title={t("change avatar")}
                   target="_blank"
                   rel="noreferrer"
                   onClick={changeAvatar}
@@ -115,7 +110,7 @@ export default function () {
                   />
                 </a>
               </p>
-              <h2>{user.display_name}</h2>
+              <h2>{user.name}</h2>
               <p>{user.email}</p>
             </div>
 
@@ -124,19 +119,19 @@ export default function () {
               role="form"
             >
               <section>
-                <h3>{t('profile')}</h3>
+                <h3>{t("profile")}</h3>
                 <form method="post" onSubmit={onProfileUpdate}>
                   <ul className="typecho-option">
                     <li>
                       <label className="typecho-label" htmlFor="screenName-0-1">
-                        {t('nickname')}
+                        {t("nickname")}
                       </label>
                       <input
                         id="screenName-0-1"
                         name="screenName"
                         type="text"
                         className="text"
-                        defaultValue={user.display_name}
+                        defaultValue={user.name}
                       />
                       <p className="description"></p>
                     </li>
@@ -145,29 +140,25 @@ export default function () {
                   <ul className="typecho-option">
                     <li>
                       <label className="typecho-label" htmlFor="url-0-2">
-                        {t('homepage')}
+                        {t("gender")}
                       </label>
-                      <input
-                        id="url-0-2"
-                        name="url"
-                        type="text"
-                        className="text"
-                        defaultValue={user.url}
-                      />
-                      <p className="description">
-                        <Trans
-                          i18nKey="homepage tips"
-                          defaults="Current users' homepage. It must be start with <code>http://</code> or <code>https://</code>."
-                          components={{ code: <code /> }}
-                        />
-                      </p>
+                      <select
+                        name="gender"
+                        id="gender"
+                        style={{ width: "100%" }}
+                        defaultValue={user.gender}
+                      >
+                        <option value="Unknown">{t("unknown")}</option>
+                        <option value="Male">{t("male")}</option>
+                        <option value="Female">{t("female")}</option>
+                      </select>
                     </li>
                   </ul>
 
                   <ul className="typecho-option">
                     <li>
                       <label className="typecho-label" htmlFor="url-0-2">
-                        {t('exclusive label')}
+                        {t("exclusive label")}
                       </label>
                       <input
                         id="url-0-2"
@@ -187,7 +178,7 @@ export default function () {
                         className="btn primary"
                         disabled={isProfileUpdating}
                       >
-                        {t('update my profile')}
+                        {t("update my profile")}
                       </button>
                     </li>
                   </ul>
@@ -195,34 +186,14 @@ export default function () {
               </section>
               <br />
               <section id="social-account">
-                <h3>{t('connect to social account')}</h3>
+                <h3>{t("connect to social account")}</h3>
                 <div className="account-list">
-                  {/** warning: compat with old server version */}
-                  {window.ALLOW_SOCIALS && (
-                    <div
-                      className={cls('account-item github', {
-                        bind: user.github,
-                      })}
-                    >
-                      <a
-                        href={
-                          user.github
-                            ? `https://github.com/${user.github}`
-                            : `${baseUrl}oauth/github?state=${token}`
-                        }
-                        target={user.github ? '_blank' : '_self'}
-                        rel="noreferrer"
-                      >
-                        {React.createElement(Icons.github)}
-                      </a>
-                    </div>
-                  )}
                   {!window.ALLOW_SOCIALS &&
-                    ['qq', 'weibo', 'github', 'twitter', 'facebook'].map(
+                    ["qq", "weibo", "github", "twitter", "facebook"].map(
                       (social) => (
                         <div
                           key={social}
-                          className={cls('account-item', social, {
+                          className={cls("account-item", social, {
                             bind: user[social],
                           })}
                         >
@@ -232,7 +203,7 @@ export default function () {
                                 ? `https://${social}.com/${user[social]}`
                                 : `${baseUrl}oauth/?type=${social}&state=${token}`
                             }
-                            target={user[social] ? '_blank' : '_self'}
+                            target={user[social] ? "_blank" : "_self"}
                             rel="noreferrer"
                           >
                             {
@@ -240,33 +211,19 @@ export default function () {
                               React.createElement(Icons[social])
                             }
                           </a>
-                          <div
-                            className="account-unbind"
-                            onClick={() => unbind(social)}
-                          >
-                            <svg
-                              className="close-icon"
-                              viewBox="0 0 1024 1024"
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="14"
-                              height="14"
-                            >
-                              <path d="m568.569 512 170.267-170.267c15.556-15.556 15.556-41.012 0-56.569s-41.012-15.556-56.569 0L512 455.431 341.733 285.165c-15.556-15.556-41.012-15.556-56.569 0s-15.556 41.012 0 56.569L455.431 512 285.165 682.267c-15.556 15.556-15.556 41.012 0 56.569 15.556 15.556 41.012 15.556 56.569 0L512 568.569l170.267 170.267c15.556 15.556 41.012 15.556 56.569 0 15.556-15.556 15.556-41.012 0-56.569L568.569 512z" />
-                            </svg>
-                          </div>
                         </div>
-                      ),
+                      )
                     )}
                 </div>
               </section>
               <br />
               <section id="change-password">
-                <h3>{t('change password')}</h3>
+                <h3>{t("change password")}</h3>
                 <form method="post" onSubmit={onPasswordUpdate}>
                   <ul className="typecho-option">
                     <li>
                       <label className="typecho-label" htmlFor="password-0-11">
-                        {t('password')}
+                        {t("password")}
                       </label>
                       <input
                         id="password-0-11"
@@ -284,7 +241,7 @@ export default function () {
                   <ul className="typecho-option">
                     <li>
                       <label className="typecho-label" htmlFor="confirm-0-12">
-                        {t('password again')}
+                        {t("password again")}
                       </label>
                       <input
                         id="confirm-0-12"
@@ -305,7 +262,7 @@ export default function () {
                         className="btn primary"
                         disabled={isPasswordUpdating}
                       >
-                        {t('update password')}
+                        {t("update password")}
                       </button>
                     </li>
                   </ul>
