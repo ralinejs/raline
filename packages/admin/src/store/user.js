@@ -46,6 +46,7 @@ export const user = {
         recaptchaV3,
         turnstile,
       });
+      console.log(token,user);
 
       if (token) {
         window.TOKEN = token;

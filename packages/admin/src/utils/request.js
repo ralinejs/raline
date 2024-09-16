@@ -47,5 +47,5 @@ export default async function request(url, opts = {}) {
 
   const __version = resp.headers.get('x-raline-version');
 
-  return { __version, ...result.data };
+  return { __version, ...result };
 }

@@ -28,9 +28,9 @@ pub struct Claims {
 }
 
 impl Claims {
-    pub fn new(user: users::Model) -> Self {
+    pub fn new(uid: i64) -> Self {
         Self {
-            uid: user.id,
+            uid,
             exp: jsonwebtoken::get_current_timestamp() + 360 * 24 * 60 * 60 * 1000,
         }
     }

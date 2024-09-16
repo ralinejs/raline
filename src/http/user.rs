@@ -1,7 +1,8 @@
 use crate::{
     config::mail::Email,
     dto::user::{
-        RegisterReq, ResetPasswdReq, SendEmailReq, SetNameReq, UserResp, ValidateCodeEmailTemplate,
+        RegisterReq, ResetPasswdReq, SendEmailReq, SetNameReq, UserResp, UserRespWithToken,
+        ValidateCodeEmailTemplate,
     },
     model::{
         prelude::Users,
@@ -15,9 +16,7 @@ use crate::{
     },
 };
 use anyhow::Context;
-use axum_client_ip::SecureClientIp;
 use sea_orm::{ActiveModelTrait, ActiveValue::NotSet, ColumnTrait, EntityTrait, QueryFilter, Set};
-use serde_json::json;
 use spring_mail::Mailer;
 use spring_redis::Redis;
 use spring_sea_orm::DbConn;
@@ -57,7 +56,7 @@ async fn register(
         id: NotSet,
         username: Set(body.name),
         email: Set(Some(body.email)),
-        password: Set(Some(body.passwd)),
+        password: Set(Some(body.password)),
         gender: Set(UserGender::Unknown),
         r#type: Set(UserType::Normal),
         mfa: Set(false),
@@ -124,7 +123,7 @@ async fn reset_validate_code(
     Ok(Json(success))
 }
 
-#[post("/user/passwd")]
+#[post("/user/password")]
 async fn reset_password(
     Component(mut redis): Component<Redis>,
     Component(db): Component<DbConn>,
@@ -147,17 +146,17 @@ async fn reset_password(
 
     let u = users::ActiveModel {
         id: Set(u.id),
-        password: Set(Some(req.passwd)),
+        password: Set(Some(req.password)),
         ..Default::default()
     }
     .update(&db)
     .await
     .with_context(|| format!("user#{} change password failed", u.id))?;
 
-    let claims = Claims::new(u);
+    let claims = Claims::new(u.id);
     let token = jwt::encode(claims)?;
 
-    Ok(Json(json!({ "token": token })))
+    Ok(Json(UserRespWithToken::new(u, token)))
 }
 
 #[patch("/user/name")]

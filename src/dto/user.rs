@@ -10,7 +10,7 @@ use validator::Validate;
 #[derive(Debug, Deserialize)]
 pub struct AuthenticationToken {
     pub email: String,
-    pub passwd: String,
+    pub password: String,
 }
 
 #[derive(Debug, Validate, Deserialize)]
@@ -25,11 +25,10 @@ pub struct RegisterReq {
     pub email: String,
 
     #[validate(length(max = 32, message = "密码过长"))]
-    pub passwd: String,
+    pub password: String,
 
     #[validate(length(max = 8, message = "验证码过长"))]
     pub validate_code: String,
-
 }
 
 #[derive(Debug, Validate, Deserialize)]
@@ -40,7 +39,7 @@ pub struct ResetPasswdReq {
     )]
     pub email: String,
     #[validate(length(max = 32, message = "密码过长"))]
-    pub passwd: String,
+    pub password: String,
     #[validate(length(max = 8, message = "验证码过长"))]
     pub validate_code: String,
 }
@@ -85,6 +84,37 @@ impl From<users::Model> for UserResp {
             mfa: user.mfa,
             created_at: user.created_at,
             updated_at: user.updated_at,
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct UserRespWithToken {
+    pub id: i64,
+    pub name: String,
+    pub email: Option<String>,
+    pub gender: UserGender,
+    pub r#type: UserType,
+    pub avatar: Option<String>,
+    pub mfa: bool,
+    pub created_at: DateTime,
+    pub updated_at: DateTime,
+    pub token: String,
+}
+
+impl UserRespWithToken {
+    pub fn new<S: Into<String>>(user: users::Model, token: S) -> Self {
+        Self {
+            id: user.id,
+            name: user.username,
+            email: user.email,
+            gender: user.gender,
+            r#type: user.r#type,
+            avatar: user.avatar,
+            mfa: user.mfa,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+            token: token.into(),
         }
     }
 }

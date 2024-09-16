@@ -66,7 +66,7 @@ export default function () {
       await dispatch.user.forgot({
         email,
         validate_code: code,
-        passwd: password,
+        password,
       });
       alert(t("find password success! please go to your mailbox to reset it!"));
       navigate("/ui/login");

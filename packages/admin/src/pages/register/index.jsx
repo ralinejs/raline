@@ -78,7 +78,7 @@ export default function () {
       const resp = await dispatch.user.register({
         name: nick,
         email,
-        passwd: password,
+        password,
         validate_code: code,
         recaptchaV3: window.recaptchaV3Key ? token : undefined,
         turnstile: window.turnstileKey ? token : undefined,
