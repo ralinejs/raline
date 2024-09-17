@@ -48,7 +48,7 @@ export default function () {
             path="/ui"
             exact
             element={
-              <Access meta={{ auth: 'administrator' }} basename={basePath}>
+              <Access meta={{ auth: 'Admin' }} basename={basePath}>
                 <ManageComments />
               </Access>
             }
@@ -57,7 +57,7 @@ export default function () {
             path="/ui/user"
             exact
             element={
-              <Access meta={{ auth: 'administrator' }} basename={basePath}>
+              <Access meta={{ auth: 'Admin' }} basename={basePath}>
                 <User />
               </Access>
             }
@@ -66,7 +66,7 @@ export default function () {
             path="/ui/migration"
             exact
             element={
-              <Access meta={{ auth: 'administrator' }} basename={basePath}>
+              <Access meta={{ auth: 'Admin' }} basename={basePath}>
                 <Migration />
               </Access>
             }

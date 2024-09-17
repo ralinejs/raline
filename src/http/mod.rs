@@ -1,3 +1,4 @@
+mod comment;
 mod token;
 mod user;
 mod view_counter;

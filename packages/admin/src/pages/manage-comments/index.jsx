@@ -294,7 +294,7 @@ export default function () {
                         key={type}
                       >
                         <a
-                          href="javascript:void(0)"
+                          href="#"
                           onClick={() => dispatch({ [key]: type })}
                         >
                           {name}
@@ -346,16 +346,12 @@ export default function () {
                       >
                         {createActions().map(({ key, name, action }) => (
                           <li key={key}>
-                            <a href="javascript:void(0)" onClick={action}>
+                            <a href="#" onClick={action}>
                               {name}
                             </a>
                           </li>
                         ))}
                       </ul>
-                      &nbsp;
-                      {/* {filter.status === 'spam' ? (
-                      <button lang="你确认要删除所有垃圾评论吗?" className="btn btn-s btn-warn btn-operate">删除所有垃圾评论</button>
-                    ) : null} */}
                     </div>
                   </div>
 
@@ -662,7 +658,7 @@ export default function () {
                                     ) : (
                                       <a
                                         key={key}
-                                        href="javascript:void(0)"
+                                        href="#"
                                         className={`operate-${key}`}
                                         onClick={action}
                                       >

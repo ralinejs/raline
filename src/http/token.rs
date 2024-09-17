@@ -55,3 +55,8 @@ async fn current_user(
 
     Ok(Json(UserResp::from(user)))
 }
+
+#[get("/token/2fa")]
+async fn mfa() -> Result<impl IntoResponse> {
+    Ok("")
+}

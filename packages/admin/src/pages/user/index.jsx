@@ -176,7 +176,7 @@ export default function () {
                                 ) : (
                                   <a
                                     key={key}
-                                    href="javascript:void(0)"
+                                    href="#"
                                     className={`operate-${key}`}
                                     onClick={action}
                                   >
