@@ -1,7 +1,7 @@
 import { createApp, h, reactive, watchEffect } from 'vue';
 
 import { commentCount } from './comment.js';
-import raline from './components/ralineComment.vue';
+import raline from './components/RalineComment.vue';
 import { pageviewCount } from './pageview.js';
 import type { ralineInitOptions } from './typings/index.js';
 import { getRoot, isString } from './utils/index.js';

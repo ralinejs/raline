@@ -13,3 +13,7 @@ publish-api:
 ## admin dev
 admin-dev:
     pnpm --dir=packages/admin dev
+
+## client dev
+client-dev:
+    pnpm --dir=packages/client dev

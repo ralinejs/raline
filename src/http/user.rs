@@ -26,7 +26,7 @@ use spring_web::{
     extractor::Component,
     put,
 };
-use spring_web::{extractor::Config, patch, post};
+use spring_web::{extractor::Config, post};
 
 #[post("/user")]
 async fn register(

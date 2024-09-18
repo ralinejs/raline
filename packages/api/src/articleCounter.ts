@@ -50,7 +50,7 @@ export const getArticleCounter = ({
   signal,
 }: GetArticleCounterOptions): Promise<GetArticleCounterResponse> =>
   fetch(
-    `${getFetchPrefix(serverURL)}article?path=${encodeURIComponent(
+    `${getFetchPrefix(serverURL)}view?path=${encodeURIComponent(
       paths.join(','),
     )}&type=${encodeURIComponent(type.join(','))}&lang=${lang}`,
     { signal },
@@ -95,7 +95,7 @@ export const updateArticleCounter = ({
   type,
   action,
 }: UpdateArticleCounterOptions): Promise<GetArticleCounterResponse> =>
-  fetch(`${getFetchPrefix(serverURL)}article?lang=${lang}`, {
+  fetch(`${getFetchPrefix(serverURL)}view?lang=${lang}`, {
     method: 'POST',
     headers: JSON_HEADERS,
     body: JSON.stringify({ path, type, action }),
