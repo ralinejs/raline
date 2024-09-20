@@ -1,8 +1,10 @@
 use crate::dto::view_counter::SetViewCount;
+use crate::dto::Urls;
 use crate::model::prelude::ViewCounter;
 use crate::{dto::view_counter::ViewCountQuery, model::view_counter};
 use anyhow::Context;
-use sea_orm::{DeriveColumn, EntityTrait, EnumIter, QueryFilter, QuerySelect};
+use sea_orm::sea_query::IntoCondition;
+use sea_orm::{ColumnTrait, DeriveColumn, EntityTrait, EnumIter, QueryFilter, QuerySelect};
 use spring_sea_orm::DbConn;
 use spring_web::{
     axum::{response::IntoResponse, Json},
@@ -25,10 +27,14 @@ async fn get_view_count(
         None => return Ok(Json(vec![0])),
         Some(path) => path,
     };
+    let filter = match path {
+        Urls::Single(path) => view_counter::Column::Url.eq(path).into_condition(),
+        Urls::List(paths) => view_counter::Column::Url.is_in(paths).into_condition(),
+    };
     let result: Vec<i32> = ViewCounter::find()
         .select_only()
         .column_as(view_counter::Column::Times, QueryAs::Times)
-        .filter(path)
+        .filter(filter)
         .into_values::<_, QueryAs>()
         .all(&db)
         .await

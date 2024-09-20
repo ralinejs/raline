@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use crate::model::users;
 use axum_extra::headers::authorization::Bearer;
 use axum_extra::headers::Authorization;
@@ -69,6 +71,14 @@ impl OptionalClaims {
         Ok(self
             .0
             .ok_or_else(|| KnownWebError::unauthorized("token不存在"))?)
+    }
+}
+
+impl Deref for OptionalClaims{
+    type Target = Option<Claims>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
