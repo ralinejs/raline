@@ -36,7 +36,7 @@ async fn login(
         ))?,
     }
 
-    let claims = Claims::new(user.id);
+    let claims = Claims::new(&user);
     let token = jwt::encode(claims)?;
 
     Ok(Json(UserRespWithToken::new(user, token)))

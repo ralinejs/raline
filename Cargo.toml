@@ -29,3 +29,4 @@ tracing = "0.1"
 rand = "0.8"
 askama = "0.12"
 itertools = "0.13"
+derive_more = { version = "1.0", features = ["full"] }

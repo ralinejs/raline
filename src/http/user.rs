@@ -140,7 +140,7 @@ async fn reset_password(
     .await
     .with_context(|| format!("user#{} change password failed", u.id))?;
 
-    let claims = Claims::new(u.id);
+    let claims = Claims::new(&u);
     let token = jwt::encode(claims)?;
 
     Ok(Json(UserRespWithToken::new(u, token)))

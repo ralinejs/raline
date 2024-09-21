@@ -102,7 +102,7 @@ export const getComment = ({
   if (token) headers.Authorization = `Bearer ${token}`;
 
   return fetch(
-    `${getFetchPrefix(serverURL)}comment?path=${encodeURIComponent(
+    `${getFetchPrefix(serverURL)}comment?type=list&path=${encodeURIComponent(
       path,
     )}&pageSize=${pageSize}&page=${page}&lang=${lang}&sortBy=${sortBy}`,
     { signal, headers },

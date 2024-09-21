@@ -1,5 +1,6 @@
 use std::ops::Deref;
 
+use crate::model::sea_orm_active_enums::UserType;
 use crate::model::users;
 use axum_extra::headers::authorization::Bearer;
 use axum_extra::headers::Authorization;
@@ -26,13 +27,17 @@ lazy_static! {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Claims {
     pub uid: i64,
+    pub ty: UserType,
+    pub mail: Option<String>,
     exp: u64,
 }
 
 impl Claims {
-    pub fn new(uid: i64) -> Self {
+    pub fn new(u: &users::Model) -> Self {
         Self {
-            uid,
+            uid: u.id,
+            ty: u.r#type.clone(),
+            mail: u.email.clone(),
             exp: jsonwebtoken::get_current_timestamp() + 360 * 24 * 60 * 60 * 1000,
         }
     }
@@ -74,7 +79,7 @@ impl OptionalClaims {
     }
 }
 
-impl Deref for OptionalClaims{
+impl Deref for OptionalClaims {
     type Target = Option<Claims>;
 
     fn deref(&self) -> &Self::Target {

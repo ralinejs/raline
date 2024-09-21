@@ -2,7 +2,7 @@ import request from '../utils/request.js';
 
 export async function getCommentList({ page = 1, filter }) {
   return request({
-    url: `comment?type=list&owner=${filter.owner}&status=${filter.status}&keyword=${filter.keyword}&page=${page}`,
+    url: `comment?type=admin&owner=${filter.owner}&status=${filter.status}&keyword=${filter.keyword}&page=${page}`,
     method: 'GET',
   });
 }

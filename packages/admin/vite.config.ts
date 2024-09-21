@@ -33,6 +33,8 @@ export default defineConfig({
       '/token': 'http://localhost:8080',
       // eslint-disable-next-line @typescript-eslint/naming-convention
       '/user': 'http://localhost:8080',
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      '/comment': 'http://localhost:8080',
     },
   },
 });

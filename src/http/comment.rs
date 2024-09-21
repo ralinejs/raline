@@ -1,6 +1,10 @@
-use crate::dto::comment::{CommentQueryResp, CountCommentQuery, CountResp};
+use crate::dto::comment::{
+    AdminCommentQuery, AdminListResp, CommentQueryResp, CountCommentQuery, CountResp,
+    ListCommentQuery, ListResp, Owner,
+};
 use crate::dto::Urls;
 use crate::model::prelude::Comments;
+use crate::model::sea_orm_active_enums::UserType;
 use crate::{
     dto::comment::CommentQueryReq,
     model::{comments, sea_orm_active_enums::CommentStatus},
@@ -9,10 +13,11 @@ use crate::{
 use anyhow::Context;
 use itertools::Itertools;
 use sea_orm::{
-    ColumnTrait, EntityOrSelect, EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
+    ColumnTrait, EntityOrSelect, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect,
     TransactionTrait,
 };
 use spring_sea_orm::DbConn;
+use spring_web::error::KnownWebError;
 use spring_web::{
     axum::{response::IntoResponse, Json},
     error::Result,
@@ -30,8 +35,114 @@ async fn get_comment(
         CommentQueryReq::Count(q) => get_comment_count(&q, &db, &claims)
             .await
             .map(|r| Json(r.into())),
+        CommentQueryReq::List(q) => get_comment_list(&q, &db, &claims)
+            .await
+            .map(|r| Json(r.into())),
+        CommentQueryReq::Admin(q) => get_admin_comment_list(&q, &db, &claims)
+            .await
+            .map(|r| Json(r.into())),
         _ => todo!(),
     }
+}
+
+async fn get_admin_comment_list(
+    q: &AdminCommentQuery,
+    db: &DbConn,
+    claims: &OptionalClaims,
+) -> Result<AdminListResp> {
+    let claims = match &**claims {
+        None => return Err(KnownWebError::forbidden("没有权限"))?,
+        Some(claims) => claims,
+    };
+    let mut filter = comments::Column::Status.eq(q.status.clone());
+    filter = match q.owner {
+        Owner::All => filter,
+        Owner::Mine => {
+            let user_filter = match &claims.mail {
+                Some(mail) => comments::Column::UserId
+                    .eq(claims.uid)
+                    .or(comments::Column::Mail.eq(mail)),
+                None => comments::Column::UserId.eq(claims.uid),
+            };
+            filter.and(user_filter)
+        }
+    };
+    if let Some(keyword) = &q.keyword {
+        filter = filter.and(comments::Column::Content.like(format!("%{keyword}%")));
+    }
+
+    let total = Comments::find()
+        .filter(filter.clone())
+        .count(db)
+        .await
+        .context("count comments failed")?;
+
+    let spam_count = Comments::find()
+        .filter(comments::Column::Status.eq(CommentStatus::Spam))
+        .count(db)
+        .await
+        .context("count comments failed")?;
+
+    let waiting_count = Comments::find()
+        .filter(comments::Column::Status.eq(CommentStatus::Waiting))
+        .count(db)
+        .await
+        .context("count comments failed")?;
+
+    let comments = Comments::find()
+        .filter(filter)
+        .paginate(db, q.size)
+        .fetch_page(std::cmp::max(q.page - 1, 0))
+        .await
+        .context("find comments page failed")?;
+
+    Ok(AdminListResp {
+        page: q.page,
+        total_pages: total / q.size,
+        page_size: q.size,
+        spam_count,
+        waiting_count,
+        data: comments,
+    })
+}
+
+async fn get_comment_list(
+    q: &ListCommentQuery,
+    db: &DbConn,
+    claims: &OptionalClaims,
+) -> Result<ListResp> {
+    let filter = comments::Column::Url.eq(&q.path);
+    let filter = match &**claims {
+        None => filter.and(comments::Column::Status.eq(CommentStatus::Approved)),
+        Some(c) => {
+            if c.ty == UserType::Admin {
+                filter.and(comments::Column::Status.ne(CommentStatus::Deleted))
+            } else {
+                filter.and(
+                    comments::Column::Status
+                        .eq(CommentStatus::Approved)
+                        .or(comments::Column::UserId.eq(c.uid)),
+                )
+            }
+        }
+    };
+    let total = Comments::find()
+        .filter(filter.clone())
+        .count(db)
+        .await
+        .context("count comments failed")?;
+
+    let filter = filter.and(comments::Column::Id.gt(q.offset));
+
+    let data = Comments::find()
+        .filter(filter)
+        .order_by_desc(q.order_by.into_column())
+        .limit(q.limit)
+        .all(db)
+        .await
+        .context("find comments failed")?;
+
+    Ok(ListResp { total, data })
 }
 
 async fn get_comment_count(
