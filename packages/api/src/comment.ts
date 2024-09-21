@@ -15,18 +15,18 @@ export interface GetCommentOptions extends BaseAPIOptions {
   path: string;
 
   /**
-   * 评论分页数
+   * 评论偏移ID
    *
    * Comment pagination number
    */
-  page: number;
+  offset: number;
 
   /**
    * 每页评论个数
    *
    * Comment number per page
    */
-  pageSize: number;
+  limit: number;
 
   /**
    * 排序方式
@@ -91,8 +91,8 @@ export const getComment = ({
   serverURL,
   lang,
   path,
-  page,
-  pageSize,
+  offset,
+  limit,
   sortBy,
   signal,
   token,
@@ -104,7 +104,7 @@ export const getComment = ({
   return fetch(
     `${getFetchPrefix(serverURL)}comment?type=list&path=${encodeURIComponent(
       path,
-    )}&pageSize=${pageSize}&page=${page}&lang=${lang}&sortBy=${sortBy}`,
+    )}&limit=${limit}&offset=${offset}&lang=${lang}&sortBy=${sortBy}`,
     { signal, headers },
   )
     .then(

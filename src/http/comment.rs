@@ -134,9 +134,10 @@ async fn get_comment_list(
 
     let filter = filter.and(comments::Column::Id.gt(q.offset));
 
+    let (column, order) = q.sort_by.into_column_order();
     let data = Comments::find()
         .filter(filter)
-        .order_by_desc(q.order_by.into_column())
+        .order_by(column, order)
         .limit(q.limit)
         .all(db)
         .await

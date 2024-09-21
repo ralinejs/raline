@@ -2,6 +2,7 @@ use super::Urls;
 use crate::model::comments::Model as Comments;
 use crate::model::sea_orm_active_enums::CommentStatus;
 use derive_more::derive::From;
+use sea_orm::Order;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use serde_with::DisplayFromStr;
@@ -34,7 +35,8 @@ pub struct CountCommentQuery {
 #[derive(Debug, Validate, Deserialize)]
 pub struct ListCommentQuery {
     pub path: String,
-    pub order_by: OrderBy,
+    #[serde(rename = "sortBy")]
+    pub sort_by: OrderBy,
     #[validate(range(max = 200, message = "查询数据过多"))]
     pub limit: u64,
     pub offset: i64,
@@ -82,15 +84,18 @@ pub enum Owner {
 pub enum OrderBy {
     #[serde(rename = "like_desc")]
     Like,
-    #[serde(rename = "insert_at_desc")]
-    CreatedAt,
+    #[serde(rename = "insertedAt_asc")]
+    CreatedAtAsc,
+    #[serde(rename = "insertedAt_desc")]
+    CreatedAtDesc,
 }
 
 impl OrderBy {
-    pub fn into_column(&self) -> crate::model::comments::Column {
+    pub fn into_column_order(&self) -> (crate::model::comments::Column, Order) {
         match self {
-            Self::Like => crate::model::comments::Column::Star,
-            Self::CreatedAt => crate::model::comments::Column::CreatedAt,
+            Self::Like => (crate::model::comments::Column::Star, Order::Desc),
+            Self::CreatedAtAsc => (crate::model::comments::Column::CreatedAt, Order::Asc),
+            Self::CreatedAtDesc => (crate::model::comments::Column::CreatedAt, Order::Desc),
         }
     }
 }
