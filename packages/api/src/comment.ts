@@ -109,11 +109,9 @@ export const getComment = ({
   )
     .then(
       (resp) =>
-        resp.json() as Promise<
-          { data: GetCommentResponse } & ErrorStatusResponse
-        >,
+        resp.json() as Promise<GetCommentResponse & ErrorStatusResponse>,
     )
-    .then((data) => errorCheck(data, 'Get comment data').data);
+    .then((data) => errorCheck(data, 'Get comment data'));
 };
 
 export interface AddCommentOptions extends BaseAPIOptions {
