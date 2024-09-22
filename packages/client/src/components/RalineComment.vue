@@ -139,6 +139,7 @@ const onEdit = (comment: ralineComment | null): void => {
 };
 
 const onSubmit = (comment: ralineComment): void => {
+  console.log('comment',comment);
   if (edit.value) {
     edit.value.comment = comment.comment;
     edit.value.orig = comment.orig;

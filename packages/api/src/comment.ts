@@ -1,7 +1,7 @@
 import type {
-  ralineComment,
-  ralineCommentData,
-  ralineRootComment,
+  RalineComment,
+  RalineCommentData,
+  RalineRootComment,
 } from './typings.js';
 import type { BaseAPIOptions, ErrorStatusResponse } from './utils.js';
 import { JSON_HEADERS, errorCheck, getFetchPrefix } from './utils.js';
@@ -77,7 +77,7 @@ export interface GetCommentResponse {
    *
    * Comment Data
    */
-  data: ralineRootComment[];
+  data: RalineRootComment[];
 
   /**
    * 页面总数
@@ -127,7 +127,7 @@ export interface AddCommentOptions extends BaseAPIOptions {
    *
    * Comment data being submitted by user
    */
-  comment: ralineCommentData;
+  comment: RalineCommentData;
 }
 
 export interface AddCommentResponse extends ErrorStatusResponse {
@@ -136,7 +136,7 @@ export interface AddCommentResponse extends ErrorStatusResponse {
    *
    * Comment data rendered
    */
-  data?: ralineComment;
+  data?: RalineComment;
 }
 
 export const addComment = ({
@@ -194,7 +194,7 @@ export const deleteComment = ({
     .then((resp) => resp.json() as Promise<DeleteCommentResponse>)
     .then((resp) => errorCheck(resp, 'Delete comment'));
 
-interface UpdateralineCommentData extends Partial<ralineCommentData> {
+interface UpdateralineCommentData extends Partial<RalineCommentData> {
   /**
    * 点赞还是取消点赞
    *
@@ -247,7 +247,7 @@ export interface UpdateCommentResponse extends ErrorStatusResponse {
    *
    * Comment data rendered
    */
-  data: ralineComment;
+  data: RalineComment;
 }
 
 export const updateComment = ({

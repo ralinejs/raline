@@ -1,4 +1,4 @@
-import type { ralineComment } from './typings.js';
+import type { RalineComment } from './typings.js';
 import type { BaseAPIOptions, ErrorStatusResponse } from './utils.js';
 import { errorCheck, getFetchPrefix } from './utils.js';
 
@@ -19,7 +19,7 @@ export interface GetUserListOptions extends BaseAPIOptions {
 }
 
 export interface ralineUser
-  extends Pick<ralineComment, 'nick' | 'link' | 'avatar' | 'label' | 'level'> {
+  extends Pick<RalineComment, 'nick' | 'link' | 'avatar' | 'label' | 'level'> {
   count: number;
 }
 

@@ -1,8 +1,8 @@
-export type ralineCommentStatus = 'approved' | 'waiting' | 'spam';
+export type RalineCommentStatus = 'approved' | 'waiting' | 'spam';
 
-export type ralineUserType = 'administrator' | 'guest';
+export type RalineUserType = 'administrator' | 'guest';
 
-export interface ralineCommentData {
+export interface RalineCommentData {
   /**
    * User Nickname
    */
@@ -122,7 +122,7 @@ export interface BaseralineResponseComment {
    *
    * @description 仅在登录用户时可用
    */
-  type?: ralineUserType;
+  type?: RalineUserType;
 
   /**
    * User ID
@@ -197,10 +197,10 @@ export interface BaseralineResponseComment {
    *
    * @description 管理员可获得 `approved`、`spam` 和 `waiting`，其他用户只能获得 `approved`
    */
-  status?: ralineCommentStatus;
+  status?: RalineCommentStatus;
 }
 
-export interface ralineChildComment extends BaseralineResponseComment {
+export interface RalineChildComment extends BaseralineResponseComment {
   /**
    * Parent comment id
    */
@@ -228,7 +228,7 @@ export interface ralineChildComment extends BaseralineResponseComment {
   };
 }
 
-export interface ralineRootComment extends BaseralineResponseComment {
+export interface RalineRootComment extends BaseralineResponseComment {
   /**
    * Whether the comment is sticky
    *
@@ -241,7 +241,7 @@ export interface ralineRootComment extends BaseralineResponseComment {
    *
    * 子评论
    */
-  children: ralineChildComment[];
+  children: RalineChildComment[];
 }
 
-export type ralineComment = ralineRootComment | ralineChildComment;
+export type RalineComment = RalineRootComment | RalineChildComment;

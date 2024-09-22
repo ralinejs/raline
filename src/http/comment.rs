@@ -25,6 +25,7 @@ use sea_orm::{
     ActiveModelTrait, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder,
     QuerySelect, Set,
 };
+use serde_json::json;
 use spring_sea_orm::DbConn;
 use spring_web::error::KnownWebError;
 use spring_web::extractor::Config;
@@ -290,7 +291,7 @@ async fn add_comment(
 
     let c = data.insert(&db).await.context("insert comment failed")?;
     let resp = CommentResp::format(&c, &vec![], &config, &claims).await;
-    Ok(Json(resp))
+    Ok(Json(json!({"data": resp})))
 }
 
 async fn check_comment(
