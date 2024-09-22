@@ -98,6 +98,7 @@ const getCommentData = (pageNumber: number): void => {
     token: userInfo.value?.token,
   })
     .then((resp) => {
+      console.log(resp);
       status.value = 'success';
       count.value = resp.count;
       data.value.push(...resp.data);

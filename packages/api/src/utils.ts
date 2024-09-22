@@ -16,18 +16,23 @@ export interface BaseAPIOptions {
 
 export interface ErrorStatusResponse {
   /**
-   * 错误代码
-   *
-   * Error number
+   * 请求
    */
-  errno: number;
+  instance: string,
+
+  /**
+   * 错误标题
+   *
+   * Error title
+   */
+  title: string;
 
   /**
    * 错误消息
    *
-   * Error msg
+   * Error msg detail
    */
-  errmsg: string;
+  detail: string;
 }
 
 export const JSON_HEADERS: Record<string, string> = {
@@ -42,8 +47,8 @@ export const errorCheck = <T extends ErrorStatusResponse>(
   data: T,
   name = '',
 ): T => {
-  if (typeof data === 'object' && data.errno)
-    throw new TypeError(`${name} failed with ${data.errno}: ${data.errmsg}`);
+  if (typeof data === 'object' && data.instance)
+    throw new TypeError(`${name} ${data.instance} failed with ${data.title}: ${data.detail}`);
 
   return data;
 };

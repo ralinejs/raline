@@ -1,9 +1,6 @@
 [web]
 connect_info = true
 
-[logger]
-pretty_backtrace = true
-
 [mail]
 host = "smtp.163.com"                                                      # SMTP mail server address,
 port = 465                                                                 # SMTP server port number

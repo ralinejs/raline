@@ -19,6 +19,7 @@ use anyhow::Context;
 use axum_client_ip::SecureClientIp;
 use itertools::Itertools;
 use regex::Regex;
+use sea_orm::prelude::Expr;
 use sea_orm::sqlx::types::chrono::Local;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, EntityOrSelect, EntityTrait, PaginatorTrait, QueryFilter,
@@ -257,10 +258,10 @@ async fn check_comment(
         .filter(
             comments::Column::Url
                 .eq(comment.url.clone())
-                .add(comments::Column::Mail.eq(comment.mail.clone()))
+                .and(comments::Column::Mail.eq(comment.mail.clone()))
                 .and(comments::Column::Link.eq(comment.link.clone()))
                 .and(comments::Column::Nick.eq(comment.nick.clone()))
-                .add(comments::Column::Content.eq(comment.comment.clone())),
+                .and(comments::Column::Content.eq(comment.comment.clone())),
         )
         .count(db)
         .await
@@ -273,17 +274,17 @@ async fn check_comment(
     }
     tracing::debug!("Comment duplicate check OK!");
 
-    let ns = Local::now() - Duration::from_secs(config.ip_qps);
-    let ip_count = Comments::find()
+    let ns = Local::now().naive_local() - Duration::from_secs(config.ip_qps);
+    let ip_comment_count = Comments::find()
         .filter(
-            comments::Column::Ip
-                .eq(client_ip.to_string())
-                .and(comments::Column::CreatedAt.gt(ns)),
+            comments::Column::CreatedAt
+                .gt(ns)
+                .and(comments::Column::Ip.eq(client_ip.to_string())),
         )
         .count(db)
         .await
         .context("check ip comments failed")?;
-    if ip_count > 0 {
+    if ip_comment_count > 0 {
         tracing::debug!("The author has posted in {} seconds", config.ip_qps);
         Err(KnownWebError::bad_request("Comment too fast!"))?;
     }

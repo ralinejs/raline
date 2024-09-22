@@ -7,7 +7,7 @@ create table comments (
     url varchar(255) not null,
     user_id bigint default null,
     content text not null,
-    ip inet not null,
+    ip varchar(255) not null,
     link varchar(255) default null,
     mail varchar(255) default null,
     nick varchar(255) default null,

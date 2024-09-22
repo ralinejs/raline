@@ -3209,9 +3209,9 @@ dependencies = [
 
 [[package]]
 name = "spring-web"
-version = "0.1.4"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba1201bb7d5df519bf91ad2d9ecc3850d05595505e1204c2160338647453d7b2"
+checksum = "6ae7ede154ff95a607c119c54e7dad1c9e934c2a28785d2abb4e9d897d7cdfa5"
 dependencies = [
  "anyhow",
  "axum",

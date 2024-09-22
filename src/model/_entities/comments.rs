@@ -13,7 +13,6 @@ pub struct Model {
     pub user_id: Option<i64>,
     #[sea_orm(column_type = "Text")]
     pub content: String,
-    #[sea_orm(column_type = "custom(\"inet\")")]
     pub ip: String,
     pub link: Option<String>,
     pub mail: Option<String>,
