@@ -104,6 +104,7 @@ async fn get_admin_comment_list(
 
     let comments = Comments::find()
         .filter(filter)
+        .order_by_desc(comments::Column::CreatedAt)
         .paginate(db, q.size)
         .fetch_page(std::cmp::max(q.page - 1, 0))
         .await
