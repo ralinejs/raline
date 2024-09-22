@@ -1,15 +1,25 @@
 use std::net::IpAddr;
 
 use super::Urls;
+use crate::config::RalineConfig;
 use crate::model::comments;
 use crate::model::comments::Model as Comments;
 use crate::model::sea_orm_active_enums::CommentStatus;
+use crate::model::sea_orm_active_enums::UserType;
+use crate::model::users;
+use crate::utils::jwt::OptionalClaims;
+use comrak::markdown_to_html;
+use comrak::Options;
 use derive_more::derive::From;
+use sea_orm::prelude::DateTime;
 use sea_orm::Order;
 use sea_orm::Set;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use serde_with::DisplayFromStr;
+use uaparser::Client;
+use uaparser::UserAgent;
+use uaparser::OS;
 use validator::Validate;
 
 #[serde_as]
@@ -124,8 +134,8 @@ pub enum CountResp {
 
 #[derive(Debug, Serialize)]
 pub struct ListResp {
-    pub total: u64,
-    pub data: Vec<Comments>,
+    pub count: u64,
+    pub data: Vec<CommentResp>,
 }
 
 #[derive(Debug, Serialize)]
@@ -135,7 +145,7 @@ pub struct AdminListResp {
     pub page_size: u64,
     pub spam_count: u64,
     pub waiting_count: u64,
-    pub data: Vec<Comments>,
+    pub data: Vec<CommentResp>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -177,5 +187,138 @@ impl AddCommentReq {
             rid: Set(self.rid),
             ..Default::default()
         }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CommentResp {
+    #[serde(with = "CommentStatusRef")]
+    pub status: CommentStatus,
+    pub comment: String,
+    pub inserted_at: DateTime,
+    pub link: Option<String>,
+    pub nick: Option<String>,
+    pub mail: Option<String>,
+    pub pid: Option<i64>,
+    pub rid: Option<i64>,
+    #[serde(rename = "user_id")]
+    pub user_id: Option<i64>,
+    pub r#type: Option<UserType>,
+    pub avatar: String,
+    pub sticky: bool,
+    pub like: i32,
+    pub object_id: i64,
+    pub level: i64,
+    pub browser: String,
+    pub os: String,
+    pub orig: Option<String>,
+    pub addr: Option<String>,
+    pub time: i64,
+    pub children: Vec<CommentResp>,
+}
+impl CommentResp {
+    pub async fn format(
+        c: &Comments,
+        users: &Vec<users::Model>,
+        config: &RalineConfig,
+        login_user: &OptionalClaims,
+    ) -> Self {
+        let RalineConfig {
+            disable_user_agent,
+            disable_region,
+            ..
+        } = config;
+        let client: Option<Client> = if *disable_user_agent { None } else { None };
+        let is_admin = match &**login_user {
+            None => false,
+            Some(u) => u.ty == UserType::Admin,
+        };
+        let addr = if is_admin || !disable_region {
+            None
+        } else {
+            None
+        };
+        let comment_html = markdown_to_html(&c.content, &Options::default());
+        let orig = if login_user.is_none() {
+            None
+        } else {
+            Some(c.content.to_owned())
+        };
+        let user = users.iter().find(|u| c.user_id == Some(u.id));
+        Self {
+            status: c.status.to_owned(),
+            comment: comment_html,
+            inserted_at: c.created_at,
+            link: c.link.to_owned(),
+            nick: user.map(|u| u.username.clone()).or(c.nick.to_owned()),
+            mail: user.and_then(|u| u.email.clone()).or(c.mail.to_owned()),
+            r#type: user.map(|u| u.r#type.clone()),
+            avatar: user.and_then(|u| u.avatar.clone()).unwrap_or_default(),
+            pid: c.pid,
+            rid: c.rid,
+            user_id: c.user_id,
+            sticky: c.sticky,
+            like: c.star,
+            object_id: c.id,
+            level: 0,
+            browser: client
+                .clone()
+                .map(|c| c.user_agent.to_string())
+                .unwrap_or_default(),
+            os: client.map(|c| c.os.to_string()).unwrap_or_default(),
+            orig,
+            addr,
+            time: c.created_at.timestamp_micros(),
+            children: Default::default(),
+        }
+    }
+}
+
+trait ToStringExt {
+    fn to_string(&self) -> String;
+}
+
+impl<'a> ToStringExt for UserAgent<'a> {
+    fn to_string(&self) -> String {
+        let Self {
+            family,
+            major,
+            minor,
+            patch,
+        } = self;
+        let mut string = format!("{family}");
+        if let Some(major) = major {
+            string = string + " " + major;
+        }
+        if let Some(minor) = minor {
+            string = string + "." + minor;
+        }
+        if let Some(patch) = patch {
+            string = string + "." + patch;
+        }
+        string
+    }
+}
+impl<'a> ToStringExt for OS<'a> {
+    fn to_string(&self) -> String {
+        let Self {
+            family,
+            major,
+            minor,
+            patch,
+            ..
+        } = self;
+        let mut string = format!("{family}");
+        if let Some(major) = major {
+            string = string + " " + major;
+        }
+        if let Some(minor) = minor {
+            string = string + "." + minor;
+        }
+        if let Some(patch) = patch {
+            string = string + "." + patch;
+        }
+        string
     }
 }

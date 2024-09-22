@@ -3,12 +3,12 @@ use std::time::Duration;
 
 use crate::config::RalineConfig;
 use crate::dto::comment::{
-    AddCommentReq, AdminCommentQuery, AdminListResp, CommentQueryResp, CountCommentQuery,
-    CountResp, ListCommentQuery, ListResp, Owner,
+    AddCommentReq, AdminCommentQuery, AdminListResp, CommentQueryResp, CommentResp,
+    CountCommentQuery, CountResp, ListCommentQuery, ListResp, Owner,
 };
 use crate::dto::Urls;
-use crate::model::prelude::Comments;
 use crate::model::sea_orm_active_enums::UserType;
+use crate::model::{prelude::*, users};
 use crate::plugins::akismet::Akismet;
 use crate::{
     dto::comment::CommentQueryReq,
@@ -19,11 +19,10 @@ use anyhow::Context;
 use axum_client_ip::SecureClientIp;
 use itertools::Itertools;
 use regex::Regex;
-use sea_orm::prelude::Expr;
 use sea_orm::sqlx::types::chrono::Local;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, EntityOrSelect, EntityTrait, PaginatorTrait, QueryFilter,
-    QueryOrder, QuerySelect, Set, TransactionTrait,
+    ActiveModelTrait, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder,
+    QuerySelect, Set,
 };
 use spring_sea_orm::DbConn;
 use spring_web::error::KnownWebError;
@@ -40,15 +39,16 @@ async fn get_comment(
     claims: OptionalClaims,
     Component(db): Component<DbConn>,
     Query(req): Query<CommentQueryReq>,
+    Config(config): Config<RalineConfig>,
 ) -> Result<Json<CommentQueryResp>> {
     match req {
         CommentQueryReq::Count(q) => get_comment_count(&q, &db, &claims)
             .await
             .map(|r| Json(r.into())),
-        CommentQueryReq::List(q) => get_comment_list(&q, &db, &claims)
+        CommentQueryReq::List(q) => get_comment_list(&q, &db, &claims, &config)
             .await
             .map(|r| Json(r.into())),
-        CommentQueryReq::Admin(q) => get_admin_comment_list(&q, &db, &claims)
+        CommentQueryReq::Admin(q) => get_admin_comment_list(&q, &db, &claims, &config)
             .await
             .map(|r| Json(r.into())),
         _ => todo!(),
@@ -58,9 +58,10 @@ async fn get_comment(
 async fn get_admin_comment_list(
     q: &AdminCommentQuery,
     db: &DbConn,
-    claims: &OptionalClaims,
+    optional_claims: &OptionalClaims,
+    config: &RalineConfig,
 ) -> Result<AdminListResp> {
-    let claims = match &**claims {
+    let claims = match &**optional_claims {
         None => return Err(KnownWebError::forbidden("没有权限"))?,
         Some(claims) => claims,
     };
@@ -106,13 +107,20 @@ async fn get_admin_comment_list(
         .await
         .context("find comments page failed")?;
 
+    let uids = comments.iter().filter_map(|c| c.user_id).collect_vec();
+    let users = Users::find()
+        .filter(users::Column::Id.is_in(uids))
+        .all(db)
+        .await
+        .context("query users failed")?;
+
     Ok(AdminListResp {
         page: q.page,
         total_pages: total / q.size,
         page_size: q.size,
         spam_count,
         waiting_count,
-        data: comments,
+        data: compute_comments(comments, &vec![], &users, config, optional_claims).await,
     })
 }
 
@@ -120,6 +128,7 @@ async fn get_comment_list(
     q: &ListCommentQuery,
     db: &DbConn,
     claims: &OptionalClaims,
+    config: &RalineConfig,
 ) -> Result<ListResp> {
     let filter = comments::Column::Url.eq(&q.path);
     let filter = match &**claims {
@@ -136,7 +145,7 @@ async fn get_comment_list(
             }
         }
     };
-    let total = Comments::find()
+    let count = Comments::find()
         .filter(filter.clone())
         .count(db)
         .await
@@ -145,15 +154,56 @@ async fn get_comment_list(
     let filter = filter.and(comments::Column::Id.gt(q.offset));
 
     let (column, order) = q.sort_by.into_column_order();
-    let data = Comments::find()
-        .filter(filter)
+    let root_comments = Comments::find()
+        .filter(filter.clone().and(comments::Column::Rid.is_null()))
         .order_by(column, order)
         .limit(q.limit)
         .all(db)
         .await
-        .context("find comments failed")?;
+        .context("find root comments failed")?;
 
-    Ok(ListResp { total, data })
+    let rids = root_comments.iter().map(|c| c.id).collect_vec();
+
+    let children = Comments::find()
+        .filter(filter.and(comments::Column::Rid.is_in(rids)))
+        .all(db)
+        .await
+        .context("find children comments failed")?;
+
+    let comments = vec![children, root_comments.clone()].concat();
+
+    let uids = comments.iter().filter_map(|c| c.user_id).collect_vec();
+    let users = Users::find()
+        .filter(users::Column::Id.is_in(uids))
+        .all(db)
+        .await
+        .context("query users failed")?;
+
+    Ok(ListResp {
+        count,
+        data: compute_comments(root_comments, &comments, &users, config, claims).await,
+    })
+}
+
+async fn compute_comments(
+    roots: Vec<comments::Model>,
+    children: &Vec<comments::Model>,
+    users: &Vec<users::Model>,
+    config: &RalineConfig,
+    login_user: &OptionalClaims,
+) -> Vec<CommentResp> {
+    let mut data = Vec::new();
+    for c in roots {
+        let mut cr = CommentResp::format(&c, users, config, login_user).await;
+        for cc in children.iter() {
+            if cc.rid == Some(cr.object_id) {
+                let ccr = CommentResp::format(cc, users, config, login_user).await;
+                cr.children.push(ccr);
+            }
+        }
+        data.push(cr);
+    }
+    data
 }
 
 async fn get_comment_count(
