@@ -1,5 +1,5 @@
 use crate::{
-    config::mail::Email,
+    config::mail::EmailConfig,
     dto::user::{
         RegisterReq, ResetPasswdReq, SendEmailReq, UpdateUserReq, UserResp, UserRespWithToken,
         ValidateCodeEmailTemplate,
@@ -74,7 +74,7 @@ async fn register(
 async fn register_validate_code(
     Component(mut redis): Component<Redis>,
     Component(mailer): Component<Mailer>,
-    Config(email): Config<Email>,
+    Config(email): Config<EmailConfig>,
     Json(body): Json<SendEmailReq>,
 ) -> Result<impl IntoResponse> {
     let code = gen_validate_code(&mut redis, &body.email).await?;
@@ -94,7 +94,7 @@ async fn register_validate_code(
 async fn reset_validate_code(
     Component(mut redis): Component<Redis>,
     Component(mailer): Component<Mailer>,
-    Config(email): Config<Email>,
+    Config(email): Config<EmailConfig>,
     Json(body): Json<SendEmailReq>,
 ) -> Result<impl IntoResponse> {
     let code = gen_validate_code(&mut redis, &body.email).await?;

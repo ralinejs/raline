@@ -13,16 +13,16 @@ export const getMeta = (meta: ralineMeta[]): ralineMeta[] =>
   meta.filter((item) => AVAILABLE_META.includes(item));
 
 export const DEFAULT_EMOJI: ralineEmojiPresets[] = [
-  '//unpkg.com/@raline/emojis@1.1.0/weibo',
+  '//unpkg.com/@waline/emojis@1.1.0/weibo',
 ];
 
 export const DEFAULT_REACTION = [
-  '//unpkg.com/@raline/emojis/tieba/tieba_agree.png',
-  '//unpkg.com/@raline/emojis/tieba/tieba_look_down.png',
-  '//unpkg.com/@raline/emojis/tieba/tieba_sunglasses.png',
-  '//unpkg.com/@raline/emojis/tieba/tieba_pick_nose.png',
-  '//unpkg.com/@raline/emojis/tieba/tieba_awkward.png',
-  '//unpkg.com/@raline/emojis/tieba/tieba_sleep.png',
+  '//unpkg.com/@waline/emojis/tieba/tieba_agree.png',
+  '//unpkg.com/@waline/emojis/tieba/tieba_look_down.png',
+  '//unpkg.com/@waline/emojis/tieba/tieba_sunglasses.png',
+  '//unpkg.com/@waline/emojis/tieba/tieba_pick_nose.png',
+  '//unpkg.com/@waline/emojis/tieba/tieba_awkward.png',
+  '//unpkg.com/@waline/emojis/tieba/tieba_sleep.png',
 ];
 
 export const defaultUploadImage = (file: File): Promise<string> =>

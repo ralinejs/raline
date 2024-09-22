@@ -3,6 +3,7 @@ mod token;
 mod user;
 mod view_counter;
 
+use axum_client_ip::SecureClientIpSource;
 use spring_web::{
     axum::{
         body,
@@ -14,7 +15,9 @@ use spring_web::{
 };
 
 pub fn router() -> Router {
-    spring_web::handler::auto_router().layer(middleware::from_fn(problem_middleware))
+    spring_web::handler::auto_router()
+        .layer(middleware::from_fn(problem_middleware))
+        .layer(SecureClientIpSource::ConnectInfo.into_extension())
 }
 
 async fn problem_middleware(request: Request, next: Next) -> Response {

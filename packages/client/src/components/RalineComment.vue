@@ -91,9 +91,9 @@ const getCommentData = (pageNumber: number): void => {
     serverURL,
     lang: config.value.lang,
     path,
-    pageSize,
+    limit: pageSize,
     sortBy: sortKeyMap[commentSortingRef.value],
-    page: pageNumber,
+    offset: pageNumber,
     signal: controller.signal,
     token: userInfo.value?.token,
   })

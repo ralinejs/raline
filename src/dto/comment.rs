@@ -1,8 +1,12 @@
+use std::net::IpAddr;
+
 use super::Urls;
+use crate::model::comments;
 use crate::model::comments::Model as Comments;
 use crate::model::sea_orm_active_enums::CommentStatus;
 use derive_more::derive::From;
 use sea_orm::Order;
+use sea_orm::Set;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use serde_with::DisplayFromStr;
@@ -32,13 +36,16 @@ pub struct CountCommentQuery {
     pub url: Urls,
 }
 
+#[serde_as]
 #[derive(Debug, Validate, Deserialize)]
 pub struct ListCommentQuery {
     pub path: String,
     #[serde(rename = "sortBy")]
     pub sort_by: OrderBy,
     #[validate(range(max = 200, message = "查询数据过多"))]
+    #[serde_as(as = "DisplayFromStr")]
     pub limit: u64,
+    #[serde_as(as = "DisplayFromStr")]
     pub offset: i64,
 }
 
@@ -142,4 +149,33 @@ pub enum CommentStatusRef {
     Spam,
     #[serde(rename = "waiting")]
     Waiting,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AddCommentReq {
+    pub comment: String,
+    pub ua: String,
+    pub url: String,
+    pub at: Option<String>,
+    pub nick: Option<String>,
+    pub link: Option<String>,
+    pub mail: Option<String>,
+    pub pid: Option<i64>,
+    pub rid: Option<i64>,
+}
+
+impl AddCommentReq {
+    pub fn into_active_model(self) -> comments::ActiveModel {
+        comments::ActiveModel {
+            content: Set(self.comment),
+            nick: Set(self.nick),
+            ua: Set(self.ua),
+            url: Set(self.url),
+            link: Set(self.link),
+            mail: Set(self.mail),
+            pid: Set(self.pid),
+            rid: Set(self.rid),
+            ..Default::default()
+        }
+    }
 }

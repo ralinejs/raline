@@ -161,7 +161,7 @@ export interface ralineProps {
    *
    * Set Emojis
    *
-   * @default ['//unpkg.com/@raline/emojis@1.1.0/weibo']
+   * @default ['//unpkg.com/@waline/emojis@1.1.0/weibo']
    */
   emoji?: (ralineEmojiInfo | ralineEmojiPresets)[] | boolean;
 

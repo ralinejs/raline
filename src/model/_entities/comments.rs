@@ -9,9 +9,10 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
+    pub url: String,
     pub user_id: Option<i64>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub content: Option<String>,
+    #[sea_orm(column_type = "Text")]
+    pub content: String,
     #[sea_orm(column_type = "custom(\"inet\")")]
     pub ip: String,
     pub link: Option<String>,
@@ -22,9 +23,8 @@ pub struct Model {
     pub sticky: bool,
     pub status: CommentStatus,
     pub star: i32,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub ua: Option<String>,
-    pub url: Option<String>,
+    #[sea_orm(column_type = "Text")]
+    pub ua: String,
     pub created_at: DateTime,
     pub updated_at: DateTime,
 }

@@ -1,3 +1,9 @@
+[web]
+connect_info = true
+
+[logger]
+pretty_backtrace = true
+
 [mail]
 host = "smtp.163.com"                                                      # SMTP mail server address,
 port = 465                                                                 # SMTP server port number
@@ -13,3 +19,6 @@ uri = "postgres://postgres:xudjf23adj213@localhost:5432/raline"
 
 [redis]
 uri = "redis://127.0.0.1/"
+
+[raline]
+site_url = "www.hufeifei.cn"

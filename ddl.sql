@@ -4,8 +4,9 @@ create type comment_status as enum('waiting', 'approved', 'spam', 'deleted');
 create sequence comments_seq;
 create table comments (
     id bigint not null default nextval ('comments_seq'),
+    url varchar(255) not null,
     user_id bigint default null,
-    content text,
+    content text not null,
     ip inet not null,
     link varchar(255) default null,
     mail varchar(255) default null,
@@ -15,8 +16,7 @@ create table comments (
     sticky boolean not null default 'false',
     status comment_status not null,
     star int not null default 0,
-    ua text,
-    url varchar(255) default null,
+    ua text not null,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp,
     primary key (id)

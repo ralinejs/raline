@@ -1,23 +1,32 @@
+use std::net::IpAddr;
+use std::time::Duration;
+
+use crate::config::RalineConfig;
 use crate::dto::comment::{
-    AdminCommentQuery, AdminListResp, CommentQueryResp, CountCommentQuery, CountResp,
-    ListCommentQuery, ListResp, Owner,
+    AddCommentReq, AdminCommentQuery, AdminListResp, CommentQueryResp, CountCommentQuery,
+    CountResp, ListCommentQuery, ListResp, Owner,
 };
 use crate::dto::Urls;
 use crate::model::prelude::Comments;
 use crate::model::sea_orm_active_enums::UserType;
+use crate::plugins::akismet::Akismet;
 use crate::{
     dto::comment::CommentQueryReq,
     model::{comments, sea_orm_active_enums::CommentStatus},
     utils::jwt::OptionalClaims,
 };
 use anyhow::Context;
+use axum_client_ip::SecureClientIp;
 use itertools::Itertools;
+use regex::Regex;
+use sea_orm::sqlx::types::chrono::Local;
 use sea_orm::{
-    ColumnTrait, EntityOrSelect, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect,
-    TransactionTrait,
+    ActiveModelTrait, ColumnTrait, EntityOrSelect, EntityTrait, PaginatorTrait, QueryFilter,
+    QueryOrder, QuerySelect, Set, TransactionTrait,
 };
 use spring_sea_orm::DbConn;
 use spring_web::error::KnownWebError;
+use spring_web::extractor::Config;
 use spring_web::{
     axum::{response::IntoResponse, Json},
     error::Result,
@@ -197,14 +206,126 @@ async fn get_comment_count(
 
 #[post("/comment")]
 async fn add_comment(
+    claims: OptionalClaims,
+    Config(config): Config<RalineConfig>,
+    SecureClientIp(client_ip): SecureClientIp,
     Component(db): Component<DbConn>,
-    Json(body): Json<CommentQueryReq>,
+    Component(akismet): Component<Akismet>,
+    Json(body): Json<AddCommentReq>,
 ) -> Result<impl IntoResponse> {
-    Ok("")
+    let mut data = body.clone().into_active_model();
+    data.ip = Set(client_ip.to_string());
+    data.user_id = Set(claims.as_ref().map(|c| c.uid));
+
+    if let Some(pid) = &body.pid {
+        match &body.at {
+            None => Err(KnownWebError::bad_request("at required with pid"))?,
+            Some(at) => {
+                let comment = &body.comment;
+                data.content = Set(format!("[@{at}](#{pid}): {comment}"))
+            }
+        }
+    }
+    tracing::debug!("Post Comment initial Data: {:?}", &body);
+
+    let status = if claims.is_none() || claims.get()?.ty != UserType::Admin {
+        check_comment(&body, &client_ip, &config, &db, &akismet).await?
+    } else {
+        CommentStatus::Approved
+    };
+    data.status = Set(status);
+
+    let resp = data.insert(&db).await.context("insert comment failed")?;
+
+    Ok(Json(resp))
+}
+
+async fn check_comment(
+    comment: &AddCommentReq,
+    client_ip: &IpAddr,
+    config: &RalineConfig,
+    db: &DbConn,
+    akismet: &Akismet,
+) -> Result<CommentStatus> {
+    if config.disallow_ips.contains(&client_ip) {
+        tracing::debug!("Comment IP {} is in disallowIPList", &client_ip);
+        Err(KnownWebError::forbidden("禁止访问"))?;
+    }
+    tracing::debug!("Comment IP {} check OK!", &client_ip);
+
+    let duplicate_count = Comments::find()
+        .filter(
+            comments::Column::Url
+                .eq(comment.url.clone())
+                .add(comments::Column::Mail.eq(comment.mail.clone()))
+                .and(comments::Column::Link.eq(comment.link.clone()))
+                .and(comments::Column::Nick.eq(comment.nick.clone()))
+                .add(comments::Column::Content.eq(comment.comment.clone())),
+        )
+        .count(db)
+        .await
+        .context("check duplicate content failed")?;
+
+    if duplicate_count > 0 {
+        tracing::debug!("The comment author had post same comment content before",);
+
+        Err(KnownWebError::bad_request("Duplicate Content"))?;
+    }
+    tracing::debug!("Comment duplicate check OK!");
+
+    let ns = Local::now() - Duration::from_secs(config.ip_qps);
+    let ip_count = Comments::find()
+        .filter(
+            comments::Column::Ip
+                .eq(client_ip.to_string())
+                .and(comments::Column::CreatedAt.gt(ns)),
+        )
+        .count(db)
+        .await
+        .context("check ip comments failed")?;
+    if ip_count > 0 {
+        tracing::debug!("The author has posted in {} seconds", config.ip_qps);
+        Err(KnownWebError::bad_request("Comment too fast!"))?;
+    }
+    tracing::debug!("Comment post frequency check OK!");
+
+    let mut status = if config.audit {
+        CommentStatus::Waiting
+    } else {
+        CommentStatus::Approved
+    };
+    tracing::debug!("Comment initial status is {:?}", status);
+
+    /* Akismet */
+    if status == CommentStatus::Approved {
+        match akismet.check_comment(&client_ip, &comment).await {
+            Err(e) => tracing::warn!("akismet error:{}", e),
+            Ok(spam) => {
+                if spam {
+                    status = CommentStatus::Spam;
+                }
+            }
+        }
+    }
+    tracing::debug!("Comment akismet check result: {:?}", status);
+
+    /* KeyWord Filter */
+    if config.forbidden_words.len() > 0 {
+        let regex = format!("({})", config.forbidden_words.iter().join("|"));
+        let regex = Regex::new(&regex)
+            .with_context(|| format!("forbidden_words regex parse failed:{}", regex))?;
+        if regex.is_match(&comment.comment) {
+            status = CommentStatus::Spam;
+        }
+    }
+    tracing::debug!("Comment keyword check result: {:?}", status);
+
+    Ok(status)
 }
 
 #[put("/comment/:id")]
 async fn update_comment(
+    claims: OptionalClaims,
     Component(db): Component<DbConn>,
     Path(id): Path<i64>,
     Json(body): Json<CommentQueryReq>,

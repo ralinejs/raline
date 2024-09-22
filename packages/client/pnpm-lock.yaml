@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@raline/api':
-    specifier: 0.0.2
-    version: registry.npmmirror.com/@raline/api@0.0.2
+    specifier: 0.0.3
+    version: registry.npmmirror.com/@raline/api@0.0.3
   '@vueuse/core':
     specifier: ^11.1.0
     version: registry.npmmirror.com/@vueuse/core@11.1.0(vue@3.5.5)
@@ -1924,10 +1924,10 @@ packages:
     dev: true
     optional: true
 
-  registry.npmmirror.com/@raline/api@0.0.2:
-    resolution: {integrity: sha512-bvnvd0PDC90pD95xN0EwSEG7NllpvBsBYpA4a5LeWANDakkDxz45DdAlaOK0H6l3HYOJ4aPClS0z+uyOd3eiag==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@raline/api/-/api-0.0.2.tgz}
+  registry.npmmirror.com/@raline/api@0.0.3:
+    resolution: {integrity: sha512-Q1lEMIzEDl08OdwIgqd8cn7iwQdxXV9SLOcN1/0BtvWQA6V8BD1lm9MldAdhs3JM2MbkusnYzM5SaRmYbTdydA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@raline/api/-/api-0.0.3.tgz}
     name: '@raline/api'
-    version: 0.0.2
+    version: 0.0.3
     engines: {node: '>=18'}
     dev: false
 
