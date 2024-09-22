@@ -10,6 +10,7 @@ use crate::dto::Urls;
 use crate::model::sea_orm_active_enums::UserType;
 use crate::model::{prelude::*, users};
 use crate::plugins::akismet::Akismet;
+use crate::utils::jwt::Claims;
 use crate::{
     dto::comment::CommentQueryReq,
     model::{comments, sea_orm_active_enums::CommentStatus},
@@ -279,15 +280,16 @@ async fn add_comment(
     }
     tracing::debug!("Post Comment initial Data: {:?}", &body);
 
-    let status = if claims.is_none() || claims.get()?.ty != UserType::Admin {
-        check_comment(&body, &client_ip, &config, &db, &akismet).await?
-    } else {
-        CommentStatus::Approved
-    };
+    let mut status = CommentStatus::Approved;
+    if let Some(Claims { ty, .. }) = &*claims {
+        if *ty == UserType::Admin {
+            status = check_comment(&body, &client_ip, &config, &db, &akismet).await?
+        }
+    }
     data.status = Set(status);
 
-    let resp = data.insert(&db).await.context("insert comment failed")?;
-
+    let c = data.insert(&db).await.context("insert comment failed")?;
+    let resp = CommentResp::format(&c, &vec![], &config, &claims).await;
     Ok(Json(resp))
 }
 
