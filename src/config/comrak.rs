@@ -47,19 +47,20 @@ fn default_true() -> bool {
     true
 }
 
-impl<'c> From<ComrakConfig> for Options<'c> {
-    fn from(value: ComrakConfig) -> Self {
+impl<'c> From<&ComrakConfig> for Options<'c> {
+    fn from(value: &ComrakConfig) -> Self {
         let mut opts = Options::default();
+        opts.render.unsafe_ = true;
         opts.extension.strikethrough = value.strikethrough;
         opts.extension.tagfilter = value.tagfilter;
         opts.extension.table = value.table;
         opts.extension.autolink = value.autolink;
         opts.extension.tasklist = value.tasklist;
         opts.extension.superscript = value.superscript;
-        opts.extension.header_ids = value.header_ids;
+        opts.extension.header_ids = value.header_ids.clone();
         opts.extension.footnotes = value.footnotes;
         opts.extension.description_lists = value.description_lists;
-        opts.extension.front_matter_delimiter = value.front_matter_delimiter;
+        opts.extension.front_matter_delimiter = value.front_matter_delimiter.clone();
         opts.extension.multiline_block_quotes = value.multiline_block_quotes;
         opts.extension.math_dollars = value.math_dollars;
         opts.extension.math_code = value.math_code;

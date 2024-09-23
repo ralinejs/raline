@@ -1,4 +1,4 @@
-use super::Urls;
+use crate::config::comrak::ComrakConfig;
 use crate::config::RalineConfig;
 use crate::model::comments;
 use crate::model::comments::Model as Comments;
@@ -7,7 +7,6 @@ use crate::model::sea_orm_active_enums::UserType;
 use crate::model::users;
 use crate::utils::jwt::OptionalClaims;
 use comrak::markdown_to_html;
-use comrak::Options;
 use derive_more::derive::From;
 use sea_orm::prelude::DateTime;
 use sea_orm::Order;
@@ -41,7 +40,7 @@ fn default_size() -> u64 {
 
 #[derive(Debug, Validate, Deserialize)]
 pub struct CountCommentQuery {
-    pub url: Urls,
+    pub url: Vec<String>,
 }
 
 #[serde_as]
@@ -119,16 +118,9 @@ impl OrderBy {
 #[derive(Debug, Serialize, From)]
 #[serde(untagged)]
 pub enum CommentQueryResp {
-    Count(CountResp),
-    List(ListResp),
     Admin(AdminListResp),
-}
-
-#[derive(Debug, Serialize, From)]
-#[serde(untagged)]
-pub enum CountResp {
-    Single(u64),
-    List(Vec<u64>),
+    List(ListResp),
+    Count { data: Vec<u64> },
 }
 
 #[derive(Debug, Serialize)]
@@ -221,6 +213,7 @@ impl CommentResp {
         c: &Comments,
         users: &Vec<users::Model>,
         config: &RalineConfig,
+        comrak: &ComrakConfig,
         login_user: &OptionalClaims,
     ) -> Self {
         let RalineConfig {
@@ -238,7 +231,7 @@ impl CommentResp {
         } else {
             None
         };
-        let comment_html = markdown_to_html(&c.content, &Options::default());
+        let comment_html = markdown_to_html(&c.content, &comrak.into());
         let orig = if login_user.is_none() {
             None
         } else {

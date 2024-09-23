@@ -1,12 +1,9 @@
-use std::net::IpAddr;
-use std::time::Duration;
-
+use crate::config::comrak::ComrakConfig;
 use crate::config::RalineConfig;
 use crate::dto::comment::{
     AddCommentReq, AdminCommentQuery, AdminListResp, CommentQueryResp, CommentResp,
-    CountCommentQuery, CountResp, ListCommentQuery, ListResp, Owner,
+    CountCommentQuery, ListCommentQuery, ListResp, Owner,
 };
-use crate::dto::Urls;
 use crate::model::sea_orm_active_enums::UserType;
 use crate::model::{prelude::*, users};
 use crate::plugins::akismet::Akismet;
@@ -35,6 +32,8 @@ use spring_web::{
     extractor::{Component, Path, Query},
     get, post, put,
 };
+use std::net::IpAddr;
+use std::time::Duration;
 
 #[get("/comment")]
 async fn get_comment(
@@ -42,15 +41,16 @@ async fn get_comment(
     Component(db): Component<DbConn>,
     Query(req): Query<CommentQueryReq>,
     Config(config): Config<RalineConfig>,
+    Config(comrak): Config<ComrakConfig>,
 ) -> Result<Json<CommentQueryResp>> {
     match req {
         CommentQueryReq::Count(q) => get_comment_count(&q, &db, &claims)
             .await
             .map(|r| Json(r.into())),
-        CommentQueryReq::List(q) => get_comment_list(&q, &db, &claims, &config)
+        CommentQueryReq::List(q) => get_comment_list(&q, &db, &claims, &config, &comrak)
             .await
             .map(|r| Json(r.into())),
-        CommentQueryReq::Admin(q) => get_admin_comment_list(&q, &db, &claims, &config)
+        CommentQueryReq::Admin(q) => get_admin_comment_list(&q, &db, &claims, &config, &comrak)
             .await
             .map(|r| Json(r.into())),
         _ => todo!(),
@@ -62,6 +62,7 @@ async fn get_admin_comment_list(
     db: &DbConn,
     optional_claims: &OptionalClaims,
     config: &RalineConfig,
+    comrak: &ComrakConfig,
 ) -> Result<AdminListResp> {
     let claims = match &**optional_claims {
         None => return Err(KnownWebError::forbidden("没有权限"))?,
@@ -123,7 +124,7 @@ async fn get_admin_comment_list(
         page_size: q.size,
         spam_count,
         waiting_count,
-        data: compute_comments(comments, &vec![], &users, config, optional_claims).await,
+        data: compute_comments(comments, &vec![], &users, config, comrak, optional_claims).await,
     })
 }
 
@@ -132,6 +133,7 @@ async fn get_comment_list(
     db: &DbConn,
     claims: &OptionalClaims,
     config: &RalineConfig,
+    comrak: &ComrakConfig,
 ) -> Result<ListResp> {
     let filter = comments::Column::Url.eq(&q.path);
     let filter = match &**claims {
@@ -184,7 +186,7 @@ async fn get_comment_list(
 
     Ok(ListResp {
         count,
-        data: compute_comments(root_comments, &comments, &users, config, claims).await,
+        data: compute_comments(root_comments, &comments, &users, config, comrak, claims).await,
     })
 }
 
@@ -193,14 +195,15 @@ async fn compute_comments(
     children: &Vec<comments::Model>,
     users: &Vec<users::Model>,
     config: &RalineConfig,
+    comrak: &ComrakConfig,
     login_user: &OptionalClaims,
 ) -> Vec<CommentResp> {
     let mut data = Vec::new();
     for c in roots {
-        let mut cr = CommentResp::format(&c, users, config, login_user).await;
+        let mut cr = CommentResp::format(&c, users, config, comrak, login_user).await;
         for cc in children.iter() {
             if cc.rid == Some(cr.object_id) {
-                let ccr = CommentResp::format(cc, users, config, login_user).await;
+                let ccr = CommentResp::format(cc, users, config, comrak, login_user).await;
                 cr.children.push(ccr);
             }
         }
@@ -213,55 +216,45 @@ async fn get_comment_count(
     q: &CountCommentQuery,
     db: &DbConn,
     claims: &OptionalClaims,
-) -> Result<CountResp> {
+) -> Result<Vec<u64>> {
     let filter = match &**claims {
         None => comments::Column::Status.eq(CommentStatus::Approved),
         Some(c) => comments::Column::Status
             .eq(CommentStatus::Approved)
             .or(comments::Column::UserId.eq(c.uid)),
     };
-    match &q.url {
-        Urls::Single(url) => {
-            let filter = filter.and(comments::Column::Url.eq(url));
-            let count = Comments::find()
-                .filter(filter)
-                .count(db)
-                .await
-                .context("query comment count failed")?;
-            Ok(count.into())
-        }
-        Urls::List(urls) => {
-            let filter = filter.and(comments::Column::Url.is_in(urls));
-            let count: Vec<(String, u64)> = Comments::find()
-                .select_only()
-                .column_as(comments::Column::Url, "url")
-                .column_as(comments::Column::Id.count(), "count")
-                .filter(filter)
-                .group_by(comments::Column::Url)
-                .into_tuple()
-                .all(db)
-                .await
-                .context("query comment count failed")?;
-            let count = urls
+
+    let filter = filter.and(comments::Column::Url.is_in(&q.url));
+    let count: Vec<(String, u64)> = Comments::find()
+        .select_only()
+        .column_as(comments::Column::Url, "url")
+        .column_as(comments::Column::Id.count(), "count")
+        .filter(filter)
+        .group_by(comments::Column::Url)
+        .into_tuple()
+        .all(db)
+        .await
+        .context("query comment count failed")?;
+    let count = q
+        .url
+        .iter()
+        .map(|u| {
+            count
                 .iter()
-                .map(|u| {
-                    count
-                        .iter()
-                        .filter(|(url, _)| url == u)
-                        .last()
-                        .map(|(_, count)| *count)
-                        .unwrap_or_default()
-                })
-                .collect_vec();
-            Ok(count.into())
-        }
-    }
+                .filter(|(url, _)| url == u)
+                .last()
+                .map(|(_, count)| *count)
+                .unwrap_or_default()
+        })
+        .collect_vec();
+    Ok(count)
 }
 
 #[post("/comment")]
 async fn add_comment(
     claims: OptionalClaims,
     Config(config): Config<RalineConfig>,
+    Config(comrak): Config<ComrakConfig>,
     SecureClientIp(client_ip): SecureClientIp,
     Component(db): Component<DbConn>,
     Component(akismet): Component<Akismet>,
@@ -291,7 +284,7 @@ async fn add_comment(
     data.status = Set(status);
 
     let c = data.insert(&db).await.context("insert comment failed")?;
-    let resp = CommentResp::format(&c, &vec![], &config, &claims).await;
+    let resp = CommentResp::format(&c, &vec![], &config, &comrak, &claims).await;
     Ok(Json(json!({"data": resp})))
 }
 
