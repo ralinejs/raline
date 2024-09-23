@@ -120,7 +120,7 @@ const loadMore = (): void => getCommentData(page.value + 1);
 const refresh = (): void => {
   count.value = 0;
   data.value = [];
-  getCommentData(1);
+  getCommentData(0);
 };
 
 const onSortByChange = (item: ralineCommentSorting): void => {

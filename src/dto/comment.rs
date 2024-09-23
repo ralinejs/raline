@@ -1,5 +1,3 @@
-use std::net::IpAddr;
-
 use super::Urls;
 use crate::config::RalineConfig;
 use crate::model::comments;
@@ -50,11 +48,12 @@ pub struct CountCommentQuery {
 #[derive(Debug, Validate, Deserialize)]
 pub struct ListCommentQuery {
     pub path: String,
-    #[serde(rename = "sortBy")]
-    pub sort_by: OrderBy,
     #[validate(range(max = 200, message = "查询数据过多"))]
     #[serde_as(as = "DisplayFromStr")]
     pub limit: u64,
+    #[serde(rename = "sortBy")]
+    pub sort_by: OrderBy,
+    #[serde(default)]
     #[serde_as(as = "DisplayFromStr")]
     pub offset: i64,
 }
@@ -170,8 +169,8 @@ pub struct AddCommentReq {
     pub nick: Option<String>,
     pub link: Option<String>,
     pub mail: Option<String>,
-    pub pid: Option<i64>,
-    pub rid: Option<i64>,
+    pub pid: Option<i32>,
+    pub rid: Option<i32>,
 }
 
 impl AddCommentReq {
@@ -200,16 +199,16 @@ pub struct CommentResp {
     pub link: Option<String>,
     pub nick: Option<String>,
     pub mail: Option<String>,
-    pub pid: Option<i64>,
-    pub rid: Option<i64>,
+    pub pid: Option<i32>,
+    pub rid: Option<i32>,
     #[serde(rename = "user_id")]
-    pub user_id: Option<i64>,
+    pub user_id: Option<i32>,
     pub r#type: Option<UserType>,
     pub avatar: String,
     pub sticky: bool,
     pub like: i32,
-    pub object_id: i64,
-    pub level: i64,
+    pub object_id: i32,
+    pub level: i32,
     pub browser: String,
     pub os: String,
     pub orig: Option<String>,

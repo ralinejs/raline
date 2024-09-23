@@ -26,7 +26,7 @@ lazy_static! {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Claims {
-    pub uid: i64,
+    pub uid: i32,
     pub ty: UserType,
     pub mail: Option<String>,
     exp: u64,

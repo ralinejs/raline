@@ -66,7 +66,7 @@ pub struct UpdateUserReq {
 
 #[derive(Debug, Serialize)]
 pub struct UserResp {
-    pub id: i64,
+    pub id: i32,
     pub name: String,
     pub email: Option<String>,
     pub gender: UserGender,
@@ -95,7 +95,7 @@ impl From<users::Model> for UserResp {
 
 #[derive(Debug, Serialize)]
 pub struct UserRespWithToken {
-    pub id: i64,
+    pub id: i32,
     pub name: String,
     pub email: Option<String>,
     pub gender: UserGender,

@@ -8,6 +8,8 @@ services:
       - POSTGRES_DB=raline
     ports:
       - 5432:5432
+    volumes:
+      - ./ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
     
   redis:
     image: redis:7.4.0-alpine
