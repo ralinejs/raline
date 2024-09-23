@@ -35,4 +35,4 @@ reqwest = "0.12"
 regex = "1"
 ip2region = "0.1"
 uaparser = "0.6"
-comrak = "0.28"
+comrak = { version="0.28", features=["shortcodes"] }

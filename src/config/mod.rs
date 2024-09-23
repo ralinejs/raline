@@ -1,5 +1,6 @@
 pub mod akismet;
 pub mod mail;
+pub mod comrak;
 
 use serde::Deserialize;
 use spring::config::Configurable;
