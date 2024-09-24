@@ -1,7 +1,5 @@
 use serde::Deserialize;
 
-use crate::model::view_counter;
-
 #[derive(Debug, Deserialize)]
 pub struct ViewCountQuery {
     pub path: Vec<String>,
@@ -11,7 +9,7 @@ pub struct ViewCountQuery {
 pub struct SetViewCount {
     pub path: String,
     pub action: SetCountAction,
-    // pub r#type: view_counter::Column,
+    pub r#type: ColumnType,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -23,3 +21,8 @@ pub enum SetCountAction {
     Desc,
 }
 
+#[derive(Debug, Deserialize)]
+enum ColumnType {
+    #[serde(rename = "time")]
+    Time,
+}

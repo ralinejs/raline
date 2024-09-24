@@ -22,8 +22,17 @@ create table comments (
 --- 浏览量
 create table view_counter (
     id serial primary key,
-    times int not null default 0,
     url varchar(255) not null,
+    times int not null default 0,
+    reaction0 int not null default 0,
+    reaction1 int not null default 0,
+    reaction2 int not null default 0,
+    reaction3 int not null default 0,
+    reaction4 int not null default 0,
+    reaction5 int not null default 0,
+    reaction6 int not null default 0,
+    reaction7 int not null default 0,
+    reaction8 int not null default 0,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
