@@ -1,5 +1,3 @@
-use serde::Deserialize;
-
+pub mod comment;
 pub mod user;
 pub mod view_counter;
-pub mod comment;

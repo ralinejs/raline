@@ -12,8 +12,10 @@ use sea_orm::prelude::DateTime;
 use sea_orm::Order;
 use sea_orm::Set;
 use serde::{Deserialize, Serialize};
+use serde_with::formats::CommaSeparator;
 use serde_with::serde_as;
 use serde_with::DisplayFromStr;
+use serde_with::StringWithSeparator;
 use uaparser::Client;
 use uaparser::UserAgent;
 use uaparser::OS;
@@ -38,8 +40,10 @@ fn default_size() -> u64 {
     20
 }
 
+#[serde_as]
 #[derive(Debug, Validate, Deserialize)]
 pub struct CountCommentQuery {
+    #[serde_as(as = "StringWithSeparator::<CommaSeparator, String>")]
     pub url: Vec<String>,
 }
 

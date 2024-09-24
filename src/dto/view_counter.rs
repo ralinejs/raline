@@ -1,7 +1,12 @@
 use serde::Deserialize;
+use serde_with::formats::CommaSeparator;
+use serde_with::serde_as;
+use serde_with::StringWithSeparator;
 
+#[serde_as]
 #[derive(Debug, Deserialize)]
 pub struct ViewCountQuery {
+    #[serde_as(as = "StringWithSeparator::<CommaSeparator, String>")]
     pub path: Vec<String>,
 }
 
