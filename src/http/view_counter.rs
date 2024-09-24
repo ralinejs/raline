@@ -1,8 +1,8 @@
-use crate::dto::view_counter::SetViewCount;
+use crate::dto::view_counter::{ColumnQueryAs, SetViewCount};
 use crate::model::prelude::ViewCounter;
 use crate::{dto::view_counter::ViewCountQuery, model::view_counter};
 use anyhow::Context;
-use sea_orm::{ColumnTrait, DeriveColumn, EntityTrait, EnumIter, QueryFilter, QuerySelect};
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use spring_sea_orm::DbConn;
 use spring_web::{
     axum::{response::IntoResponse, Json},
@@ -10,11 +10,7 @@ use spring_web::{
     extractor::{Component, Query},
     get, post,
 };
-
-#[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
-enum QueryAs {
-    Times,
-}
+use std::collections::HashMap;
 
 #[get("/view")]
 async fn get_view_count(
@@ -22,17 +18,33 @@ async fn get_view_count(
     Query(req): Query<ViewCountQuery>,
 ) -> Result<impl IntoResponse> {
     if req.path.is_empty() {
-        return Ok(Json(Vec::<i32>::new()));
+        let result = req.types.into_iter().map(|ty| (ty, 0)).collect();
+        return Ok(Json(vec![result]));
     }
-    let result: Vec<i32> = ViewCounter::find()
-        .select_only()
-        .column_as(view_counter::Column::Times, QueryAs::Times)
-        .filter(view_counter::Column::Url.is_in(req.path))
-        .into_values::<_, QueryAs>()
+    let result = ViewCounter::find()
+        .filter(view_counter::Column::Url.is_in(&req.path))
         .all(&db)
         .await
         .context("query view counter failed")?;
 
+    let item_map: HashMap<String, view_counter::Model> =
+        result.into_iter().map(|vc| (vc.url.clone(), vc)).collect();
+
+    let ty_count: usize = req.types.len();
+    let mut result = vec![];
+    for url in req.path {
+        let mut counter = HashMap::<ColumnQueryAs, i32>::with_capacity(ty_count);
+        for field in &req.types {
+            counter.insert(
+                field.clone(),
+                item_map
+                    .get(&url)
+                    .map(|vc| field.get(vc))
+                    .unwrap_or_default(),
+            );
+        }
+        result.push(counter);
+    }
     Ok(Json(result))
 }
 

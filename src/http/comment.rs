@@ -216,7 +216,7 @@ async fn get_comment_count(
     q: &CountCommentQuery,
     db: &DbConn,
     claims: &OptionalClaims,
-) -> Result<Vec<u64>> {
+) -> Result<Vec<i64>> {
     let filter = match &**claims {
         None => comments::Column::Status.eq(CommentStatus::Approved),
         Some(c) => comments::Column::Status
@@ -225,7 +225,7 @@ async fn get_comment_count(
     };
 
     let filter = filter.and(comments::Column::Url.is_in(&q.url));
-    let count: Vec<(String, u64)> = Comments::find()
+    let count: Vec<(String, i64)> = Comments::find()
         .select_only()
         .column_as(comments::Column::Url, "url")
         .column_as(comments::Column::Id.count(), "count")

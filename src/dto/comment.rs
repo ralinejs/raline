@@ -124,7 +124,7 @@ impl OrderBy {
 pub enum CommentQueryResp {
     Admin(AdminListResp),
     List(ListResp),
-    Count { data: Vec<u64> },
+    Count { data: Vec<i64> },
 }
 
 #[derive(Debug, Serialize)]

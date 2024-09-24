@@ -19,3 +19,6 @@ uri = "redis://127.0.0.1/"
 
 [raline]
 site_url = "www.hufeifei.cn"
+
+[logger]
+pretty_backtrace = true
