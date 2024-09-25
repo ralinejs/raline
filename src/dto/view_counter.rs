@@ -21,6 +21,7 @@ pub struct ViewCountQuery {
 #[derive(Debug, Deserialize)]
 pub struct SetViewCount {
     pub path: String,
+    #[serde(default)]
     pub action: SetCountAction,
     pub r#type: ColumnQueryAs,
 }
@@ -39,7 +40,7 @@ pub enum SetCountAction {
 )]
 #[serde(rename_all = "lowercase")]
 pub enum ColumnQueryAs {
-    #[serde(rename="time")]
+    #[serde(rename = "time")]
     Times,
     Reaction0,
     Reaction1,

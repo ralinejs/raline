@@ -57,11 +57,10 @@ export const getArticleCounter = ({
   )
     .then(
       (resp) =>
-        resp.json() as Promise<
-          { data: GetArticleCounterResponse } & ErrorStatusResponse
+        resp.json() as Promise<GetArticleCounterResponse & ErrorStatusResponse
         >,
     )
-    .then((data) => errorCheck(data, 'Get counter').data);
+    .then((data) => errorCheck(data, 'Get counter'));
 
 export interface UpdateArticleCounterOptions extends BaseAPIOptions {
   /**
@@ -102,8 +101,6 @@ export const updateArticleCounter = ({
   })
     .then(
       (resp) =>
-        resp.json() as Promise<
-          { data: GetArticleCounterResponse } & ErrorStatusResponse
-        >,
+        resp.json() as Promise<GetArticleCounterResponse & ErrorStatusResponse>,
     )
-    .then((data) => errorCheck(data, 'Update counter').data);
+    .then((data) => errorCheck(data, 'Update counter'));

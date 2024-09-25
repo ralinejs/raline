@@ -1,6 +1,6 @@
 {
   "name": "@raline/api",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Client API for raline comment system",
   "keywords": [
     "api",

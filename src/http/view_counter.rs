@@ -53,9 +53,21 @@ async fn post_view_count(
     Component(db): Component<DbConn>,
     Json(req): Json<SetViewCount>,
 ) -> Result<impl IntoResponse> {
-    let count = ViewCounter::increase_by_path(&db, req.path)
+    let count = ViewCounter::increase_by_path(&db, &req)
         .await
         .context("increase view count failed")?;
 
+    let count = match req.r#type {
+        ColumnQueryAs::Times => count.times,
+        ColumnQueryAs::Reaction0 => count.reaction0,
+        ColumnQueryAs::Reaction1 => count.reaction1,
+        ColumnQueryAs::Reaction2 => count.reaction2,
+        ColumnQueryAs::Reaction3 => count.reaction3,
+        ColumnQueryAs::Reaction4 => count.reaction4,
+        ColumnQueryAs::Reaction5 => count.reaction5,
+        ColumnQueryAs::Reaction6 => count.reaction6,
+        ColumnQueryAs::Reaction7 => count.reaction7,
+        ColumnQueryAs::Reaction8 => count.reaction8,
+    };
     Ok(Json(count))
 }
