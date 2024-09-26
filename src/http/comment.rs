@@ -33,6 +33,7 @@ use spring_web::{
     extractor::{Component, Path, Query},
     get, post, put,
 };
+use std::cmp::max;
 use std::net::IpAddr;
 use std::time::Duration;
 
@@ -150,7 +151,7 @@ async fn get_admin_comment_list(
         .filter(filter)
         .order_by_desc(comments::Column::CreatedAt)
         .paginate(db, q.size)
-        .fetch_page(std::cmp::max(q.page - 1, 0))
+        .fetch_page(max(q.page - 1, 0))
         .await
         .context("find comments page failed")?;
 
@@ -419,9 +420,9 @@ async fn update_comment(
     optional_claims: OptionalClaims,
     Component(db): Component<DbConn>,
     Path(id): Path<i32>,
+    config: Config<RalineConfig>,
+    comrak: Config<ComrakConfig>,
     Json(body): Json<CommentUpdateReq>,
-    config: &RalineConfig,
-    comrak: &ComrakConfig,
 ) -> Result<impl IntoResponse> {
     let c = Comments::find_by_id(id)
         .one(&db)
@@ -432,28 +433,40 @@ async fn update_comment(
         None => Err(KnownWebError::not_found("not found"))?,
         Some(c) => c,
     };
-    let claims = match &*optional_claims {
-        None => Err(KnownWebError::forbidden("forbidden"))?,
-        Some(claims) => claims,
+
+    let c = match &*optional_claims {
+        None => match body.like {
+            None => Err(KnownWebError::forbidden("forbidden"))?,
+            Some(like) => {
+                let mut ac = comments::ActiveModel {
+                    ..Default::default()
+                };
+                match like {
+                    true => ac.star = Set(max(c.star + 1, 0)),
+                    false => ac.star = Set(max(c.star - 1, 0)),
+                }
+                let c = ac.update(&db).await.context("update comment failed")?;
+                CommentResp::format(&c, &vec![], &config, &comrak, &optional_claims).await
+            }
+        },
+        Some(claims) => {
+            if c.user_id != Some(claims.uid) || UserType::Admin != claims.ty {
+                Err(KnownWebError::forbidden("forbidden"))?;
+            }
+            let c = body
+                .to_active_model(claims.ty.clone())
+                .update(&db)
+                .await
+                .context("update comment failed")?;
+            let u = Users::find_by_id(claims.uid)
+                .one(&db)
+                .await
+                .context("find user by id failed")?
+                .expect("用户不存在");
+            CommentResp::format(&c, &vec![u], &config, &comrak, &optional_claims).await
+        }
     };
 
-    if c.user_id != Some(claims.uid) || UserType::Admin != claims.ty {
-        Err(KnownWebError::forbidden("forbidden"))?;
-    }
-
-    let c = body
-        .to_active_model(claims.ty.clone())
-        .update(&db)
-        .await
-        .context("update comment failed")?;
-
-    let u = Users::find_by_id(c.id)
-        .one(&db)
-        .await
-        .context("find user by id failed")?
-        .expect("用户不存在");
-
-    let c = CommentResp::format(&c, &vec![u], config, comrak, &optional_claims).await;
     Ok(Json(c))
 }
 
