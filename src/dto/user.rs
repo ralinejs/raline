@@ -130,3 +130,19 @@ pub struct ValidateCodeEmailTemplate<'a> {
     pub tip: &'a str,
     pub code: &'a str,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct UserQuery {
+    pub email: Option<String>,
+    #[serde(default = "default_page")]
+    pub page: u64,
+    #[serde(rename = "pageSize", default = "default_size")]
+    pub size: u64,
+}
+
+fn default_page() -> u64 {
+    0
+}
+fn default_size() -> u64 {
+    10
+}

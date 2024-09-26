@@ -1,8 +1,8 @@
 use crate::{
     config::mail::EmailConfig,
     dto::user::{
-        RegisterReq, ResetPasswdReq, SendEmailReq, UpdateUserReq, UserResp, UserRespWithToken,
-        ValidateCodeEmailTemplate,
+        RegisterReq, ResetPasswdReq, SendEmailReq, UpdateUserReq, UserQuery, UserResp,
+        UserRespWithToken, ValidateCodeEmailTemplate,
     },
     model::{
         prelude::Users,
@@ -23,10 +23,18 @@ use spring_sea_orm::DbConn;
 use spring_web::{
     axum::{response::IntoResponse, Json},
     error::{KnownWebError, Result},
-    extractor::Component,
-    put,
+    extractor::{Component, Query},
+    get, put,
 };
 use spring_web::{extractor::Config, post};
+
+#[get("/user")]
+async fn get_users(
+    Component(db): Component<DbConn>,
+    Query(q): Query<UserQuery>,
+) -> Result<impl IntoResponse> {
+    Ok("")
+}
 
 #[post("/user")]
 async fn register(
