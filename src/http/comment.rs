@@ -418,9 +418,10 @@ async fn check_comment(
 async fn update_comment(
     claims: OptionalClaims,
     Component(db): Component<DbConn>,
-    Path(id): Path<i64>,
+    Path(id): Path<i32>,
     Json(body): Json<CommentUpdateReq>,
 ) -> Result<impl IntoResponse> {
+    let c = find_and_check_user(claims, &db, id).await?;
     Ok("")
 }
 
@@ -428,7 +429,36 @@ async fn update_comment(
 async fn delete_comment(
     claims: OptionalClaims,
     Component(db): Component<DbConn>,
-    Path(id): Path<i64>,
+    Path(id): Path<i32>,
 ) -> Result<impl IntoResponse> {
-    Ok("")
+    let c = find_and_check_user(claims, &db, id).await?;
+
+    let effect = Comments::delete_by_id(c.id)
+        .exec(&db)
+        .await
+        .context("delete comment failed")?;
+    let success = effect.rows_affected > 0;
+    Ok(Json(json!({"data":success})))
+}
+
+async fn find_and_check_user(
+    claims: OptionalClaims,
+    db: &DbConn,
+    id: i32,
+) -> Result<comments::Model> {
+    let c = Comments::find_by_id(id)
+        .one(db)
+        .await
+        .context("find comment failed")?;
+
+    let c = match c {
+        None => Err(KnownWebError::not_found("not found"))?,
+        Some(c) => c,
+    };
+
+    let uid = claims.clone().map(|c| c.uid);
+    if c.user_id != uid || claims.clone().map(|c| c.ty) == Some(UserType::Admin) {
+        Err(KnownWebError::forbidden("forbidden"))?;
+    }
+    Ok(c)
 }

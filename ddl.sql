@@ -1,5 +1,5 @@
 --- 评论状态
-create type comment_status as enum('waiting', 'approved', 'spam', 'deleted');
+create type comment_status as enum('waiting', 'approved', 'spam');
 --- 用户评论
 create table comments (
     id serial primary key,
