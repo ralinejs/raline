@@ -65,8 +65,38 @@ async fn get_recent_comment_list(
     optional_claims: &OptionalClaims,
     config: &RalineConfig,
     comrak: &ComrakConfig,
-) -> Result<impl IntoResponse> {
-    Ok("")
+) -> Result<Vec<CommentResp>> {
+    let filter = match &**optional_claims {
+        None => comments::Column::Status.eq(CommentStatus::Approved),
+        Some(c) => {
+            if c.ty == UserType::Admin {
+                comments::Column::Status.ne(CommentStatus::Deleted)
+            } else {
+                comments::Column::Status
+                    .eq(CommentStatus::Approved)
+                    .or(comments::Column::UserId.eq(c.uid))
+            }
+        }
+    };
+
+    let comments = Comments::find()
+        .filter(filter)
+        .order_by_desc(comments::Column::CreatedAt)
+        .limit(q.count)
+        .all(db)
+        .await
+        .context("find comments page failed")?;
+
+    let uids = comments.iter().filter_map(|c| c.user_id).collect_vec();
+    let users = Users::find()
+        .filter(users::Column::Id.is_in(uids))
+        .all(db)
+        .await
+        .context("query users failed")?;
+
+    let comments =
+        compute_comments(comments, &vec![], &users, config, comrak, optional_claims).await;
+    Ok(comments)
 }
 
 async fn get_admin_comment_list(

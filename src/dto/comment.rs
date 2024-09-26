@@ -66,7 +66,7 @@ pub struct ListCommentQuery {
 pub struct RecentCommentQuery {
     #[validate(range(max = 100, message = "查询数据过多"))]
     #[serde_as(as = "DisplayFromStr")]
-    pub count: u16,
+    pub count: u64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -127,6 +127,7 @@ pub enum CommentQueryResp {
     Admin(AdminListResp),
     List(ListResp),
     Count { data: Vec<i64> },
+    Recent(Vec<CommentResp>),
 }
 
 #[derive(Debug, Serialize)]
@@ -190,6 +191,7 @@ impl AddCommentReq {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CommentResp {
+    pub url: String,
     #[serde(with = "CommentStatusRef")]
     pub status: CommentStatus,
     pub comment: String,
@@ -245,6 +247,7 @@ impl CommentResp {
         };
         let user = users.iter().find(|u| c.user_id == Some(u.id));
         Self {
+            url: c.url.to_owned(),
             status: c.status.to_owned(),
             comment: comment_html,
             inserted_at: c.created_at,
