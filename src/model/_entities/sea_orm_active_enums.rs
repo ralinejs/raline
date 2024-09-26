@@ -60,8 +60,6 @@ pub enum UserGender {
 pub enum UserType {
     #[sea_orm(string_value = "admin")]
     Admin,
-    #[sea_orm(string_value = "guest")]
-    Guest,
     #[sea_orm(string_value = "normal")]
     Normal,
 }

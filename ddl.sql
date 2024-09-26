@@ -37,7 +37,7 @@ create table view_counter (
     updated_at timestamp not null default current_timestamp
 );
 --- 用户类型
-create type user_type as enum('admin', 'guest', 'normal');
+create type user_type as enum('admin', 'normal');
 create type user_gender as enum('unknown', 'male', 'female');
 --- 用户
 create table users (

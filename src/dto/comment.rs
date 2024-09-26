@@ -334,3 +334,11 @@ pub struct CommentUpdateReq {
     pub status: Option<CommentStatus>,
     pub like: Option<bool>,
 }
+
+impl CommentUpdateReq {
+    pub fn to_active_model(self, ty: UserType) -> comments::ActiveModel {
+        comments::ActiveModel {
+            ..Default::default()
+        }
+    }
+}
