@@ -1,3 +1,5 @@
+use std::cmp::max;
+
 use crate::{
     config::mail::EmailConfig,
     dto::user::{
@@ -10,16 +12,22 @@ use crate::{
         users,
     },
     utils::{
-        jwt::{self, Claims},
+        jwt::{self, Claims, OptionalClaims},
         mail,
         validate_code::{gen_validate_code, get_validate_code},
     },
 };
 use anyhow::Context;
-use sea_orm::{ActiveModelTrait, ActiveValue::NotSet, ColumnTrait, EntityTrait, QueryFilter, Set};
+use sea_orm::{
+    ActiveModelTrait, ActiveValue::NotSet, ColumnTrait, Condition, EntityTrait, PaginatorTrait,
+    QueryFilter, QuerySelect, Set,
+};
 use spring_mail::Mailer;
 use spring_redis::Redis;
-use spring_sea_orm::DbConn;
+use spring_sea_orm::{
+    pagination::{Pagination, PaginationExt},
+    DbConn,
+};
 use spring_web::{
     axum::{response::IntoResponse, Json},
     error::{KnownWebError, Result},
@@ -30,10 +38,30 @@ use spring_web::{extractor::Config, post};
 
 #[get("/user")]
 async fn get_users(
+    claims: OptionalClaims,
     Component(db): Component<DbConn>,
     Query(q): Query<UserQuery>,
 ) -> Result<impl IntoResponse> {
-    Ok("")
+    match &*claims {
+        None => Err(KnownWebError::forbidden("无权访问"))?,
+        Some(c) => c,
+    };
+    let p = Pagination {
+        page: if q.page > 0 { q.page - 1 } else { 0 },
+        size: q.size,
+    };
+    let page = match q.email {
+        Some(email) => Users::find()
+            .filter(users::Column::Email.eq(email))
+            .page(&db, p)
+            .await
+            .context("fetch user failed")?,
+        None => Users::find()
+            .page(&db, p)
+            .await
+            .context("fetch user failed")?,
+    };
+    Ok(Json(page))
 }
 
 #[post("/user")]
