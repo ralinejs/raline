@@ -2,7 +2,7 @@ use crate::config::comrak::ComrakConfig;
 use crate::config::RalineConfig;
 use crate::dto::comment::{
     AddCommentReq, AdminCommentQuery, AdminListResp, CommentQueryResp, CommentResp,
-    CountCommentQuery, ListCommentQuery, ListResp, Owner,
+    CountCommentQuery, ListCommentQuery, ListResp, Owner, RecentCommentQuery,
 };
 use crate::model::sea_orm_active_enums::UserType;
 use crate::model::{prelude::*, users};
@@ -53,8 +53,20 @@ async fn get_comment(
         CommentQueryReq::Admin(q) => get_admin_comment_list(&q, &db, &claims, &config, &comrak)
             .await
             .map(|r| Json(r.into())),
-        _ => todo!(),
+        CommentQueryReq::Recent(q) => get_recent_comment_list(&q, &db, &claims, &config, &comrak)
+            .await
+            .map(|r| Json(r.into())),
     }
+}
+
+async fn get_recent_comment_list(
+    q: &RecentCommentQuery,
+    db: &DbConn,
+    optional_claims: &OptionalClaims,
+    config: &RalineConfig,
+    comrak: &ComrakConfig,
+) -> Result<impl IntoResponse> {
+    Ok("")
 }
 
 async fn get_admin_comment_list(

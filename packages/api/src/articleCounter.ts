@@ -25,7 +25,7 @@ export interface GetArticleCounterOptions extends BaseAPIOptions {
 }
 
 export interface CounterFields {
-  time?: number;
+  times?: number;
   reaction0?: number;
   reaction1?: number;
   reaction2?: number;

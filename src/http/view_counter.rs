@@ -3,6 +3,7 @@ use crate::model::prelude::ViewCounter;
 use crate::{dto::view_counter::ViewCountQuery, model::view_counter};
 use anyhow::Context;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
+use serde_json::json;
 use spring_sea_orm::DbConn;
 use spring_web::{
     axum::{response::IntoResponse, Json},
@@ -58,16 +59,16 @@ async fn post_view_count(
         .context("increase view count failed")?;
 
     let count = match req.r#type {
-        ColumnQueryAs::Times => count.times,
-        ColumnQueryAs::Reaction0 => count.reaction0,
-        ColumnQueryAs::Reaction1 => count.reaction1,
-        ColumnQueryAs::Reaction2 => count.reaction2,
-        ColumnQueryAs::Reaction3 => count.reaction3,
-        ColumnQueryAs::Reaction4 => count.reaction4,
-        ColumnQueryAs::Reaction5 => count.reaction5,
-        ColumnQueryAs::Reaction6 => count.reaction6,
-        ColumnQueryAs::Reaction7 => count.reaction7,
-        ColumnQueryAs::Reaction8 => count.reaction8,
+        ColumnQueryAs::Times => json!({"times":count.times}),
+        ColumnQueryAs::Reaction0 => json!({"reaction0":count.reaction0}),
+        ColumnQueryAs::Reaction1 => json!({"reaction1":count.reaction1}),
+        ColumnQueryAs::Reaction2 => json!({"reaction2":count.reaction2}),
+        ColumnQueryAs::Reaction3 => json!({"reaction3":count.reaction3}),
+        ColumnQueryAs::Reaction4 => json!({"reaction4":count.reaction4}),
+        ColumnQueryAs::Reaction5 => json!({"reaction5":count.reaction5}),
+        ColumnQueryAs::Reaction6 => json!({"reaction6":count.reaction6}),
+        ColumnQueryAs::Reaction7 => json!({"reaction7":count.reaction7}),
+        ColumnQueryAs::Reaction8 => json!({"reaction8":count.reaction8}),
     };
-    Ok(Json(count))
+    Ok(Json(vec![count]))
 }

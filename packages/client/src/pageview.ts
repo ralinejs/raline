@@ -54,7 +54,7 @@ const renderVisitorCount = (
   countElements: HTMLElement[],
 ): void => {
   countElements.forEach((element, index) => {
-    const count = counts[index].time;
+    const count = counts[index].times;
 
     if (typeof count !== 'number') {
       return;

@@ -61,9 +61,11 @@ pub struct ListCommentQuery {
     pub offset: i64,
 }
 
+#[serde_as]
 #[derive(Debug, Validate, Deserialize)]
 pub struct RecentCommentQuery {
     #[validate(range(max = 100, message = "查询数据过多"))]
+    #[serde_as(as = "DisplayFromStr")]
     pub count: u16,
 }
 
