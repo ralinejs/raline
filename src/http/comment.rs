@@ -2,7 +2,7 @@ use crate::config::comrak::ComrakConfig;
 use crate::config::RalineConfig;
 use crate::dto::comment::{
     AddCommentReq, AdminCommentQuery, AdminListResp, CommentQueryResp, CommentResp,
-    CountCommentQuery, ListCommentQuery, ListResp, Owner, RecentCommentQuery,
+    CommentUpdateReq, CountCommentQuery, ListCommentQuery, ListResp, Owner, RecentCommentQuery,
 };
 use crate::model::sea_orm_active_enums::UserType;
 use crate::model::{prelude::*, users};
@@ -24,6 +24,7 @@ use sea_orm::{
 };
 use serde_json::json;
 use spring_sea_orm::DbConn;
+use spring_web::delete;
 use spring_web::error::KnownWebError;
 use spring_web::extractor::Config;
 use spring_web::{
@@ -418,7 +419,16 @@ async fn update_comment(
     claims: OptionalClaims,
     Component(db): Component<DbConn>,
     Path(id): Path<i64>,
-    Json(body): Json<CommentQueryReq>,
+    Json(body): Json<CommentUpdateReq>,
+) -> Result<impl IntoResponse> {
+    Ok("")
+}
+
+#[delete("/comment/:id")]
+async fn delete_comment(
+    claims: OptionalClaims,
+    Component(db): Component<DbConn>,
+    Path(id): Path<i64>,
 ) -> Result<impl IntoResponse> {
     Ok("")
 }

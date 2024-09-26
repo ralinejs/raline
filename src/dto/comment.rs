@@ -323,3 +323,14 @@ impl<'a> ToStringExt for OS<'a> {
         string
     }
 }
+
+#[derive(Debug, Deserialize)]
+pub struct CommentUpdateReq {
+    pub comment: Option<String>,
+    pub link: Option<String>,
+    pub mail: Option<String>,
+    pub nick: Option<String>,
+    pub sticky: Option<bool>,
+    pub status: Option<CommentStatus>,
+    pub like: Option<bool>,
+}
