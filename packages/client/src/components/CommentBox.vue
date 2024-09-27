@@ -32,9 +32,9 @@ import {
   useUserMeta,
 } from '../composables/index.js';
 import type {
-  ralineImageUploader,
+  RalineImageUploader,
   ralineSearchOptions,
-  ralineSearchResult,
+  RalineSearchResult,
 } from '../typings/index.js';
 import type { ralineConfig, ralineEmojiConfig } from '../utils/index.js';
 import {
@@ -106,7 +106,7 @@ const wordNumber = ref(0);
 
 const searchResults = reactive({
   loading: true,
-  list: [] as ralineSearchResult,
+  list: [] as RalineSearchResult,
 });
 
 const wordLimit = ref(0);
@@ -158,7 +158,7 @@ const uploadImage = (file: File): Promise<void> => {
   isSubmitting.value = true;
 
   return Promise.resolve()
-    .then(() => (config.value.imageUploader as ralineImageUploader)(file))
+    .then(() => (config.value.imageUploader as RalineImageUploader)(file))
     .then((url) => {
       editor.value = editor.value.replace(
         uploadText,

@@ -3,12 +3,12 @@ import { markedHighlight } from 'marked-highlight';
 
 import { markedTeXExtensions } from './markedMathExtension.js';
 import type {
-  ralineEmojiMaps,
-  ralineHighlighter,
-  ralineTeXRenderer,
+  RalineEmojiMaps,
+  RalineHighlighter,
+  RalineTeXRenderer,
 } from '../typings/index.js';
 
-export const parseEmoji = (text = '', emojiMap: ralineEmojiMaps = {}): string =>
+export const parseEmoji = (text = '', emojiMap: RalineEmojiMaps = {}): string =>
   text.replace(/:(.+?):/g, (placeholder, key: string) =>
     emojiMap[key]
       ? `<img class="wl-emoji" src="${emojiMap[key]}" alt="${key}">`
@@ -16,9 +16,9 @@ export const parseEmoji = (text = '', emojiMap: ralineEmojiMaps = {}): string =>
   );
 
 export interface ParseMarkdownOptions {
-  emojiMap: ralineEmojiMaps;
-  highlighter: ralineHighlighter | false;
-  texRenderer: ralineTeXRenderer | false;
+  emojiMap: RalineEmojiMaps;
+  highlighter: RalineHighlighter | false;
+  texRenderer: RalineTeXRenderer | false;
 }
 
 export const parseMarkdown = (

@@ -1,18 +1,18 @@
 import type { IGif } from '@giphy/js-types';
 
 import type {
-  ralineEmojiPresets,
-  ralineMeta,
+  RalineEmojiPresets,
+  RalineMeta,
   ralineSearchOptions,
-  ralineSearchResult,
+  RalineSearchResult,
 } from '../typings/index.js';
 
-const AVAILABLE_META: ralineMeta[] = ['nick', 'mail', 'link'];
+const AVAILABLE_META: RalineMeta[] = ['nick', 'mail', 'link'];
 
-export const getMeta = (meta: ralineMeta[]): ralineMeta[] =>
+export const getMeta = (meta: RalineMeta[]): RalineMeta[] =>
   meta.filter((item) => AVAILABLE_META.includes(item));
 
-export const DEFAULT_EMOJI: ralineEmojiPresets[] = [
+export const DEFAULT_EMOJI: RalineEmojiPresets[] = [
   '//unpkg.com/@waline/emojis@1.1.0/weibo',
 ];
 
@@ -62,7 +62,7 @@ export const getDefaultSearchOptions = (lang: string): ralineSearchOptions => {
   const fetchGiphy = async (
     url: string,
     params: Record<string, string> = {},
-  ): Promise<ralineSearchResult> =>
+  ): Promise<RalineSearchResult> =>
     fetch(
       `https://api.giphy.com/v1/gifs/${url}?${new URLSearchParams({
         lang,
@@ -82,10 +82,10 @@ export const getDefaultSearchOptions = (lang: string): ralineSearchOptions => {
       );
 
   return {
-    search: (word: string): Promise<ralineSearchResult> =>
+    search: (word: string): Promise<RalineSearchResult> =>
       fetchGiphy('search', { q: word, offset: '0' }),
-    default: (): Promise<ralineSearchResult> => fetchGiphy('trending', {}),
-    more: (word: string, offset = 0): Promise<ralineSearchResult> =>
+    default: (): Promise<RalineSearchResult> => fetchGiphy('trending', {}),
+    more: (word: string, offset = 0): Promise<RalineSearchResult> =>
       fetchGiphy('search', { q: word, offset: offset.toString() }),
   };
 };

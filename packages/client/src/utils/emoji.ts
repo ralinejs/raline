@@ -3,13 +3,13 @@ import { useStorage } from '@vueuse/core';
 import type { ralineEmojiConfig } from './config.js';
 import { removeEndingSplash } from './path.js';
 import { isString } from './type.js';
-import type { ralineEmojiInfo } from '../typings/index.js';
+import type { RalineEmojiInfo } from '../typings/index.js';
 
 const hasVersion = (url: string): boolean =>
   Boolean(/@[0-9]+\.[0-9]+\.[0-9]+/.test(url));
 
-const fetchEmoji = (link: string): Promise<ralineEmojiInfo> => {
-  const emojiStore = useStorage<Record<string, ralineEmojiInfo>>(
+const fetchEmoji = (link: string): Promise<RalineEmojiInfo> => {
+  const emojiStore = useStorage<Record<string, RalineEmojiInfo>>(
     'raline_EMOJI',
     {},
   );
@@ -23,7 +23,7 @@ const fetchEmoji = (link: string): Promise<ralineEmojiInfo> => {
   }
 
   return fetch(`${link}/info.json`)
-    .then((resp) => resp.json() as Promise<Omit<ralineEmojiInfo, 'folder'>>)
+    .then((resp) => resp.json() as Promise<Omit<RalineEmojiInfo, 'folder'>>)
     .then((emojiInfo) => {
       const info = {
         folder: link,
@@ -40,7 +40,7 @@ const getLink = (name: string, folder = '', prefix = '', type = ''): string =>
   `${folder ? `${folder}/` : ''}${prefix}${name}${type ? `.${type}` : ''}`;
 
 export const getEmojis = (
-  emojis: (string | ralineEmojiInfo)[],
+  emojis: (string | RalineEmojiInfo)[],
 ): Promise<ralineEmojiConfig> =>
   Promise.all(
     emojis.map((emoji) =>

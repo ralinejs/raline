@@ -5,19 +5,18 @@
 /* eslint-disable vue/require-prop-types */
 import { useStyleTag } from '@vueuse/core';
 import type {
-  ralineComment,
-  ralineCommentStatus,
-  ralineRootComment,
+  RalineComment,
+  RalineCommentStatus,
+  RalineRootComment,
 } from '@raline/api';
 import { deleteComment, getComment, updateComment } from '@raline/api';
 import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue';
-
 import Reaction from './ArticleReaction.vue';
 import CommentBox from './CommentBox.vue';
 import CommentCard from './CommentCard.vue';
 import { LoadingIcon } from './Icons.js';
 import { useLikeStorage, useUserInfo } from '../composables/index.js';
-import type { ralineCommentSorting, ralineProps } from '../typings/index.js';
+import type { RalineCommentSorting, ralineProps } from '../typings/index.js';
 import { getConfig, getDarkStyle } from '../utils/index.js';
 import { version } from '../version.js';
 
@@ -46,12 +45,12 @@ const props = defineProps([
   'reaction',
 ]);
 
-const sortKeyMap: Record<ralineCommentSorting, SortKey> = {
+const sortKeyMap: Record<RalineCommentSorting, SortKey> = {
   latest: 'insertedAt_desc',
   oldest: 'insertedAt_asc',
   hottest: 'like_desc',
 };
-const sortingMethods = Object.keys(sortKeyMap) as ralineCommentSorting[];
+const sortingMethods = Object.keys(sortKeyMap) as RalineCommentSorting[];
 
 const userInfo = useUserInfo();
 const likeStorage = useLikeStorage();
@@ -67,9 +66,9 @@ const config = computed(() => getConfig(props as ralineProps));
 // eslint-disable-next-line vue/no-ref-object-destructure
 const commentSortingRef = ref(config.value.commentSorting);
 
-const data = ref<ralineRootComment[]>([]);
-const reply = ref<ralineComment | null>(null);
-const edit = ref<ralineComment | null>(null);
+const data = ref<RalineRootComment[]>([]);
+const reply = ref<RalineComment | null>(null);
+const edit = ref<RalineComment | null>(null);
 
 const darkmodeStyle = computed(() => getDarkStyle(config.value.dark));
 
@@ -123,22 +122,22 @@ const refresh = (): void => {
   getCommentData(0);
 };
 
-const onSortByChange = (item: ralineCommentSorting): void => {
+const onSortByChange = (item: RalineCommentSorting): void => {
   if (commentSortingRef.value !== item) {
     commentSortingRef.value = item;
     refresh();
   }
 };
 
-const onReply = (comment: ralineComment | null): void => {
+const onReply = (comment: RalineComment | null): void => {
   reply.value = comment;
 };
 
-const onEdit = (comment: ralineComment | null): void => {
+const onEdit = (comment: RalineComment | null): void => {
   edit.value = comment;
 };
 
-const onSubmit = (comment: ralineComment): void => {
+const onSubmit = (comment: RalineComment): void => {
   console.log('comment',comment);
   if (edit.value) {
     edit.value.comment = comment.comment;
@@ -163,8 +162,8 @@ const onStatusChange = async ({
   comment,
   status,
 }: {
-  comment: ralineComment;
-  status: ralineCommentStatus;
+  comment: RalineComment;
+  status: RalineCommentStatus;
 }): Promise<void> => {
   if (comment.status === status) return;
 
@@ -181,7 +180,7 @@ const onStatusChange = async ({
   comment.status = status;
 };
 
-const onSticky = async (comment: ralineComment): Promise<void> => {
+const onSticky = async (comment: RalineComment): Promise<void> => {
   if ('rid' in comment) return;
 
   const { serverURL, lang } = config.value;
@@ -197,7 +196,7 @@ const onSticky = async (comment: ralineComment): Promise<void> => {
   comment.sticky = !comment.sticky;
 };
 
-const onDelete = async ({ objectId }: ralineComment): Promise<void> => {
+const onDelete = async ({ objectId }: RalineComment): Promise<void> => {
   if (!confirm('Are you sure you want to delete this comment?')) return;
 
   const { serverURL, lang } = config.value;
@@ -231,7 +230,7 @@ const onDelete = async ({ objectId }: ralineComment): Promise<void> => {
   });
 };
 
-const onLike = async (comment: ralineComment): Promise<void> => {
+const onLike = async (comment: RalineComment): Promise<void> => {
   const { serverURL, lang } = config.value;
   const { objectId } = comment;
   const hasLiked = likeStorage.value.includes(objectId);

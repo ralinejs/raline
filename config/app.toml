@@ -28,4 +28,4 @@ site_url = "http://localhost:8080"
 server_url = "http://localhost:8080"
 
 [logger]
-pretty_backtrace = true
+pretty_backtrace = false
