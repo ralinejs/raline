@@ -18,10 +18,7 @@ use crate::{
     },
 };
 use anyhow::Context;
-use sea_orm::{
-    ActiveModelTrait, ActiveValue::NotSet, ColumnTrait, Condition, EntityTrait, PaginatorTrait,
-    QueryFilter, QuerySelect, Set,
-};
+use sea_orm::{ActiveModelTrait, ActiveValue::NotSet, ColumnTrait, EntityTrait, QueryFilter, Set};
 use spring_mail::Mailer;
 use spring_redis::Redis;
 use spring_sea_orm::{
@@ -36,7 +33,7 @@ use spring_web::{
 };
 use spring_web::{extractor::Config, post};
 
-#[get("/user")]
+#[get("/api/user")]
 async fn get_users(
     claims: OptionalClaims,
     Component(db): Component<DbConn>,
@@ -64,7 +61,7 @@ async fn get_users(
     Ok(Json(page))
 }
 
-#[post("/user")]
+#[post("/api/user")]
 async fn register(
     Component(mut redis): Component<Redis>,
     Component(db): Component<DbConn>,
@@ -106,7 +103,7 @@ async fn register(
     Ok(Json(user.into()))
 }
 
-#[post("/user/register-validate-code")]
+#[post("/api/user/register-validate-code")]
 async fn register_validate_code(
     Component(mut redis): Component<Redis>,
     Component(mailer): Component<Mailer>,
@@ -126,7 +123,7 @@ async fn register_validate_code(
     Ok(Json(success))
 }
 
-#[post("/user/reset-validate-code")]
+#[post("/api/user/reset-validate-code")]
 async fn reset_validate_code(
     Component(mut redis): Component<Redis>,
     Component(mailer): Component<Mailer>,
@@ -146,7 +143,7 @@ async fn reset_validate_code(
     Ok(Json(success))
 }
 
-#[post("/user/password")]
+#[post("/api/user/password")]
 async fn reset_password(
     Component(mut redis): Component<Redis>,
     Component(db): Component<DbConn>,
@@ -182,7 +179,7 @@ async fn reset_password(
     Ok(Json(UserRespWithToken::new(u, token)))
 }
 
-#[put("/user")]
+#[put("/api/user")]
 async fn update_user(
     claims: Claims,
     Component(db): Component<DbConn>,

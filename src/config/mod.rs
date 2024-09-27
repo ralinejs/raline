@@ -1,6 +1,6 @@
 pub mod akismet;
-pub mod mail;
 pub mod comrak;
+pub mod mail;
 
 use serde::Deserialize;
 use spring::config::Configurable;
@@ -10,6 +10,9 @@ use std::net::IpAddr;
 #[config_prefix = "raline"]
 pub struct RalineConfig {
     pub site_url: String,
+    #[serde(default)]
+    pub site_name: String,
+    pub server_url: String,
     #[serde(default)]
     pub disallow_ips: Vec<IpAddr>,
     #[serde(default = "default_ip_qps")]
@@ -22,6 +25,8 @@ pub struct RalineConfig {
     pub disable_region: bool,
     #[serde(default)]
     pub forbidden_words: Vec<String>,
+    pub recaptcha_v3_key: Option<String>,
+    pub turnstile_key: Option<String>,
 }
 
 fn default_ip_qps() -> u64 {

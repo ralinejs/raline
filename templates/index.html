@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raline Management System</title>
+  <link rel="stylesheet" href="/static/raline.css" />
+</head>
+
+<body>
+  <div id="raline"></div>
+  <script type="module">
+    import { init } from "/static/raline.js"
+    init({
+      el: '#raline',
+      serverURL: "{{server_url}}",
+      recaptchaV3Key: '{{recaptcha_v3_key}}',
+      turnstileKey: '{{turnstile_key}}',
+    });
+  </script>
+</body>
+
+</html>

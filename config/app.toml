@@ -1,6 +1,9 @@
 [web]
 connect_info = true
 
+[web.middlewares]
+static = { enable = true, uri = "/static", path = "static", precompressed = true, fallback = "index.html" }
+
 [mail]
 host = "smtp.163.com"                                                      # SMTP mail server address,
 port = 465                                                                 # SMTP server port number
@@ -21,7 +24,8 @@ one_indexed = true
 uri = "redis://127.0.0.1/"
 
 [raline]
-site_url = "www.hufeifei.cn"
+site_url = "http://localhost:8080"
+server_url = "http://localhost:8080"
 
 [logger]
 pretty_backtrace = true

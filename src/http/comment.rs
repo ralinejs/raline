@@ -37,7 +37,7 @@ use std::cmp::max;
 use std::net::IpAddr;
 use std::time::Duration;
 
-#[get("/comment")]
+#[get("/api/comment")]
 async fn get_comment(
     claims: OptionalClaims,
     Component(db): Component<DbConn>,
@@ -294,7 +294,7 @@ async fn get_comment_count(
     Ok(count)
 }
 
-#[post("/comment")]
+#[post("/api/comment")]
 async fn add_comment(
     claims: OptionalClaims,
     Config(config): Config<RalineConfig>,
@@ -415,7 +415,7 @@ async fn check_comment(
     Ok(status)
 }
 
-#[put("/comment/:id")]
+#[put("/api/comment/:id")]
 async fn update_comment(
     optional_claims: OptionalClaims,
     Component(db): Component<DbConn>,
@@ -470,7 +470,7 @@ async fn update_comment(
     Ok(Json(c))
 }
 
-#[delete("/comment/:id")]
+#[delete("/api/comment/:id")]
 async fn delete_comment(
     claims: OptionalClaims,
     Component(db): Component<DbConn>,
