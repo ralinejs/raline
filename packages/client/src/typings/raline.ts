@@ -1,5 +1,5 @@
 import type {
-  ralineCommentSorting,
+  RalineCommentSorting,
   RalineEmojiInfo,
   RalineEmojiPresets,
   RalineHighlighter,
@@ -143,7 +143,7 @@ export interface ralineProps {
    *
    * @default 'latest'
    */
-  commentSorting?: ralineCommentSorting;
+  commentSorting?: RalineCommentSorting;
 
   /**
    * 是否启用暗黑模式适配

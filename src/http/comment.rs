@@ -475,7 +475,7 @@ async fn update_comment(
         }
     };
 
-    Ok(Json(c))
+    Ok(Json(json!({"data": c})))
 }
 
 #[delete("/api/comment/:id")]

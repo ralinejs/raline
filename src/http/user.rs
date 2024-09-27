@@ -1,5 +1,3 @@
-use std::cmp::max;
-
 use crate::{
     config::mail::EmailConfig,
     dto::user::{

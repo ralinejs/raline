@@ -270,7 +270,7 @@ impl CommentResp {
             os: client.map(|c| c.os.to_string()).unwrap_or_default(),
             orig,
             addr,
-            time: c.created_at.timestamp_micros(),
+            time: c.created_at.and_utc().timestamp_micros(),
             children: Default::default(),
         }
     }
