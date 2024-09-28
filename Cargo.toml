@@ -6,11 +6,11 @@ publish = ["crates-io"]
 
 [dependencies]
 tokio = { version = "1.0", features = ["full"] }
-spring = "0.1"
-spring-web = "0.1"
-spring-mail = "0.1"
-spring-redis = "0.1"
-spring-sea-orm = { version = "0.1", features = ["postgres", "with-web"] }
+spring = "0.2"
+spring-web = "0.2"
+spring-mail = "0.2"
+spring-redis = "0.2"
+spring-sea-orm = { version = "0.2", features = ["postgres", "with-web"] }
 sea-orm = "1.0"
 serde = "1.0"
 serde_json = "1.0"

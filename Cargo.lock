@@ -3544,9 +3544,9 @@ dependencies = [
 
 [[package]]
 name = "spring"
-version = "0.1.3"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6760306930c852e677a52c8280703c0cfeaca18756f9ac6375daa921d9da8aea"
+checksum = "bdb9bd821a2d3d5b9f1dc61ea9f84fee981f7cb8910474bf62c901ca30c06025"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -3568,9 +3568,9 @@ dependencies = [
 
 [[package]]
 name = "spring-macros"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f87085434639c15089db0e3ad05da69f880ce8c46dc28a8751956c3f42d8a907"
+checksum = "0b2213a738a420f1fbe9756ae4911c6181d3fd4d1858fc8115f0b0e944663751"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3579,9 +3579,9 @@ dependencies = [
 
 [[package]]
 name = "spring-mail"
-version = "0.1.2"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5dfa7caff1df0e409b99f0d6b241a54c193a6a9777e348b9a9b7ae5d9b0f1c2d"
+checksum = "aeab570f15c5fb0727f7e17eb3500794fdd0589ac36d9804f926795e4073b071"
 dependencies = [
  "anyhow",
  "lettre",
@@ -3593,9 +3593,9 @@ dependencies = [
 
 [[package]]
 name = "spring-redis"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4dcd620c5d2c914fd5d06ade4cb4d486fb2b3a276cbeb52a4ccc3c14f99c713f"
+checksum = "14ecb25077107572b05ba5e21f8090d9ce2e868072e921a103987eb13b965d95"
 dependencies = [
  "anyhow",
  "redis",
@@ -3607,9 +3607,9 @@ dependencies = [
 
 [[package]]
 name = "spring-sea-orm"
-version = "0.1.4"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2ae8d96d7dfc87f412381e31b74dc2d27920b81852d20b74af3838f1395c9844"
+checksum = "43c880829e5aacb84c254ef9c22d5cb189735c210e693ec43ea4788bb23e6775"
 dependencies = [
  "anyhow",
  "schemars",
@@ -3623,9 +3623,9 @@ dependencies = [
 
 [[package]]
 name = "spring-web"
-version = "0.1.5"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ae7ede154ff95a607c119c54e7dad1c9e934c2a28785d2abb4e9d897d7cdfa5"
+checksum = "c6611fd8bef018511fadcd039567b4f496bc83a650f8f849178264a94aed73da"
 dependencies = [
  "anyhow",
  "axum",
