@@ -37,4 +37,5 @@ regex = "1"
 ip2region = "0.1"
 uaparser = "0.6"
 comrak = { version = "0.28", features = ["shortcodes"] }
+ammonia = "4"
 rust-i18n = "3.1"

@@ -475,6 +475,7 @@ impl CommentService {
         };
         let comrak_opts = self.comrak.deref().into();
         let comment_html = markdown_to_html(&c.content, &comrak_opts);
+        let comment_html = ammonia::clean(&*comment_html);
         let orig = if login_user.is_none() {
             None
         } else {
