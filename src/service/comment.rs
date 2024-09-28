@@ -2,11 +2,12 @@ use crate::config::comrak::ComrakConfig;
 use crate::config::RalineConfig;
 use crate::dto::comment::{
     AddCommentReq, AdminCommentQuery, AdminListResp, CommentResp, CommentUpdateReq,
-    CountCommentQuery, ListCommentQuery, ListResp, Owner, RecentCommentQuery, ToStringExt,
+    CountCommentQuery, ListCommentQuery, ListResp, Owner, RecentCommentQuery,
 };
 use crate::model::sea_orm_active_enums::UserType;
 use crate::model::{prelude::*, users};
 use crate::plugins::akismet::Akismet;
+use crate::plugins::uaparser::{ToStringExt, UAParser};
 use crate::utils::jwt::Claims;
 use crate::{
     model::{comments, sea_orm_active_enums::CommentStatus},
@@ -30,7 +31,7 @@ use std::cmp::max;
 use std::net::IpAddr;
 use std::ops::Deref;
 use std::time::Duration;
-use uaparser::Client;
+use uaparser::{Client, Parser};
 
 #[derive(Clone, Service)]
 pub struct CommentService {
@@ -38,6 +39,8 @@ pub struct CommentService {
     db: DbConn,
     #[component]
     akismet: Akismet,
+    #[component]
+    uaparser: UAParser,
     raline: ConfigRef<RalineConfig>,
     comrak: ConfigRef<ComrakConfig>,
 }
@@ -463,7 +466,11 @@ impl CommentService {
             disable_region,
             ..
         } = &*self.raline;
-        let client: Option<Client> = if *disable_user_agent { None } else { None };
+        let client: Option<Client> = if *disable_user_agent {
+            None
+        } else {
+            Some(self.uaparser.parse(&c.ua))
+        };
         let is_admin = match &**login_user {
             None => false,
             Some(u) => u.ty == UserType::Admin,
@@ -506,7 +513,7 @@ impl CommentService {
             os: client.map(|c| c.os.to_string()).unwrap_or_default(),
             orig,
             addr,
-            time: c.created_at.and_utc().timestamp_micros(),
+            time: c.created_at.and_utc().timestamp_millis(),
             children: Default::default(),
         }
     }

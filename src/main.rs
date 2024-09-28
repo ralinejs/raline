@@ -2,11 +2,11 @@ mod config;
 mod dto;
 mod http;
 mod model;
-mod utils;
 mod plugins;
 mod service;
+mod utils;
 
-use plugins::akismet::AkismetPlugin;
+use plugins::{akismet::AkismetPlugin, uaparser::UAParserPlugin};
 use spring::App;
 use spring_mail::MailPlugin;
 use spring_redis::RedisPlugin;
@@ -21,6 +21,7 @@ async fn main() {
         .add_plugin(MailPlugin)
         .add_plugin(RedisPlugin)
         .add_plugin(AkismetPlugin)
+        .add_plugin(UAParserPlugin)
         .add_router(http::router())
         .run()
         .await

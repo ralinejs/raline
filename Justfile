@@ -3,7 +3,7 @@ gen-model:
     sea-orm-cli generate entity --with-serde both --output-dir src/model/_entities --enum-extra-derives strum::EnumString
 
 ## install dependency
-install-api:
+install-dependency:
     pnpm --dir=packages/client install && pnpm --dir=packages/admin install 
 
 ## publish api
@@ -23,6 +23,7 @@ release:
     pnpm --dir=packages/client build
     pnpm --dir=packages/admin build
     cargo build --release
+    mkdir static/
     cp packages/admin/dist/* static/
     cp packages/admin/index.html static/
     cp packages/client/dist/* static/

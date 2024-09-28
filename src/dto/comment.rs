@@ -10,8 +10,6 @@ use serde_with::formats::CommaSeparator;
 use serde_with::serde_as;
 use serde_with::DisplayFromStr;
 use serde_with::StringWithSeparator;
-use uaparser::UserAgent;
-use uaparser::OS;
 use validator::Validate;
 
 #[serde_as]
@@ -208,54 +206,6 @@ pub struct CommentResp {
     pub addr: Option<String>,
     pub time: i64,
     pub children: Vec<CommentResp>,
-}
-
-pub trait ToStringExt {
-    fn to_string(&self) -> String;
-}
-
-impl<'a> ToStringExt for UserAgent<'a> {
-    fn to_string(&self) -> String {
-        let Self {
-            family,
-            major,
-            minor,
-            patch,
-        } = self;
-        let mut string = format!("{family}");
-        if let Some(major) = major {
-            string = string + " " + major;
-        }
-        if let Some(minor) = minor {
-            string = string + "." + minor;
-        }
-        if let Some(patch) = patch {
-            string = string + "." + patch;
-        }
-        string
-    }
-}
-impl<'a> ToStringExt for OS<'a> {
-    fn to_string(&self) -> String {
-        let Self {
-            family,
-            major,
-            minor,
-            patch,
-            ..
-        } = self;
-        let mut string = format!("{family}");
-        if let Some(major) = major {
-            string = string + " " + major;
-        }
-        if let Some(minor) = minor {
-            string = string + "." + minor;
-        }
-        if let Some(patch) = patch {
-            string = string + "." + patch;
-        }
-        string
-    }
 }
 
 #[derive(Debug, Deserialize)]
