@@ -21,15 +21,11 @@ use sea_orm::{
     ActiveModelTrait, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder,
     QuerySelect, Set,
 };
-use serde_json::json;
 use spring::config::ConfigRef;
 use spring::plugin::service::Service;
 use spring_sea_orm::DbConn;
 use spring_web::error::KnownWebError;
-use spring_web::{
-    axum::{response::IntoResponse, Json},
-    error::Result,
-};
+use spring_web::error::Result;
 use std::cmp::max;
 use std::net::IpAddr;
 use std::ops::Deref;
@@ -262,7 +258,7 @@ impl CommentService {
         claims: OptionalClaims,
         client_ip: IpAddr,
         body: AddCommentReq,
-    ) -> Result<impl IntoResponse> {
+    ) -> Result<CommentResp> {
         let mut data = body.clone().into_active_model();
         data.ip = Set(client_ip.to_string());
         data.user_id = Set(claims.as_ref().map(|c| c.uid));
@@ -290,8 +286,8 @@ impl CommentService {
             .insert(&self.db)
             .await
             .context("insert comment failed")?;
-        let resp = self.format_comment(&c, &vec![], &claims).await;
-        Ok(Json(json!({"data": resp})))
+        let comment = self.format_comment(&c, &vec![], &claims).await;
+        Ok(comment)
     }
 
     pub async fn update_comment(
@@ -299,7 +295,7 @@ impl CommentService {
         optional_claims: OptionalClaims,
         id: i32,
         body: CommentUpdateReq,
-    ) -> Result<impl IntoResponse> {
+    ) -> Result<CommentResp> {
         let c = Comments::find_by_id(id)
             .one(&self.db)
             .await
@@ -351,7 +347,7 @@ impl CommentService {
             }
         };
 
-        Ok(Json(json!({"data": c})))
+        Ok(c)
     }
 
     async fn check_comment(

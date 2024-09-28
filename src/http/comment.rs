@@ -50,7 +50,8 @@ async fn add_comment(
     SecureClientIp(client_ip): SecureClientIp,
     Json(body): Json<AddCommentReq>,
 ) -> Result<impl IntoResponse> {
-    comment_service.add_comment(claims, client_ip, body).await
+    let comment = comment_service.add_comment(claims, client_ip, body).await?;
+    Ok(Json(json!({"data": comment})))
 }
 
 #[put("/api/comment/:id")]
@@ -60,9 +61,11 @@ async fn update_comment(
     Path(id): Path<i32>,
     Json(body): Json<CommentUpdateReq>,
 ) -> Result<impl IntoResponse> {
-    comment_service
+    let comment = comment_service
         .update_comment(optional_claims, id, body)
-        .await
+        .await?;
+
+    Ok(Json(json!({"data": comment})))
 }
 
 #[delete("/api/comment/:id")]
