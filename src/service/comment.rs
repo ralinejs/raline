@@ -32,6 +32,7 @@ use std::net::IpAddr;
 use std::ops::Deref;
 use std::time::Duration;
 use uaparser::{Client, Parser};
+use xdb::search_by_ip;
 
 #[derive(Clone, Service)]
 pub struct CommentService {
@@ -478,7 +479,13 @@ impl CommentService {
         let addr = if is_admin || !disable_region {
             None
         } else {
-            None
+            match search_by_ip(c.ip.as_str()) {
+                Ok(addr) => Some(addr),
+                Err(e) => {
+                    tracing::warn!("ip2region failed:{}", e);
+                    None
+                }
+            }
         };
         let comrak_opts = self.comrak.deref().into();
         let comment_html = markdown_to_html(&c.content, &comrak_opts);

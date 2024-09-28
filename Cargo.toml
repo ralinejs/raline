@@ -35,8 +35,8 @@ delegate-attr = "0.3"
 instant-akismet = "0.2"
 reqwest = "0.12"
 regex = "1"
-ip2region = "0.1"
 uaparser = "0.6"
 comrak = { version = "0.28", features = ["shortcodes"] }
 ammonia = "4"
 rust-i18n = "3.1"
+xdb = { git = "https://github.com/lionsoul2014/ip2region.git", branch = "master" }

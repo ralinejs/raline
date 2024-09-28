@@ -9,7 +9,7 @@ pub struct UAParserPlugin;
 impl Plugin for UAParserPlugin {
     async fn build(&self, app: &mut AppBuilder) {
         let parser =
-            UserAgentParser::from_yaml("./uaparser/regexes.yaml").expect("Parser creation failed");
+            UserAgentParser::from_yaml("./data/ua-regexes.yaml").expect("Parser creation failed");
         app.add_component(UAParser(Arc::new(parser)));
     }
 }

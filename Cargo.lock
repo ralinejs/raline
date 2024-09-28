@@ -1979,15 +1979,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f958d3d68f4167080a18141e10381e7634563984a537f2a49a30fd8e53ac5767"
 
 [[package]]
-name = "ip2region"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "177ec63ab00a02b8f36b501caa8a5eb86e65d23a3ec0a89621cd8c9225191be2"
-dependencies = [
- "speedy",
-]
-
-[[package]]
 name = "ipnet"
 version = "2.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2222,15 +2213,6 @@ name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
-
-[[package]]
-name = "memoffset"
-version = "0.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "488016bfae457b036d996092f6cb448677611ce4449e970ceaf42695203f218a"
-dependencies = [
- "autocfg",
-]
 
 [[package]]
 name = "mime"
@@ -2906,7 +2888,6 @@ dependencies = [
  "delegate-attr",
  "derive_more 1.0.0",
  "instant-akismet",
- "ip2region",
  "itertools 0.13.0",
  "jsonwebtoken",
  "lazy_static",
@@ -2930,6 +2911,7 @@ dependencies = [
  "tracing",
  "uaparser",
  "validator",
+ "xdb",
 ]
 
 [[package]]
@@ -3816,27 +3798,6 @@ checksum = "ce305eb0b4296696835b71df73eb912e0f1ffd2556a501fcede6e0c50349191c"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "speedy"
-version = "0.8.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da1992073f0e55aab599f4483c460598219b4f9ff0affa124b33580ab511e25a"
-dependencies = [
- "memoffset",
- "speedy-derive",
-]
-
-[[package]]
-name = "speedy-derive"
-version = "0.8.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "658f2ca5276b92c3dfd65fa88316b4e032ace68f88d7570b43967784c0bac5ac"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.77",
 ]
 
 [[package]]
@@ -5427,6 +5388,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05f360fc0b24296329c78fda852a1e9ae82de9cf7b27dae4b7f62f118f77b9ed"
 dependencies = [
  "tap",
+]
+
+[[package]]
+name = "xdb"
+version = "0.1.0"
+source = "git+https://github.com/lionsoul2014/ip2region.git?branch=master#89e20ab7b6c63d33c6e7be8f4f393b39ba817a6f"
+dependencies = [
+ "once_cell",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
