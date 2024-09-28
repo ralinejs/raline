@@ -72,11 +72,6 @@ impl OptionalClaims {
     pub fn is_none(&self) -> bool {
         self.0.is_none()
     }
-    pub fn get(self) -> Result<Claims> {
-        Ok(self
-            .0
-            .ok_or_else(|| KnownWebError::unauthorized("token不存在"))?)
-    }
 }
 
 impl Deref for OptionalClaims {

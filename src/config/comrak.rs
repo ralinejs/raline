@@ -2,7 +2,7 @@ use comrak::Options;
 use serde::Deserialize;
 use spring::config::Configurable;
 
-#[derive(Deserialize, Configurable)]
+#[derive(Clone, Deserialize, Configurable)]
 #[config_prefix = "comrak"]
 pub struct ComrakConfig {
     #[serde(default = "default_true")]

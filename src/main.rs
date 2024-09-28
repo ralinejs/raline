@@ -4,6 +4,7 @@ mod http;
 mod model;
 mod utils;
 mod plugins;
+mod service;
 
 use plugins::akismet::AkismetPlugin;
 use spring::App;

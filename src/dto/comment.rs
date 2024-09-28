@@ -1,12 +1,6 @@
-use crate::config::comrak::ComrakConfig;
-use crate::config::RalineConfig;
 use crate::model::comments;
-use crate::model::comments::Model as Comments;
 use crate::model::sea_orm_active_enums::CommentStatus;
 use crate::model::sea_orm_active_enums::UserType;
-use crate::model::users;
-use crate::utils::jwt::OptionalClaims;
-use comrak::markdown_to_html;
 use derive_more::derive::From;
 use sea_orm::prelude::DateTime;
 use sea_orm::Order;
@@ -16,7 +10,6 @@ use serde_with::formats::CommaSeparator;
 use serde_with::serde_as;
 use serde_with::DisplayFromStr;
 use serde_with::StringWithSeparator;
-use uaparser::Client;
 use uaparser::UserAgent;
 use uaparser::OS;
 use validator::Validate;
@@ -216,67 +209,8 @@ pub struct CommentResp {
     pub time: i64,
     pub children: Vec<CommentResp>,
 }
-impl CommentResp {
-    pub async fn format(
-        c: &Comments,
-        users: &Vec<users::Model>,
-        config: &RalineConfig,
-        comrak: &ComrakConfig,
-        login_user: &OptionalClaims,
-    ) -> Self {
-        let RalineConfig {
-            disable_user_agent,
-            disable_region,
-            ..
-        } = config;
-        let client: Option<Client> = if *disable_user_agent { None } else { None };
-        let is_admin = match &**login_user {
-            None => false,
-            Some(u) => u.ty == UserType::Admin,
-        };
-        let addr = if is_admin || !disable_region {
-            None
-        } else {
-            None
-        };
-        let comment_html = markdown_to_html(&c.content, &comrak.into());
-        let orig = if login_user.is_none() {
-            None
-        } else {
-            Some(c.content.to_owned())
-        };
-        let user = users.iter().find(|u| c.user_id == Some(u.id));
-        Self {
-            url: c.url.to_owned(),
-            status: c.status.to_owned(),
-            comment: comment_html,
-            inserted_at: c.created_at,
-            link: c.link.to_owned(),
-            nick: user.map(|u| u.username.clone()).or(c.nick.to_owned()),
-            mail: user.and_then(|u| u.email.clone()).or(c.mail.to_owned()),
-            r#type: user.map(|u| u.r#type.clone()),
-            avatar: user.and_then(|u| u.avatar.clone()).unwrap_or_default(),
-            pid: c.pid,
-            rid: c.rid,
-            user_id: c.user_id,
-            sticky: c.sticky,
-            like: c.star,
-            object_id: c.id,
-            level: 0,
-            browser: client
-                .clone()
-                .map(|c| c.user_agent.to_string())
-                .unwrap_or_default(),
-            os: client.map(|c| c.os.to_string()).unwrap_or_default(),
-            orig,
-            addr,
-            time: c.created_at.and_utc().timestamp_micros(),
-            children: Default::default(),
-        }
-    }
-}
 
-trait ToStringExt {
+pub trait ToStringExt {
     fn to_string(&self) -> String;
 }
 

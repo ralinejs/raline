@@ -6,7 +6,7 @@ use serde::Deserialize;
 use spring::config::Configurable;
 use std::net::IpAddr;
 
-#[derive(Deserialize, Configurable)]
+#[derive(Clone, Deserialize, Configurable)]
 #[config_prefix = "raline"]
 pub struct RalineConfig {
     pub site_url: String,
