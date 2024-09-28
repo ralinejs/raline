@@ -1,6 +1,3 @@
-use std::net::IpAddr;
-use std::sync::Arc;
-
 use crate::config::akismet::AkismetConfig;
 use crate::config::RalineConfig;
 use crate::dto::comment::AddCommentReq;
@@ -11,6 +8,8 @@ use spring::async_trait;
 use spring::config::ConfigRegistry;
 use spring::plugin::Plugin;
 use spring_web::error::Result;
+use std::net::IpAddr;
+use std::sync::Arc;
 
 pub struct AkismetPlugin;
 
