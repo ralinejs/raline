@@ -28,7 +28,7 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import { LoadingIcon } from './Icons.js';
-import type { ralineSearchResult } from '../typings/index.js';
+import type { RalineSearchResult } from '../typings/index.js';
 
 type Column = number[];
 
@@ -37,7 +37,7 @@ const props = withDefaults(
     /**
      * Image Items
      */
-    items?: ralineSearchResult;
+    items?: RalineSearchResult;
     /**
      * width in pixels of each column
      */
@@ -48,7 +48,7 @@ const props = withDefaults(
     gap?: number;
   }>(),
   {
-    items: () => [] as ralineSearchResult,
+    items: () => [] as RalineSearchResult,
     columnWidth: 300,
     gap: 0,
   },

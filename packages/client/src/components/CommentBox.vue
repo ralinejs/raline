@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDebounceFn, useEventListener } from '@vueuse/core';
-import type { ralineComment, ralineCommentData } from '@raline/api';
+import type { RalineComment, RalineCommentData } from '@raline/api';
 import { UserInfo, addComment, login, updateComment } from '@raline/api';
 import autosize from 'autosize';
 import type { ComputedRef, DeepReadonly } from 'vue';
@@ -32,9 +32,9 @@ import {
   useUserMeta,
 } from '../composables/index.js';
 import type {
-  ralineImageUploader,
+  RalineImageUploader,
   ralineSearchOptions,
-  ralineSearchResult,
+  RalineSearchResult,
 } from '../typings/index.js';
 import type { ralineConfig, ralineEmojiConfig } from '../utils/index.js';
 import {
@@ -52,7 +52,7 @@ const props = withDefaults(
     /**
      * Current comment to be edited
      */
-    edit?: ralineComment | null;
+    edit?: RalineComment | null;
     /**
      * Root comment id
      */
@@ -78,7 +78,7 @@ const emit = defineEmits<{
   (event: 'log'): void;
   (event: 'cancelEdit'): void;
   (event: 'cancelReply'): void;
-  (event: 'submit', comment: ralineComment): void;
+  (event: 'submit', comment: RalineComment): void;
 }>();
 
 const config = inject<ComputedRef<ralineConfig>>('config')!;
@@ -106,7 +106,7 @@ const wordNumber = ref(0);
 
 const searchResults = reactive({
   loading: true,
-  list: [] as ralineSearchResult,
+  list: [] as RalineSearchResult,
 });
 
 const wordLimit = ref(0);
@@ -158,7 +158,7 @@ const uploadImage = (file: File): Promise<void> => {
   isSubmitting.value = true;
 
   return Promise.resolve()
-    .then(() => (config.value.imageUploader as ralineImageUploader)(file))
+    .then(() => (config.value.imageUploader as RalineImageUploader)(file))
     .then((url) => {
       editor.value = editor.value.replace(
         uploadText,
@@ -215,7 +215,7 @@ const submitComment = async (): Promise<void> => {
   } = config.value;
 
   const ua = await userAgent();
-  const comment: ralineCommentData = {
+  const comment: RalineCommentData = {
     comment: content.value,
     nick: userMeta.value.nick,
     mail: userMeta.value.mail,

@@ -13,7 +13,7 @@ use spring_web::{
     extractor::Component,
 };
 
-#[post("/token")]
+#[post("/api/token")]
 async fn login(
     Component(db): Component<DbConn>,
     Json(body): Json<AuthenticationToken>,
@@ -42,7 +42,7 @@ async fn login(
     Ok(Json(UserRespWithToken::new(user, token)))
 }
 
-#[get("/token")]
+#[get("/api/token")]
 async fn current_user(
     claims: Claims,
     Component(db): Component<DbConn>,
@@ -56,7 +56,7 @@ async fn current_user(
     Ok(Json(UserResp::from(user)))
 }
 
-#[get("/token/2fa")]
+#[get("/api/token/2fa")]
 async fn mfa() -> Result<impl IntoResponse> {
     Ok("")
 }

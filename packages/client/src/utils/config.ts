@@ -11,15 +11,15 @@ import {
   getMeta,
 } from '../config/index.js';
 import type {
-  ralineEmojiInfo,
-  ralineEmojiMaps,
+  RalineEmojiInfo,
+  RalineEmojiMaps,
   ralineLocale,
   ralineProps,
 } from '../typings/index.js';
 
 export interface ralineEmojiConfig {
-  tabs: Pick<ralineEmojiInfo, 'name' | 'icon' | 'items'>[];
-  map: ralineEmojiMaps;
+  tabs: Pick<RalineEmojiInfo, 'name' | 'icon' | 'items'>[];
+  map: RalineEmojiMaps;
 }
 
 export interface ralineConfig

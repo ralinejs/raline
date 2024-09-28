@@ -1,13 +1,13 @@
 import type {
-  ralineCommentSorting,
-  ralineEmojiInfo,
-  ralineEmojiPresets,
-  ralineHighlighter,
-  ralineImageUploader,
-  ralineLoginStatus,
-  ralineMeta,
+  RalineCommentSorting,
+  RalineEmojiInfo,
+  RalineEmojiPresets,
+  RalineHighlighter,
+  RalineImageUploader,
+  RalineLoginStatus,
+  RalineMeta,
   ralineSearchOptions,
-  ralineTeXRenderer,
+  RalineTeXRenderer,
 } from './base.js';
 import type { ralineLocale } from './locale.js';
 
@@ -41,7 +41,7 @@ export interface ralineProps {
    *
    * @default ['nick', 'mail', 'link']
    */
-  meta?: ralineMeta[];
+  meta?: RalineMeta[];
 
   /**
    * 设置**必填项**，默认昵称为匿名
@@ -50,7 +50,7 @@ export interface ralineProps {
    *
    * @default []
    */
-  requiredMeta?: ralineMeta[];
+  requiredMeta?: RalineMeta[];
 
   /**
    * 评论字数限制。填入单个数字时为最大字数限制
@@ -143,7 +143,7 @@ export interface ralineProps {
    *
    * @default 'latest'
    */
-  commentSorting?: ralineCommentSorting;
+  commentSorting?: RalineCommentSorting;
 
   /**
    * 是否启用暗黑模式适配
@@ -163,7 +163,7 @@ export interface ralineProps {
    *
    * @default ['//unpkg.com/@waline/emojis@1.1.0/weibo']
    */
-  emoji?: (ralineEmojiInfo | ralineEmojiPresets)[] | boolean;
+  emoji?: (RalineEmojiInfo | RalineEmojiPresets)[] | boolean;
 
   /**
    * 设置搜索功能
@@ -182,7 +182,7 @@ export interface ralineProps {
    * @default true
    */
 
-  highlighter?: ralineHighlighter | boolean;
+  highlighter?: RalineHighlighter | boolean;
 
   /**
    * 自定义图片上传方法，方便更好的存储图片
@@ -196,7 +196,7 @@ export interface ralineProps {
    * @default true
    */
 
-  imageUploader?: ralineImageUploader | boolean;
+  imageUploader?: RalineImageUploader | boolean;
 
   /**
    * 自定义数学公式处理方法，用于预览。
@@ -205,7 +205,7 @@ export interface ralineProps {
    *
    * @default true
    */
-  texRenderer?: ralineTeXRenderer | boolean;
+  texRenderer?: RalineTeXRenderer | boolean;
 
   /**
    *
@@ -223,7 +223,7 @@ export interface ralineProps {
    *
    * @default 'enable'
    */
-  login?: ralineLoginStatus;
+  login?: RalineLoginStatus;
 
   /**
    * 是否在页脚展示版权信息

@@ -270,7 +270,7 @@ impl CommentResp {
             os: client.map(|c| c.os.to_string()).unwrap_or_default(),
             orig,
             addr,
-            time: c.created_at.timestamp_micros(),
+            time: c.created_at.and_utc().timestamp_micros(),
             children: Default::default(),
         }
     }
@@ -336,9 +336,46 @@ pub struct CommentUpdateReq {
 }
 
 impl CommentUpdateReq {
-    pub fn to_active_model(self, ty: UserType) -> comments::ActiveModel {
-        comments::ActiveModel {
-            ..Default::default()
-        }
+    pub fn update_active_model(
+        self,
+        mut ac: comments::ActiveModel,
+        ty: UserType,
+    ) -> comments::ActiveModel {
+        match ty {
+            UserType::Normal => {
+                if let Some(content) = self.comment {
+                    ac.content = Set(content);
+                }
+            }
+            UserType::Admin => {
+                if let Some(content) = self.comment {
+                    ac.content = Set(content);
+                }
+                if let Some(link) = self.link {
+                    ac.link = Set(Some(link));
+                }
+                if let Some(mail) = self.mail {
+                    ac.mail = Set(Some(mail));
+                }
+                if let Some(nick) = self.nick {
+                    ac.nick = Set(Some(nick));
+                }
+                if let Some(sticky) = self.sticky {
+                    ac.sticky = Set(sticky);
+                }
+                if let Some(status) = self.status {
+                    ac.status = Set(status);
+                }
+            }
+        };
+        ac
+    }
+    pub fn is_empty(&self) -> bool {
+        self.comment.is_none()
+            && self.link.is_none()
+            && self.mail.is_none()
+            && self.nick.is_none()
+            && self.sticky.is_none()
+            && self.status.is_none()
     }
 }

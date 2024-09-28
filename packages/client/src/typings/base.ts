@@ -1,11 +1,11 @@
-export type ralineCommentSorting = 'latest' | 'oldest' | 'hottest';
+export type RalineCommentSorting = 'latest' | 'oldest' | 'hottest';
 
-export type ralineEmojiPresets =
+export type RalineEmojiPresets =
   | `//${string}`
   | `http://${string}`
   | `https://${string}`;
 
-export interface ralineEmojiInfo {
+export interface RalineEmojiInfo {
   /**
    * 选项卡上的 Emoji 名称
    *
@@ -44,11 +44,11 @@ export interface ralineEmojiInfo {
   items: string[];
 }
 
-export type ralineEmojiMaps = Record<string, string>;
+export type RalineEmojiMaps = Record<string, string>;
 
-export type ralineLoginStatus = 'enable' | 'disable' | 'force';
+export type RalineLoginStatus = 'enable' | 'disable' | 'force';
 
-export interface ralineSearchImageData extends Record<string, unknown> {
+export interface RalineSearchImageData extends Record<string, unknown> {
   /**
    * 图片链接
    *
@@ -81,7 +81,7 @@ export interface ralineSearchImageData extends Record<string, unknown> {
   preview?: string;
 }
 
-export type ralineSearchResult = ralineSearchImageData[];
+export type RalineSearchResult = RalineSearchImageData[];
 
 export interface ralineSearchOptions {
   /**
@@ -89,7 +89,7 @@ export interface ralineSearchOptions {
    *
    * Search action
    */
-  search: (word: string) => Promise<ralineSearchResult>;
+  search: (word: string) => Promise<RalineSearchResult>;
 
   /**
    * 打开列表时展示的默认结果
@@ -98,7 +98,7 @@ export interface ralineSearchOptions {
    *
    * @default () => search('')
    */
-  default?: () => Promise<ralineSearchResult>;
+  default?: () => Promise<RalineSearchResult>;
 
   /**
    * 获取更多的操作
@@ -111,13 +111,13 @@ export interface ralineSearchOptions {
    *
    * @default (word) => search(word)
    */
-  more?: (word: string, currentCount: number) => Promise<ralineSearchResult>;
+  more?: (word: string, currentCount: number) => Promise<RalineSearchResult>;
 }
 
-export type ralineMeta = 'nick' | 'mail' | 'link';
+export type RalineMeta = 'nick' | 'mail' | 'link';
 
-export type ralineImageUploader = (image: File) => Promise<string>;
+export type RalineImageUploader = (image: File) => Promise<string>;
 
-export type ralineHighlighter = (code: string, lang: string) => string;
+export type RalineHighlighter = (code: string, lang: string) => string;
 
-export type ralineTeXRenderer = (blockMode: boolean, tex: string) => string;
+export type RalineTeXRenderer = (blockMode: boolean, tex: string) => string;

@@ -13,7 +13,7 @@ use spring_web::{
 };
 use std::collections::HashMap;
 
-#[get("/view")]
+#[get("/api/view")]
 async fn get_view_count(
     Component(db): Component<DbConn>,
     Query(req): Query<ViewCountQuery>,
@@ -49,7 +49,7 @@ async fn get_view_count(
     Ok(Json(result))
 }
 
-#[post("/view")]
+#[post("/api/view")]
 async fn post_view_count(
     Component(db): Component<DbConn>,
     Json(req): Json<SetViewCount>,

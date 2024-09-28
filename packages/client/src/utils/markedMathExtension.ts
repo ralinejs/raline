@@ -1,13 +1,13 @@
 import type { TokenizerExtension } from 'marked';
 
-import type { ralineTeXRenderer } from '../typings/index.js';
+import type { RalineTeXRenderer } from '../typings/index.js';
 
 const inlineMathStart = /\$.*?\$/;
 const inlineMathReg = /^\$(.*?)\$/;
 const blockMathReg = /^(?:\s{0,3})\$\$((?:[^\n]|\n[^\n])+?)\n{0,1}\$\$/;
 
 export const markedTeXExtensions = (
-  texRenderer: ralineTeXRenderer,
+  texRenderer: RalineTeXRenderer,
 ): TokenizerExtension[] => {
   const blockMathExtension: TokenizerExtension = {
     name: 'blockMath',
