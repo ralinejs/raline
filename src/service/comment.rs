@@ -8,6 +8,7 @@ use crate::model::sea_orm_active_enums::UserType;
 use crate::model::{prelude::*, users};
 use crate::plugins::akismet::Akismet;
 use crate::plugins::uaparser::{ToStringExt, UAParser};
+use crate::utils::ip2region;
 use crate::utils::jwt::Claims;
 use crate::{
     model::{comments, sea_orm_active_enums::CommentStatus},
@@ -32,7 +33,6 @@ use std::net::IpAddr;
 use std::ops::Deref;
 use std::time::Duration;
 use uaparser::{Client, Parser};
-use xdb::search_by_ip;
 
 #[derive(Clone, Service)]
 pub struct CommentService {
@@ -477,15 +477,15 @@ impl CommentService {
             Some(u) => u.ty == UserType::Admin,
         };
         let addr = if is_admin || !disable_region {
-            None
-        } else {
-            match search_by_ip(c.ip.as_str()) {
-                Ok(addr) => Some(addr),
+            match ip2region::search_ip(c.ip.as_str()) {
+                Ok(addr) => Some(addr.to_string(if is_admin { 3 } else { 1 })),
                 Err(e) => {
                     tracing::warn!("ip2region failed:{}", e);
                     None
                 }
             }
+        } else {
+            None
         };
         let comrak_opts = self.comrak.deref().into();
         let comment_html = markdown_to_html(&c.content, &comrak_opts);

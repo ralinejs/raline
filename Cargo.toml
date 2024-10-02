@@ -6,7 +6,7 @@ publish = ["crates-io"]
 
 [dependencies]
 tokio = { version = "1.0", features = ["full"] }
-spring = "0.2"
+spring = "0.2.1"
 spring-web = "0.2"
 spring-mail = "0.2"
 spring-redis = "0.2"

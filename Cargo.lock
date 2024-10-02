@@ -3827,9 +3827,9 @@ dependencies = [
 
 [[package]]
 name = "spring"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bdb9bd821a2d3d5b9f1dc61ea9f84fee981f7cb8910474bf62c901ca30c06025"
+checksum = "8ebe584705bb36dbfd5baed28050a0e865c07dd20be20caf629db40fd21830ed"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4770,6 +4770,7 @@ version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ad0f048c97dbd9faa9b7df56362b8ebcaa52adb06b498c050d2f4e32f90a7a8b"
 dependencies = [
+ "chrono",
  "matchers",
  "nu-ansi-term",
  "once_cell",
