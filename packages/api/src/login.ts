@@ -57,7 +57,7 @@ export interface UserInfo {
    *
    * User role
    */
-  type: 'administrator' | 'guest';
+  type: 'admin' | 'guest';
 }
 
 export const login = ({

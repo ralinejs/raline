@@ -26,7 +26,7 @@ export default function () {
   const createActions = (user) =>
     [
       {
-        key: "administrator",
+        key: "admin",
         name: t("set administrator"),
         show: user.type === "guest",
         async action(e) {
@@ -34,16 +34,16 @@ export default function () {
 
           await updateUser({
             id: user.objectId,
-            type: "administrator",
+            type: "admin",
           });
-          user.type = "administrator";
+          user.type = "admin";
           setList({ ...list });
         },
       },
       {
         key: "guest",
         name: t("set guest"),
-        show: user.type === "administrator",
+        show: user.type === "admin",
         async action(e) {
           e.preventDefault();
           if (user.objectId === currentUser.objectId) {

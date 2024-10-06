@@ -119,7 +119,7 @@ const isEditingCurrent = computed(
         <span v-else class="wl-nick">{{ comment.nick }}</span>
 
         <span
-          v-if="comment.type === 'administrator'"
+          v-if="comment.type === 'admin'"
           class="wl-badge"
           v-text="locale.admin"
         />

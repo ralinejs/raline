@@ -22,7 +22,7 @@ client-dev:
 release:
     pnpm --dir=packages/client build
     pnpm --dir=packages/admin build
-    cargo build --release
+    rm -rf static/
     mkdir static/
     cp packages/admin/dist/* static/
     cp packages/admin/index.html static/
