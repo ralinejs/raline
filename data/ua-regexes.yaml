@@ -325,30 +325,6 @@ os_parsers:
     os_replacement: 'Windows'
     os_v1_replacement: '10'
 
-  - regex: '(Windows NT 5\.0)'
-    os_replacement: 'Windows'
-    os_v1_replacement: '2000'
-
-  - regex: '(WinNT4.0)'
-    os_replacement: 'Windows'
-    os_v1_replacement: 'NT 4.0'
-
-  - regex: '(Windows ?CE)'
-    os_replacement: 'Windows'
-    os_v1_replacement: 'CE'
-
-  - regex: 'Win(?:dows)? ?(95|98|3.1|NT|ME|2000|XP|Vista|7|CE)'
-    os_replacement: 'Windows'
-    os_v1_replacement: '$1'
-
-  - regex: 'Win16'
-    os_replacement: 'Windows'
-    os_v1_replacement: '3.1'
-
-  - regex: 'Win32'
-    os_replacement: 'Windows'
-    os_v1_replacement: '95'
-
   # Box apps (Drive, Sync, Notes) on Windows https://www.box.com/resources/downloads
   - regex: '^Box.{0,200}Windows/([\d.]+);'
     os_replacement: 'Windows'
@@ -496,12 +472,6 @@ os_parsers:
     os_replacement: 'iOS'
 
   ##########
-  # Apple TV
-  ##########
-  - regex: '(tvOS)[/ ](\d+)\.(\d+)(?:\.(\d+)|)'
-    os_replacement: 'tvOS'
-
-  ##########
   # Chrome OS
   # if version 0.0.0, probably this stuff:
   # http://code.google.com/p/chromium-os/issues/detail?id=11573
@@ -605,25 +575,6 @@ os_parsers:
   - regex: '\((?:Mobile|Tablet);.{1,200}Firefox/\d+\.\d+'
     os_replacement: 'Firefox OS'
 
-
-  ##########
-  # BREW
-  # yes, Brew is lower-cased for Brew MP
-  ##########
-  - regex: '(BREW)[ /](\d+)\.(\d+)\.(\d+)'
-  - regex: '(BREW);'
-  - regex: '(Brew MP|BMP)[ /](\d+)\.(\d+)\.(\d+)'
-    os_replacement: 'Brew MP'
-  - regex: 'BMP;'
-    os_replacement: 'Brew MP'
-
-  ##########
-  # Google TV
-  ##########
-  - regex: '(GoogleTV)(?: (\d+)\.(\d+)(?:\.(\d+)|)|/[\da-z]+)'
-
-  - regex: '(WebTV)/(\d+).(\d+)'
-
   ##########
   # Misc mobile
   ##########
@@ -647,19 +598,6 @@ os_parsers:
   # just os
   - regex: '(Windows|Android|WeTab|Maemo|Web0S)'
   - regex: '(Ubuntu|Kubuntu|Arch Linux|CentOS|Slackware|Gentoo|openSUSE|SUSE|Red Hat|Fedora|PCLinuxOS|Mageia|SerenityOS|(?:Free|Open|Net|\b)BSD)'
-  # Linux + Kernel Version
-  - regex: '(Linux)(?:[ /](\d+)\.(\d+)(?:\.(\d+)|)|)'
-  - regex: 'SunOS'
-    os_replacement: 'Solaris'
-  # Wget/x.x.x (linux-gnu)
-  - regex: '\(linux-gnu\)'
-    os_replacement: 'Linux'
-  - regex: '\(x86_64-redhat-linux-gnu\)'
-    os_replacement: 'Red Hat'
-  - regex: '\((freebsd)(\d+)\.(\d+)\)'
-    os_replacement: 'FreeBSD'
-  - regex: 'linux'
-    os_replacement: 'Linux'
 
   # Roku Digital-Video-Players https://www.roku.com/
   - regex: '^(Roku)/DVP-(\d+)\.(\d+)'
