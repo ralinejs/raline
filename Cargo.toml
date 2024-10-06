@@ -12,6 +12,7 @@ askama_axum = "0.4"
 axum-client-ip = "0.6.0"
 axum-extra = {version = "0.9", features = ["typed-header"]}
 axum-valid = "0.19.0"
+base16ct = {version = "0.2", features = ["alloc"]}
 comrak = {version = "0.28", features = ["shortcodes"]}
 delegate-attr = "0.3"
 derive_more = {version = "1.0", features = ["full"]}
@@ -19,7 +20,8 @@ instant-akismet = "0.2"
 itertools = "0.13"
 jsonwebtoken = "8.3"
 just-auth = "0.1"
-lazy_static = "1.4"
+lazy_static = "1.5"
+md-5 = "0.10"
 pem = "3.0"
 problemdetails = {version = "0.4", features = ["axum"]}
 rand = "0.8"

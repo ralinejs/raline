@@ -10,9 +10,7 @@ use crate::{
         users,
     },
     utils::{
-        jwt::{self, Claims, OptionalClaims},
-        mail,
-        validate_code::{gen_validate_code, get_validate_code},
+        avatar::avatar_url, jwt::{self, Claims, OptionalClaims}, mail, validate_code::{gen_validate_code, get_validate_code}
     },
 };
 use anyhow::Context;
@@ -84,6 +82,7 @@ async fn register(
     if user.is_some() {
         return Err(KnownWebError::bad_request("邮箱已被注册"))?;
     }
+    let avatar = avatar_url(&body.name, &body.email).await;
     let user = users::ActiveModel {
         id: NotSet,
         username: Set(body.name),
@@ -92,6 +91,7 @@ async fn register(
         gender: Set(UserGender::Unknown),
         r#type: Set(UserType::Normal),
         mfa: Set(false),
+        avatar: Set(Some(avatar)),
         ..Default::default()
     }
     .insert(&db)
