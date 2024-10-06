@@ -1,6 +1,6 @@
 export type RalineCommentStatus = 'approved' | 'waiting' | 'spam';
 
-export type RalineUserType = 'administrator' | 'guest';
+export type RalineUserType = 'admin' | 'guest';
 
 export interface RalineCommentData {
   /**

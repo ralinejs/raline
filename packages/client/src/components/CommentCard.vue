@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useNow } from '@vueuse/core';
-import type { ralineComment, ralineCommentStatus } from '@raline/api';
+import type { RalineComment, RalineCommentStatus } from '@raline/api';
 import type { ComputedRef } from 'vue';
 import { computed, inject } from 'vue';
 
@@ -21,11 +21,11 @@ const props = withDefaults(
     /**
      * Comment data
      */
-    comment: ralineComment;
+    comment: RalineComment;
     /**
      * Current comment to be edited
      */
-    edit?: ralineComment | null;
+    edit?: RalineComment | null;
     /**
      * Root comment id
      */
@@ -33,7 +33,7 @@ const props = withDefaults(
     /**
      * Current comment to be replied
      */
-    reply?: ralineComment | null;
+    reply?: RalineComment | null;
   }>(),
   {
     edit: null,
@@ -43,19 +43,19 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (event: 'log'): void;
-  (event: 'submit', comment: ralineComment): void;
-  (event: 'delete', comment: ralineComment): void;
-  (event: 'edit', comment: ralineComment | null): void;
-  (event: 'like', comment: ralineComment): void;
+  (event: 'submit', comment: RalineComment): void;
+  (event: 'delete', comment: RalineComment): void;
+  (event: 'edit', comment: RalineComment | null): void;
+  (event: 'like', comment: RalineComment): void;
   (
     event: 'status',
-    statusInfo: { status: ralineCommentStatus; comment: ralineComment },
+    statusInfo: { status: RalineCommentStatus; comment: RalineComment },
   ): void;
-  (event: 'sticky', comment: ralineComment): void;
-  (event: 'reply', comment: ralineComment | null): void;
+  (event: 'sticky', comment: RalineComment): void;
+  (event: 'reply', comment: RalineComment | null): void;
 }>();
 
-const commentStatus: ralineCommentStatus[] = ['approved', 'waiting', 'spam'];
+const commentStatus: RalineCommentStatus[] = ['approved', 'waiting', 'spam'];
 
 const config = inject<ComputedRef<ralineConfig>>('config')!;
 const likes = useLikeStorage();
@@ -76,7 +76,7 @@ const time = computed(() =>
   getTimeAgo(new Date(props.comment.time), now.value, locale.value),
 );
 
-const isAdmin = computed(() => userInfo.value.type === 'administrator');
+const isAdmin = computed(() => userInfo.value.type === 'admin');
 
 const isOwner = computed(
   () =>
