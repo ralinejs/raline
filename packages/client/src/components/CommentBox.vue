@@ -304,7 +304,7 @@ const submitComment = async (): Promise<void> => {
 
     isSubmitting.value = false;
 
-    if (response.errmsg) return alert(response.errmsg);
+    if (response.instance) return alert(response.detail);
 
     emit('submit', response.data!);
 

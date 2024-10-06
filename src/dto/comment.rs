@@ -8,6 +8,7 @@ use sea_orm::Set;
 use serde::{Deserialize, Serialize};
 use serde_with::formats::CommaSeparator;
 use serde_with::serde_as;
+use serde_with::skip_serializing_none;
 use serde_with::DisplayFromStr;
 use serde_with::StringWithSeparator;
 use validator::Validate;
@@ -179,6 +180,7 @@ impl AddCommentReq {
     }
 }
 
+#[skip_serializing_none]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CommentResp {
