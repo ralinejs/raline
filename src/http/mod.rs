@@ -2,6 +2,7 @@ mod comment;
 mod token;
 mod user;
 mod view_counter;
+mod oauth;
 
 use askama::Template;
 use axum_client_ip::SecureClientIpSource;

@@ -1,5 +1,6 @@
 [web]
 connect_info = true
+graceful = true
 
 [web.middlewares]
 static = { enable = true, uri = "/static", path = "static", precompressed = true, fallback = "index.html" }

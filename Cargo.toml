@@ -1,42 +1,44 @@
 [package]
-name = "raline-server"
-version = "0.1.0"
 edition = "2021"
+name = "raline-server"
 publish = ["crates-io"]
+version = "0.1.0"
 
 [dependencies]
-tokio = { version = "1.0", features = ["full"] }
-spring = "0.2.1"
-spring-web = "0.2"
-spring-mail = "0.2"
-spring-redis = "0.2"
-spring-sea-orm = { version = "0.2", features = ["postgres", "with-web"] }
+ammonia = "4"
+anyhow = "1.0"
+askama = {version = "0.12", features = ["with-axum"]}
+askama_axum = "0.4"
+axum-client-ip = "0.6.0"
+axum-extra = {version = "0.9", features = ["typed-header"]}
+axum-valid = "0.19.0"
+comrak = {version = "0.28", features = ["shortcodes"]}
+delegate-attr = "0.3"
+derive_more = {version = "1.0", features = ["full"]}
+instant-akismet = "0.2"
+itertools = "0.13"
+jsonwebtoken = "8.3"
+just-auth = "0.1"
+lazy_static = "1.4"
+pem = "3.0"
+problemdetails = {version = "0.4", features = ["axum"]}
+rand = "0.8"
+regex = "1"
+reqwest = "0.12"
+rust-i18n = "3.1"
 sea-orm = "1.0"
 serde = "1.0"
 serde_json = "1.0"
 serde_with = "3.9"
-strum = { version = "0.26", features = ["derive"] }
-anyhow = "1.0"
-axum-extra = { version = "0.9", features = ["typed-header"] }
-axum-client-ip = "0.6.0"
-axum-valid = "0.19.0"
-problemdetails = { version = "0.4", features = ["axum"] }
-validator = { version = "0.18", features = ["derive"] }
-jsonwebtoken = "8.3"
-pem = "3.0"
-lazy_static = "1.4"
+spring = "0.2.2"
+spring-job = "0.2"
+spring-mail = "0.2"
+spring-redis = "0.2"
+spring-sea-orm = {version = "0.2", features = ["postgres", "with-web"]}
+spring-web = "0.2"
+strum = {version = "0.26", features = ["derive"]}
+tokio = {version = "1.0", features = ["full"]}
 tracing = "0.1"
-rand = "0.8"
-askama = { version = "0.12", features = ["with-axum"] }
-askama_axum = "0.4"
-itertools = "0.13"
-derive_more = { version = "1.0", features = ["full"] }
-delegate-attr = "0.3"
-instant-akismet = "0.2"
-reqwest = "0.12"
-regex = "1"
 uaparser = "0.6"
-comrak = { version = "0.28", features = ["shortcodes"] }
-ammonia = "4"
-rust-i18n = "3.1"
-xdb = { git = "https://github.com/lionsoul2014/ip2region.git", branch = "master" }
+validator = {version = "0.18", features = ["derive"]}
+xdb = {git = "https://github.com/lionsoul2014/ip2region.git", branch = "master"}
