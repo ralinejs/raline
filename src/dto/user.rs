@@ -66,10 +66,12 @@ pub struct UpdateUserReq {
 
 #[derive(Debug, Serialize)]
 pub struct UserResp {
+    #[serde(rename = "objectId")]
     pub id: i32,
     pub name: String,
     pub email: Option<String>,
     pub gender: UserGender,
+    #[serde(with = "UserTypeRef")]
     pub r#type: UserType,
     pub avatar: Option<String>,
     pub mfa: bool,
@@ -95,10 +97,12 @@ impl From<users::Model> for UserResp {
 
 #[derive(Debug, Serialize)]
 pub struct UserRespWithToken {
+    #[serde(rename = "objectId")]
     pub id: i32,
     pub name: String,
     pub email: Option<String>,
     pub gender: UserGender,
+    #[serde(with = "UserTypeRef")]
     pub r#type: UserType,
     pub avatar: Option<String>,
     pub mfa: bool,
@@ -145,4 +149,13 @@ fn default_page() -> u64 {
 }
 fn default_size() -> u64 {
     10
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(remote = "UserType")]
+pub enum UserTypeRef {
+    #[serde(rename = "admin")]
+    Admin,
+    #[serde(rename = "normal")]
+    Normal,
 }
