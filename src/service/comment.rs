@@ -8,6 +8,7 @@ use crate::model::sea_orm_active_enums::UserType;
 use crate::model::{prelude::*, users};
 use crate::plugins::akismet::Akismet;
 use crate::plugins::uaparser::{ToStringExt, UAParser};
+use crate::utils::avatar::avatar_url;
 use crate::utils::ip2region;
 use crate::utils::jwt::Claims;
 use crate::{
@@ -496,16 +497,27 @@ impl CommentService {
             Some(c.content.to_owned())
         };
         let user = users.iter().find(|u| c.user_id == Some(u.id));
+        let nick = user.map(|u| u.username.clone()).or(c.nick.to_owned());
+        let mail = user.and_then(|u| u.email.clone()).or(c.mail.to_owned());
+        let avatar = user.and_then(|u| u.avatar.clone());
+        let avatar = match avatar {
+            Some(avatar) => avatar,
+            None => {
+                let nick = nick.as_ref().map(|s| s.as_str()).unwrap_or("");
+                let mail = mail.as_ref().map(|s| s.as_str()).unwrap_or("");
+                avatar_url(nick, mail)
+            }
+        };
         CommentResp {
             url: c.url.to_owned(),
             status: c.status.to_owned(),
             comment: comment_html,
             inserted_at: c.created_at,
             link: c.link.to_owned(),
-            nick: user.map(|u| u.username.clone()).or(c.nick.to_owned()),
-            mail: user.and_then(|u| u.email.clone()).or(c.mail.to_owned()),
+            nick: nick,
+            mail: mail,
             r#type: user.map(|u| u.r#type.clone()),
-            avatar: user.and_then(|u| u.avatar.clone()).unwrap_or_default(),
+            avatar: avatar,
             pid: c.pid,
             rid: c.rid,
             user_id: c.user_id,

@@ -7,7 +7,7 @@ lazy_static! {
     static ref qq_mail_reg: Regex = Regex::new("^[0-9]+@qq.com$").expect("regex parse failed");
 }
 
-pub async fn avatar_url(nick: &str, email: &str) -> String {
+pub fn avatar_url(nick: &str, email: &str) -> String {
     if num_reg.is_match(nick) {
         format!("https://q1.qlogo.cn/g?b=qq&nk={nick}&s=100")
     } else if qq_mail_reg.is_match(email) {

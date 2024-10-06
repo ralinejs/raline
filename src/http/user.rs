@@ -82,7 +82,7 @@ async fn register(
     if user.is_some() {
         return Err(KnownWebError::bad_request("邮箱已被注册"))?;
     }
-    let avatar = avatar_url(&body.name, &body.email).await;
+    let avatar = avatar_url(&body.name, &body.email);
     let user = users::ActiveModel {
         id: NotSet,
         username: Set(body.name),
