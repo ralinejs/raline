@@ -2080,12 +2080,11 @@ dependencies = [
 
 [[package]]
 name = "just-auth"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "551d840ab38482cc8cdcda14bbd0552620bd6c8f244bc02f95f2e15889b29168"
+checksum = "482378184b13b1fd70e87365966e58cd3ee40a431c321b13f6ed80c6f5c5e108"
 dependencies = [
  "async-trait",
- "derive_builder",
  "reqwest",
  "serde",
  "serde_json",

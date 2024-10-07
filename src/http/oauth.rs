@@ -1,30 +1,25 @@
-use std::collections::HashMap;
-
+use crate::service::auth::AuthService;
 use spring_web::axum::response::{IntoResponse, Redirect};
-use spring_web::error::{KnownWebError, Result};
-use spring_web::extractor::{Config, Query};
+use spring_web::error::Result;
+use spring_web::extractor::{Component, Path, RawQuery};
 use spring_web::get;
 
-use crate::config::RalineConfig;
-
-type MapQuery = Query<HashMap<String, String>>;
-
-#[get("/api/oauth")]
-async fn oauth(
-    Query(params): MapQuery,
-    Config(config): Config<RalineConfig>,
+#[get("/api/oauth/:ty/render")]
+async fn oauth_render(
+    Path(ty): Path<String>,
+    Component(auth): Component<AuthService>,
 ) -> Result<impl IntoResponse> {
-    let code = params.get("code");
-    let ty = params
-        .get("type")
-        .ok_or_else(|| KnownWebError::bad_request("type is empty"))?;
-    let redirect = params.get("redirect");
-    match code {
-        None => {
-            let server_url = config.server_url;
+    let auth_server = auth.get_auth_server(&ty)?;
+    Ok(Redirect::to(&auth_server.authorize().await?))
+}
 
-            return Ok(Redirect::to(&format!("")));
-        }
-        Some(code) => Ok(Redirect::to(&format!(""))),
-    }
+#[get("/api/oauth/:ty/callback")]
+async fn oauth_callback(
+    Path(ty): Path<String>,
+    RawQuery(query): RawQuery,
+    Component(auth): Component<AuthService>,
+) -> Result<impl IntoResponse> {
+    let auth_server = auth.get_auth_server(&ty)?;
+    auth_server.login(query.unwrap_or_default()).await;
+    Ok("")
 }
