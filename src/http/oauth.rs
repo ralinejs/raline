@@ -20,6 +20,6 @@ async fn oauth_callback(
     Component(auth): Component<AuthService>,
 ) -> Result<impl IntoResponse> {
     let auth_server = auth.get_auth_server(&ty)?;
-    auth_server.login(query.unwrap_or_default()).await;
+    auth_server.login(query.unwrap_or_default()).await?;
     Ok("")
 }

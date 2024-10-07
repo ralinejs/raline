@@ -2080,9 +2080,9 @@ dependencies = [
 
 [[package]]
 name = "just-auth"
-version = "0.1.1"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "482378184b13b1fd70e87365966e58cd3ee40a431c321b13f6ed80c6f5c5e108"
+checksum = "a7c55d0c8d6058f931904506eaa3741b170452f9659adaeda90c78f2d662c38a"
 dependencies = [
  "async-trait",
  "reqwest",
@@ -2974,6 +2974,7 @@ dependencies = [
  "sea-orm",
  "serde",
  "serde_json",
+ "serde_urlencoded",
  "serde_with",
  "spring",
  "spring-job",
