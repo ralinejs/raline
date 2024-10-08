@@ -334,7 +334,7 @@ impl CommentService {
                     let c = ac.update(&self.db).await.context("update comment failed")?;
                     self.format_comment(&c, &vec![], &optional_claims).await
                 } else {
-                    if c.user_id != Some(claims.uid) || UserType::Admin != claims.ty {
+                    if c.user_id != Some(claims.uid) && UserType::Admin != claims.ty {
                         Err(KnownWebError::forbidden("forbidden"))?;
                     }
                     let c = body

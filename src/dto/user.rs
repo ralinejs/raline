@@ -71,7 +71,6 @@ pub struct UserResp {
     pub name: String,
     pub email: Option<String>,
     pub gender: UserGender,
-    #[serde(with = "UserTypeRef")]
     pub r#type: UserType,
     pub avatar: Option<String>,
     pub mfa: bool,
@@ -102,7 +101,6 @@ pub struct UserRespWithToken {
     pub name: String,
     pub email: Option<String>,
     pub gender: UserGender,
-    #[serde(with = "UserTypeRef")]
     pub r#type: UserType,
     pub avatar: Option<String>,
     pub mfa: bool,
@@ -149,13 +147,4 @@ fn default_page() -> u64 {
 }
 fn default_size() -> u64 {
     10
-}
-
-#[derive(Serialize, Deserialize)]
-#[serde(remote = "UserType")]
-pub enum UserTypeRef {
-    #[serde(rename = "admin")]
-    Admin,
-    #[serde(rename = "normal")]
-    Normal,
 }

@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::formats::CommaSeparator;
 use serde_with::serde_as;
 use serde_with::skip_serializing_none;
+use serde_with::BoolFromInt;
 use serde_with::DisplayFromStr;
 use serde_with::StringWithSeparator;
 use validator::Validate;
@@ -21,7 +22,6 @@ pub struct AdminCommentQuery {
     #[validate(range(max = 200, message = "查询数据过多"))]
     #[serde(default = "default_size")]
     pub size: u64,
-    #[serde(with = "CommentStatusRef")]
     pub status: CommentStatus,
     pub owner: Owner,
     #[validate(length(max = 32, message = "查询关键字过长"))]
@@ -138,19 +138,6 @@ pub struct AdminListResp {
     pub data: Vec<CommentResp>,
 }
 
-#[derive(Serialize, Deserialize)]
-#[serde(remote = "CommentStatus")]
-pub enum CommentStatusRef {
-    #[serde(rename = "approved")]
-    Approved,
-    #[serde(rename = "deleted")]
-    Deleted,
-    #[serde(rename = "spam")]
-    Spam,
-    #[serde(rename = "waiting")]
-    Waiting,
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AddCommentReq {
     pub comment: String,
@@ -185,7 +172,6 @@ impl AddCommentReq {
 #[serde(rename_all = "camelCase")]
 pub struct CommentResp {
     pub url: String,
-    #[serde(with = "CommentStatusRef")]
     pub status: CommentStatus,
     pub comment: String,
     pub inserted_at: DateTime,
@@ -210,12 +196,14 @@ pub struct CommentResp {
     pub children: Vec<CommentResp>,
 }
 
+#[serde_as]
 #[derive(Debug, Deserialize)]
 pub struct CommentUpdateReq {
     pub comment: Option<String>,
     pub link: Option<String>,
     pub mail: Option<String>,
     pub nick: Option<String>,
+    #[serde_as(as = "Option<BoolFromInt>")]
     pub sticky: Option<bool>,
     pub status: Option<CommentStatus>,
     pub like: Option<bool>,

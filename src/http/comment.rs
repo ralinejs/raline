@@ -1,11 +1,11 @@
 use crate::dto::comment::{AddCommentReq, CommentQueryResp, CommentUpdateReq};
-use crate::model::prelude::*;
 use crate::model::sea_orm_active_enums::UserType;
+use crate::model::{comments, prelude::*};
 use crate::service::comment::CommentService;
 use crate::{dto::comment::CommentQueryReq, utils::jwt::OptionalClaims};
 use anyhow::Context;
 use axum_client_ip::SecureClientIp;
-use sea_orm::EntityTrait;
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde_json::json;
 use spring_sea_orm::DbConn;
 use spring_web::delete;
@@ -89,7 +89,13 @@ async fn delete_comment(
         Err(KnownWebError::forbidden("forbidden"))?;
     }
 
-    let effect = Comments::delete_by_id(c.id)
+    let effect = Comments::delete_many()
+        .filter(
+            comments::Column::Id
+                .eq(id)
+                .or(comments::Column::Pid.eq(id))
+                .or(comments::Column::Rid.eq(id)),
+        )
         .exec(&db)
         .await
         .context("delete comment failed")?;
