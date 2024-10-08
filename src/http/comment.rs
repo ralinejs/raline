@@ -85,7 +85,7 @@ async fn delete_comment(
     };
 
     let uid = claims.clone().map(|c| c.uid);
-    if c.user_id != uid || claims.clone().map(|c| c.ty) == Some(UserType::Admin) {
+    if c.user_id != uid || claims.clone().map(|c| c.ty) != Some(UserType::Admin) {
         Err(KnownWebError::forbidden("forbidden"))?;
     }
 

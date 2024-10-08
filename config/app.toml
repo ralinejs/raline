@@ -30,3 +30,9 @@ server_url = "http://localhost:8080"
 
 [logger]
 pretty_backtrace = false
+
+[auth]
+qq = { client_id = "", client_secret = "" }
+weibo = { client_id = "", client_secret = "" }
+github = { client_id = "", client_secret = "" }
+twitter = { client_id = "", client_secret = "" }
