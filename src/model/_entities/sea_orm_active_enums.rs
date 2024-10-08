@@ -19,8 +19,6 @@ use serde::{Deserialize, Serialize};
 pub enum CommentStatus {
     #[sea_orm(string_value = "approved")]
     Approved,
-    #[sea_orm(string_value = "deleted")]
-    Deleted,
     #[sea_orm(string_value = "spam")]
     Spam,
     #[sea_orm(string_value = "waiting")]

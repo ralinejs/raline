@@ -53,17 +53,10 @@ impl CommentService {
         q: &RecentCommentQuery,
         optional_claims: &OptionalClaims,
     ) -> Result<Vec<CommentResp>> {
+        let filter = comments::Column::Status.eq(CommentStatus::Approved);
         let filter = match &**optional_claims {
-            None => comments::Column::Status.eq(CommentStatus::Approved),
-            Some(c) => {
-                if c.ty == UserType::Admin {
-                    comments::Column::Status.ne(CommentStatus::Deleted)
-                } else {
-                    comments::Column::Status
-                        .eq(CommentStatus::Approved)
-                        .or(comments::Column::UserId.eq(c.uid))
-                }
-            }
+            None => filter,
+            Some(c) => filter.or(comments::Column::UserId.eq(c.uid)),
         };
 
         let comments = Comments::find()
@@ -168,7 +161,7 @@ impl CommentService {
             None => filter.and(comments::Column::Status.eq(CommentStatus::Approved)),
             Some(c) => {
                 if c.ty == UserType::Admin {
-                    filter.and(comments::Column::Status.ne(CommentStatus::Deleted))
+                    filter
                 } else {
                     filter.and(
                         comments::Column::Status
