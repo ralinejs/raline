@@ -1,0 +1,7 @@
+{
+    "i18n-ally.localesPaths": [
+        "locales",
+        "packages/admin/src/locales",
+        "packages/client/src/config/i18n"
+    ]
+}

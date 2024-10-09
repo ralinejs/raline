@@ -1,3 +1,4 @@
+use super::Locale;
 use crate::{
     config::mail::EmailConfig,
     dto::user::{
@@ -10,10 +11,14 @@ use crate::{
         users,
     },
     utils::{
-        avatar::avatar_url, jwt::{self, Claims, OptionalClaims}, mail, validate_code::{gen_validate_code, get_validate_code}
+        avatar::avatar_url,
+        jwt::{self, Claims, OptionalClaims},
+        mail,
+        validate_code::{gen_validate_code, get_validate_code},
     },
 };
 use anyhow::Context;
+use rust_i18n::t;
 use sea_orm::{ActiveModelTrait, ActiveValue::NotSet, ColumnTrait, EntityTrait, QueryFilter, Set};
 use spring_mail::Mailer;
 use spring_redis::Redis;
@@ -61,15 +66,21 @@ async fn get_users(
 async fn register(
     Component(mut redis): Component<Redis>,
     Component(db): Component<DbConn>,
+    Locale(lang): Locale,
     Json(body): Json<RegisterReq>,
 ) -> Result<Json<UserResp>> {
     let code = get_validate_code(&mut redis, &body.email).await?;
 
     match code {
-        None => return Err(KnownWebError::bad_request("验证码已过期"))?,
+        None => {
+            return Err(KnownWebError::bad_request(t!(
+                "expired_code",
+                locale = lang
+            )))?
+        }
         Some(code) => {
             if code != body.validate_code {
-                return Err(KnownWebError::bad_request("验证码错误"))?;
+                return Err(KnownWebError::bad_request(t!("error_code", locale = lang)))?;
             }
         }
     }
@@ -80,7 +91,10 @@ async fn register(
         .await
         .context("select user from db failed")?;
     if user.is_some() {
-        return Err(KnownWebError::bad_request("邮箱已被注册"))?;
+        return Err(KnownWebError::bad_request(t!(
+            "user_registered",
+            locale = lang
+        )))?;
     }
     let avatar = avatar_url(&body.name, &body.email);
     let user = users::ActiveModel {
@@ -145,14 +159,15 @@ async fn reset_validate_code(
 async fn reset_password(
     Component(mut redis): Component<Redis>,
     Component(db): Component<DbConn>,
+    Locale(lang): Locale,
     Json(req): Json<ResetPasswdReq>,
 ) -> Result<impl IntoResponse> {
     let code = get_validate_code(&mut redis, &req.email)
         .await?
-        .ok_or_else(|| KnownWebError::bad_request("验证码已过期"))?;
+        .ok_or_else(|| KnownWebError::bad_request(t!("expired_code", locale = lang)))?;
 
     if code != req.validate_code {
-        Err(KnownWebError::bad_request("验证码错误"))?;
+        Err(KnownWebError::bad_request(t!("error_code", locale = lang)))?;
     }
 
     let u = Users::find()
@@ -160,7 +175,7 @@ async fn reset_password(
         .one(&db)
         .await
         .with_context(|| format!("query user by email failed: {}", req.email))?
-        .ok_or_else(|| KnownWebError::not_found("用户不存在"))?;
+        .ok_or_else(|| KnownWebError::not_found(t!("user_not_exists", locale = lang)))?;
 
     let u = users::ActiveModel {
         id: Set(u.id),
@@ -181,13 +196,14 @@ async fn reset_password(
 async fn update_user(
     claims: Claims,
     Component(db): Component<DbConn>,
+    Locale(lang): Locale,
     Json(req): Json<UpdateUserReq>,
 ) -> Result<impl IntoResponse> {
     let u = Users::find_by_id(claims.uid)
         .one(&db)
         .await
         .with_context(|| format!("query user by id#{} failed", claims.uid))?
-        .ok_or_else(|| KnownWebError::not_found("用户不存在"))?;
+        .ok_or_else(|| KnownWebError::not_found(t!("user_not_exists", locale = lang)))?;
 
     let u = users::ActiveModel {
         id: Set(u.id),

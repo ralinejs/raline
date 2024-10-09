@@ -1,18 +1,21 @@
 mod comment;
+mod oauth;
+mod pv_counter;
 mod token;
 mod user;
-mod pv_counter;
-mod oauth;
 
 use askama::Template;
 use axum_client_ip::SecureClientIpSource;
+use serde::Deserialize;
+use spring::async_trait;
 use spring_web::{
     axum::{
         body,
+        http::request::Parts,
         middleware::{self, Next},
         response::{IntoResponse, Response},
     },
-    extractor::{Config, Request},
+    extractor::{rejection::QueryRejection, Config, FromRequestParts, Query, Request},
     get, routes, Router,
 };
 
@@ -84,4 +87,25 @@ async fn ui(Config(config): Config<RalineConfig>) -> impl IntoResponse {
         site_name: site_name,
         server_url: format!("{server_url}/api/"),
     }
+}
+
+struct Locale(String);
+
+#[async_trait]
+impl<S> FromRequestParts<S> for Locale {
+    type Rejection = QueryRejection;
+    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
+        let query: Query<LangParam> = Query::try_from_uri(&parts.uri)?;
+        Ok(Locale(query.lang.clone()))
+    }
+}
+
+#[derive(Deserialize)]
+struct LangParam {
+    #[serde(default = "default_lang")]
+    lang: String,
+}
+
+fn default_lang() -> String {
+    "zh-CN".to_string()
 }

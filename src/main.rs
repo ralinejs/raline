@@ -14,6 +14,9 @@ use spring_sea_orm::SeaOrmPlugin;
 use spring_web::{WebConfigurator, WebPlugin};
 use xdb::searcher_init;
 
+// Init translations for current crate.
+rust_i18n::i18n!("locales");
+
 #[tokio::main]
 async fn main() {
     let xdb_filepath = "./data/ip2region.xdb";
