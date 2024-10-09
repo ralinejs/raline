@@ -122,7 +122,7 @@ pub enum CommentQueryResp {
     Recent(Vec<CommentResp>),
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Default, Serialize)]
 pub struct ListResp {
     pub count: u64,
     pub data: Vec<CommentResp>,
@@ -152,16 +152,16 @@ pub struct AddCommentReq {
 }
 
 impl AddCommentReq {
-    pub fn into_active_model(self) -> comments::ActiveModel {
+    pub fn into_active_model(self, page_id: i32) -> comments::ActiveModel {
         comments::ActiveModel {
+            page_id: Set(page_id),
             content: Set(self.comment),
             nick: Set(self.nick),
             ua: Set(self.ua),
-            url: Set(self.url),
             link: Set(self.link),
             mail: Set(self.mail),
-            pid: Set(self.pid),
-            rid: Set(self.rid),
+            pid: Set(self.pid.unwrap_or(0)),
+            rid: Set(self.rid.unwrap_or(0)),
             ..Default::default()
         }
     }
@@ -171,15 +171,14 @@ impl AddCommentReq {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CommentResp {
-    pub url: String,
     pub status: CommentStatus,
     pub comment: String,
     pub inserted_at: DateTime,
     pub link: Option<String>,
     pub nick: Option<String>,
     pub mail: Option<String>,
-    pub pid: Option<i32>,
-    pub rid: Option<i32>,
+    pub pid: i32,
+    pub rid: i32,
     #[serde(rename = "user_id")]
     pub user_id: Option<i32>,
     pub r#type: Option<UserType>,

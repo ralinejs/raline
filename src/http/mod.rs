@@ -1,7 +1,7 @@
 mod comment;
 mod token;
 mod user;
-mod view_counter;
+mod pv_counter;
 mod oauth;
 
 use askama::Template;

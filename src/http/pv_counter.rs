@@ -1,6 +1,6 @@
-use crate::dto::view_counter::{ColumnQueryAs, SetViewCount};
-use crate::model::prelude::ViewCounter;
-use crate::{dto::view_counter::ViewCountQuery, model::view_counter};
+use crate::dto::pv_counter::{ColumnQueryAs, SetViewCount};
+use crate::model::prelude::PageViewCounter;
+use crate::{dto::pv_counter::ViewCountQuery, model::page_view_counter};
 use anyhow::Context;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde_json::json;
@@ -22,14 +22,14 @@ async fn get_view_count(
         let result = req.types.into_iter().map(|ty| (ty, 0)).collect();
         return Ok(Json(vec![result]));
     }
-    let result = ViewCounter::find()
-        .filter(view_counter::Column::Url.is_in(&req.path))
+    let result = PageViewCounter::find()
+        .filter(page_view_counter::Column::Path.is_in(&req.path))
         .all(&db)
         .await
         .context("query view counter failed")?;
 
-    let item_map: HashMap<String, view_counter::Model> =
-        result.into_iter().map(|vc| (vc.url.clone(), vc)).collect();
+    let item_map: HashMap<String, page_view_counter::Model> =
+        result.into_iter().map(|vc| (vc.path.clone(), vc)).collect();
 
     let ty_count: usize = req.types.len();
     let mut result = vec![];
@@ -54,7 +54,7 @@ async fn post_view_count(
     Component(db): Component<DbConn>,
     Json(req): Json<SetViewCount>,
 ) -> Result<impl IntoResponse> {
-    let count = ViewCounter::increase_by_path(&db, &req)
+    let count = PageViewCounter::increase_by_path(&db, &req)
         .await
         .context("increase view count failed")?;
 

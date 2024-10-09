@@ -1,7 +1,7 @@
 --- 浏览量
 create table page_view_counter (
     id serial primary key,
-    url varchar(255) not null,
+    path varchar(255) not null,
     times int not null default 0,
     reaction0 int not null default 0,
     reaction1 int not null default 0,
@@ -15,8 +15,8 @@ create table page_view_counter (
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
---- url字段创建唯一索引，对于频繁根据url查询id，包含id避免回表
-create unique index if not exists pvc_uk_url on page_view_counter(url) include (id);
+--- path字段创建唯一索引，叶子节点包含id针对频繁根据path查询id，避免回表
+-- create unique index if not exists pvc_uk_path on page_view_counter(path) include (id);
 --- 评论状态
 create type comment_status as enum('waiting', 'approved', 'spam');
 --- 用户评论
@@ -38,9 +38,9 @@ create table comments (
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
---- keyset pagination索引，最后包含user_id是为了索引覆盖user_id的过滤，因为user_id的条件有无是动态的
-create index if not exists cmt_pgid_pid_created_id_sticky on comments(page_id, pid, created_at, id, sticky, user_id);
-create index if not exists cmt_pgid_pid_star_id_sticky on comments(page_id, pid, star, id, sticky, user_id);
+--- keyset pagination索引，叶子节点包含status、user_id是为了索引覆盖过滤查询
+-- create index if not exists cmt_pgid_pid_created_id_sticky on comments(page_id, pid, sticky, created_at, id) include (status, user_id);
+-- create index if not exists cmt_pgid_pid_star_id_sticky on comments(page_id, pid, sticky, star, id) include (status, user_id);
 --- 用户类型
 create type user_type as enum('admin', 'normal');
 create type user_gender as enum('unknown', 'male', 'female');

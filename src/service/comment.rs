@@ -5,7 +5,7 @@ use crate::dto::comment::{
     CountCommentQuery, ListCommentQuery, ListResp, Owner, RecentCommentQuery,
 };
 use crate::model::sea_orm_active_enums::UserType;
-use crate::model::{prelude::*, users};
+use crate::model::{page_view_counter, prelude::*, users};
 use crate::plugins::akismet::Akismet;
 use crate::plugins::uaparser::{ToStringExt, UAParser};
 use crate::utils::avatar::avatar_url;
@@ -156,7 +156,14 @@ impl CommentService {
         q: &ListCommentQuery,
         claims: &OptionalClaims,
     ) -> Result<ListResp> {
-        let filter = comments::Column::Url.eq(&q.path);
+        let page = PageViewCounter::find_id_by_path(&self.db, &q.path)
+            .await
+            .context("find page failed")?;
+        let page = match page {
+            None => return Ok(ListResp::default()),
+            Some(page) => page,
+        };
+        let filter = comments::Column::PageId.eq(page.id);
         let filter = match &**claims {
             None => filter.and(comments::Column::Status.eq(CommentStatus::Approved)),
             Some(c) => {
@@ -225,13 +232,19 @@ impl CommentService {
                 .or(comments::Column::UserId.eq(c.uid)),
         };
 
-        let filter = filter.and(comments::Column::Url.is_in(&q.url));
-        let count: Vec<(String, i64)> = Comments::find()
+        let path_id_map = PageViewCounter::find_ids_by_paths(&self.db, &q.url)
+            .await
+            .context("find pages failed")?;
+
+        let path_ids = path_id_map.values().cloned().collect_vec();
+
+        let filter = filter.and(comments::Column::PageId.is_in(path_ids));
+        let count: Vec<(i32, i64)> = Comments::find()
             .select_only()
-            .column_as(comments::Column::Url, "url")
+            .column_as(comments::Column::PageId, "page_id")
             .column_as(comments::Column::Id.count(), "count")
             .filter(filter)
-            .group_by(comments::Column::Url)
+            .group_by(comments::Column::PageId)
             .into_tuple()
             .all(&self.db)
             .await
@@ -240,9 +253,10 @@ impl CommentService {
             .url
             .iter()
             .map(|u| {
+                let page_id = path_id_map.get(u);
                 count
                     .iter()
-                    .filter(|(url, _)| url == u)
+                    .filter(|(stat_page_id, _)| Some(stat_page_id) == page_id)
                     .last()
                     .map(|(_, count)| *count)
                     .unwrap_or_default()
@@ -257,7 +271,23 @@ impl CommentService {
         client_ip: IpAddr,
         body: AddCommentReq,
     ) -> Result<CommentResp> {
-        let mut data = body.clone().into_active_model();
+        let page = PageViewCounter::find_id_by_path(&self.db, &body.url)
+            .await
+            .context("find page failed")?;
+        let page_id = match page {
+            Some(page) => page.id,
+            None => {
+                page_view_counter::ActiveModel {
+                    path: Set(body.url.clone()),
+                    ..Default::default()
+                }
+                .insert(&self.db)
+                .await
+                .context("insert page failed")?
+                .id
+            }
+        };
+        let mut data = body.clone().into_active_model(page_id);
         data.ip = Set(client_ip.to_string());
         data.user_id = Set(claims.as_ref().map(|c| c.uid));
 
@@ -358,11 +388,15 @@ impl CommentService {
             Err(KnownWebError::forbidden("禁止访问"))?;
         }
         tracing::debug!("Comment IP {} check OK!", &client_ip);
+        let page = PageViewCounter::find_id_by_path(&self.db, comment.url.clone())
+            .await
+            .context("find page failed")?
+            .ok_or_else(|| KnownWebError::not_found("page not exists"))?;
 
         let duplicate_count = Comments::find()
             .filter(
-                comments::Column::Url
-                    .eq(comment.url.clone())
+                comments::Column::PageId
+                    .eq(page.id)
                     .and(comments::Column::Mail.eq(comment.mail.clone()))
                     .and(comments::Column::Link.eq(comment.link.clone()))
                     .and(comments::Column::Nick.eq(comment.nick.clone()))
@@ -440,7 +474,7 @@ impl CommentService {
         for c in roots {
             let mut cr = self.format_comment(&c, users, login_user).await;
             for cc in children.iter() {
-                if cc.rid == Some(cr.object_id) {
+                if cc.rid == cr.object_id {
                     let ccr = self.format_comment(cc, users, login_user).await;
                     cr.children.push(ccr);
                 }
@@ -502,7 +536,6 @@ impl CommentService {
             }
         };
         CommentResp {
-            url: c.url.to_owned(),
             status: c.status.to_owned(),
             comment: comment_html,
             inserted_at: c.created_at,

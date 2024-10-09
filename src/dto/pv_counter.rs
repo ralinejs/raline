@@ -1,3 +1,4 @@
+use crate::model::page_view_counter;
 use sea_orm::DeriveColumn;
 use sea_orm::EnumIter;
 use serde::Deserialize;
@@ -5,8 +6,6 @@ use serde::Serialize;
 use serde_with::formats::CommaSeparator;
 use serde_with::serde_as;
 use serde_with::StringWithSeparator;
-
-use crate::model::view_counter;
 
 #[serde_as]
 #[derive(Debug, Deserialize)]
@@ -54,7 +53,7 @@ pub enum ColumnQueryAs {
 }
 
 impl ColumnQueryAs {
-    pub fn get(&self, model: &view_counter::Model) -> i32 {
+    pub fn get(&self, model: &page_view_counter::Model) -> i32 {
         match self {
             Self::Times => model.times,
             Self::Reaction0 => model.reaction0,

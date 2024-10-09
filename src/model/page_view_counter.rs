@@ -1,10 +1,12 @@
-use std::cmp::max;
+use std::{cmp::max, collections::HashMap};
 
-pub use super::_entities::view_counter::*;
-use crate::dto::view_counter::{ColumnQueryAs, SetCountAction, SetViewCount};
+pub use super::_entities::page_view_counter::*;
+use crate::dto::pv_counter::{ColumnQueryAs, SetCountAction, SetViewCount};
+use itertools::Itertools;
 use sea_orm::{
     sqlx::types::chrono::Local, ActiveModelBehavior, ActiveModelTrait, ColumnTrait,
-    ConnectionTrait, DbConn, DbErr, EntityTrait, QueryFilter, Set,
+    ConnectionTrait, DbConn, DbErr, DerivePartialModel, EntityTrait, FromQueryResult, QueryFilter,
+    Set,
 };
 use spring::async_trait;
 
@@ -23,16 +25,45 @@ impl ActiveModelBehavior for ActiveModel {
 }
 
 impl Entity {
+    pub async fn find_id_by_path<S: Into<String>>(
+        db: &DbConn,
+        path: S,
+    ) -> Result<Option<PathId>, DbErr> {
+        let path_id = Entity::find()
+            .filter(Column::Path.eq(path.into()))
+            .into_partial_model::<PathId>()
+            .one(db)
+            .await?;
+        Ok(path_id)
+    }
+
+    pub async fn find_ids_by_paths<V, S>(
+        db: &DbConn,
+        paths: &V,
+    ) -> Result<HashMap<String, i32>, DbErr>
+    where
+        for<'a> &'a V: IntoIterator<Item = &'a S>,
+        S: ToString,
+    {
+        let paths: Vec<String> = paths.into_iter().map(|s| s.to_string()).collect_vec();
+        let path_ids = Entity::find()
+            .filter(Column::Path.is_in(paths))
+            .into_partial_model::<PathId>()
+            .all(db)
+            .await?;
+        Ok(path_ids.into_iter().map(|p| (p.path, p.id)).collect())
+    }
+
     pub async fn increase_by_path(db: &DbConn, q: &SetViewCount) -> Result<Model, DbErr> {
         let model = Entity::find()
-            .filter(Column::Url.eq(&q.path))
+            .filter(Column::Path.eq(&q.path))
             .one(db)
             .await?;
 
         let model = match model {
             None => {
                 let mut am = ActiveModel {
-                    url: Set(q.path.clone()),
+                    path: Set(q.path.clone()),
                     ..Default::default()
                 };
                 match q.r#type {
@@ -76,4 +107,13 @@ impl Entity {
 
         Ok(model)
     }
+}
+
+#[derive(DerivePartialModel, FromQueryResult)]
+#[sea_orm(entity = "Entity")]
+pub struct PathId {
+    #[sea_orm(from_col = "id")]
+    pub id: i32,
+    #[sea_orm(from_col = "path")]
+    pub path: String,
 }
