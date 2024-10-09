@@ -188,7 +188,7 @@ impl CommentService {
 
         let (column, order) = q.sort_by.into_column_order();
         let root_comments = Comments::find()
-            .filter(filter.clone().and(comments::Column::Rid.is_null()))
+            .filter(filter.clone().and(comments::Column::Rid.eq(0)))
             .order_by(column, order)
             .limit(q.limit)
             .all(&self.db)
@@ -544,8 +544,8 @@ impl CommentService {
             mail: mail,
             r#type: user.map(|u| u.r#type.clone()),
             avatar: avatar,
-            pid: c.pid,
-            rid: c.rid,
+            pid: if c.pid == 0 { None } else { Some(c.pid) },
+            rid: if c.rid == 0 { None } else { Some(c.rid) },
             user_id: c.user_id,
             sticky: c.sticky,
             like: c.star,

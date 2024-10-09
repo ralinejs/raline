@@ -39,8 +39,8 @@ create table comments (
     updated_at timestamp not null default current_timestamp
 );
 --- keyset pagination索引，叶子节点包含status、user_id是为了索引覆盖过滤查询
--- create index if not exists cmt_pgid_pid_created_id_sticky on comments(page_id, pid, sticky, created_at, id) include (status, user_id);
--- create index if not exists cmt_pgid_pid_star_id_sticky on comments(page_id, pid, sticky, star, id) include (status, user_id);
+-- create index if not exists cmt_pgid_rid_created_id_sticky on comments(page_id, rid, sticky, created_at, id) include (status, user_id);
+-- create index if not exists cmt_pgid_rid_star_id_sticky on comments(page_id, rid, sticky, star, id) include (status, user_id);
 --- 用户类型
 create type user_type as enum('admin', 'normal');
 create type user_gender as enum('unknown', 'male', 'female');

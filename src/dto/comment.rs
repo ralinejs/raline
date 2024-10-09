@@ -177,8 +177,8 @@ pub struct CommentResp {
     pub link: Option<String>,
     pub nick: Option<String>,
     pub mail: Option<String>,
-    pub pid: i32,
-    pub rid: i32,
+    pub pid: Option<i32>,
+    pub rid: Option<i32>,
     #[serde(rename = "user_id")]
     pub user_id: Option<i32>,
     pub r#type: Option<UserType>,
