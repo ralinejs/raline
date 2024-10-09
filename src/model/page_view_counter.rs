@@ -25,10 +25,11 @@ impl ActiveModelBehavior for ActiveModel {
 }
 
 impl Entity {
-    pub async fn find_id_by_path<S: Into<String>>(
-        db: &DbConn,
-        path: S,
-    ) -> Result<Option<PathId>, DbErr> {
+    pub async fn find_id_by_path<C, S>(db: &C, path: S) -> Result<Option<PathId>, DbErr>
+    where
+        C: ConnectionTrait,
+        S: Into<String>,
+    {
         let path_id = Entity::find()
             .filter(Column::Path.eq(path.into()))
             .into_partial_model::<PathId>()
@@ -37,11 +38,12 @@ impl Entity {
         Ok(path_id)
     }
 
-    pub async fn find_ids_by_paths<V, S>(
-        db: &DbConn,
+    pub async fn find_ids_by_paths<C, V, S>(
+        db: &C,
         paths: &V,
     ) -> Result<HashMap<String, i32>, DbErr>
     where
+        C: ConnectionTrait,
         for<'a> &'a V: IntoIterator<Item = &'a S>,
         S: ToString,
     {
