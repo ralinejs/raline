@@ -1,10 +1,12 @@
 use crate::dto::comment::{AddCommentReq, CommentQueryResp, CommentUpdateReq};
+use crate::http::Locale;
 use crate::model::sea_orm_active_enums::UserType;
 use crate::model::{comments, prelude::*};
 use crate::service::comment::CommentService;
 use crate::{dto::comment::CommentQueryReq, utils::jwt::OptionalClaims};
 use anyhow::Context;
 use axum_client_ip::SecureClientIp;
+use rust_i18n::t;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde_json::json;
 use spring_sea_orm::DbConn;
@@ -73,6 +75,7 @@ async fn delete_comment(
     claims: OptionalClaims,
     Component(db): Component<DbConn>,
     Path(id): Path<i32>,
+    Locale(lang): Locale,
 ) -> Result<impl IntoResponse> {
     let c = Comments::find_by_id(id)
         .one(&db)
@@ -80,13 +83,13 @@ async fn delete_comment(
         .context("find comment failed")?;
 
     let c = match c {
-        None => Err(KnownWebError::not_found("not found"))?,
+        None => Err(KnownWebError::not_found(t!("not_found", locale = lang)))?,
         Some(c) => c,
     };
 
     let uid = claims.clone().map(|c| c.uid);
     if c.user_id != uid && claims.clone().map(|c| c.ty) != Some(UserType::Admin) {
-        Err(KnownWebError::forbidden("forbidden"))?;
+        Err(KnownWebError::forbidden(t!("no_permission", locale = lang)))?;
     }
 
     let effect = Comments::delete_many()

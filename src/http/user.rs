@@ -39,9 +39,10 @@ async fn get_users(
     claims: OptionalClaims,
     Component(db): Component<DbConn>,
     Query(q): Query<UserQuery>,
+    Locale(lang): Locale,
 ) -> Result<impl IntoResponse> {
     match &*claims {
-        None => Err(KnownWebError::forbidden("无权访问"))?,
+        None => Err(KnownWebError::forbidden(t!("no_permission", locale = lang)))?,
         Some(c) => c,
     };
     let p = Pagination {
@@ -72,15 +73,13 @@ async fn register(
     let code = get_validate_code(&mut redis, &body.email).await?;
 
     match code {
-        None => {
-            return Err(KnownWebError::bad_request(t!(
-                "expired_code",
-                locale = lang
-            )))?
-        }
+        None => Err(KnownWebError::bad_request(t!(
+            "expired_code",
+            locale = lang
+        )))?,
         Some(code) => {
             if code != body.validate_code {
-                return Err(KnownWebError::bad_request(t!("error_code", locale = lang)))?;
+                Err(KnownWebError::bad_request(t!("error_code", locale = lang)))?
             }
         }
     }
@@ -91,10 +90,10 @@ async fn register(
         .await
         .context("select user from db failed")?;
     if user.is_some() {
-        return Err(KnownWebError::bad_request(t!(
+        Err(KnownWebError::bad_request(t!(
             "user_registered",
             locale = lang
-        )))?;
+        )))?
     }
     let avatar = avatar_url(&body.name, &body.email);
     let user = users::ActiveModel {
@@ -167,7 +166,7 @@ async fn reset_password(
         .ok_or_else(|| KnownWebError::bad_request(t!("expired_code", locale = lang)))?;
 
     if code != req.validate_code {
-        Err(KnownWebError::bad_request(t!("error_code", locale = lang)))?;
+        Err(KnownWebError::bad_request(t!("error_code", locale = lang)))?
     }
 
     let u = Users::find()
