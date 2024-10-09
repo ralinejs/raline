@@ -46,11 +46,32 @@ pub struct ListCommentQuery {
     #[validate(range(max = 200, message = "查询数据过多"))]
     #[serde_as(as = "DisplayFromStr")]
     pub limit: u64,
-    #[serde(rename = "sortBy")]
+    #[serde(flatten)]
     pub sort_by: OrderBy,
-    #[serde(default)]
-    #[serde_as(as = "DisplayFromStr")]
-    pub offset: i64,
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Deserialize)]
+#[serde(tag = "sortBy")]
+pub enum OrderBy {
+    #[serde(rename = "like_desc")]
+    Like {
+        #[serde(default)]
+        #[serde_as(as = "DisplayFromStr")]
+        offset: i64,
+    },
+    #[serde(rename = "insertedAt_asc")]
+    CreatedAtAsc {
+        #[serde(default)]
+        #[serde_as(as = "DisplayFromStr")]
+        offset: i64,
+    },
+    #[serde(rename = "insertedAt_desc")]
+    CreatedAtDesc {
+        #[serde(default)]
+        #[serde_as(as = "DisplayFromStr")]
+        offset: i64,
+    },
 }
 
 #[serde_as]
@@ -93,22 +114,18 @@ pub enum Owner {
     Mine,
 }
 
-#[derive(Debug, Deserialize)]
-pub enum OrderBy {
-    #[serde(rename = "like_desc")]
-    Like,
-    #[serde(rename = "insertedAt_asc")]
-    CreatedAtAsc,
-    #[serde(rename = "insertedAt_desc")]
-    CreatedAtDesc,
-}
-
 impl OrderBy {
-    pub fn into_column_order(&self) -> (crate::model::comments::Column, Order) {
+    pub fn into_column_order(self) -> ((crate::model::comments::Column, Order), i64) {
         match self {
-            Self::Like => (crate::model::comments::Column::Star, Order::Desc),
-            Self::CreatedAtAsc => (crate::model::comments::Column::CreatedAt, Order::Asc),
-            Self::CreatedAtDesc => (crate::model::comments::Column::CreatedAt, Order::Desc),
+            Self::Like { offset } => ((crate::model::comments::Column::Star, Order::Desc), offset),
+            Self::CreatedAtAsc { offset } => (
+                (crate::model::comments::Column::CreatedAt, Order::Asc),
+                offset,
+            ),
+            Self::CreatedAtDesc { offset } => (
+                (crate::model::comments::Column::CreatedAt, Order::Desc),
+                offset,
+            ),
         }
     }
 }

@@ -184,9 +184,9 @@ impl CommentService {
             .await
             .context("count comments failed")?;
 
-        let filter = filter.and(comments::Column::Id.gt(q.offset));
+        let ((column, order), offset) = q.sort_by.clone().into_column_order();
+        let filter = filter.and(comments::Column::Id.gt(offset));
 
-        let (column, order) = q.sort_by.into_column_order();
         let root_comments = Comments::find()
             .filter(filter.clone().and(comments::Column::Rid.eq(0)))
             .order_by(column, order)
