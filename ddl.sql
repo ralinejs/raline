@@ -39,6 +39,8 @@ create table comments (
     updated_at timestamp not null default current_timestamp
 );
 create index if not exists comments_idx_pgid_rid_sticky_created on comments(page_id, rid, sticky, created_at) include (star, status, user_id);
+create index if not exists comments_idx_rid on comments(rid);
+create index if not exists comments_idx_pid on comments(pid);
 --- 用户类型
 create type user_type as enum('admin', 'normal');
 create type user_gender as enum('unknown', 'male', 'female');
