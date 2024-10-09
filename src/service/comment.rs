@@ -185,26 +185,30 @@ impl CommentService {
             .context("count comments failed")?;
 
         let ((column, order), offset) = q.sort_by.clone().into_column_order();
-        let filter = filter.and(comments::Column::Id.gt(offset));
 
         let root_comments = Comments::find()
             .filter(filter.clone().and(comments::Column::Rid.eq(q.rid)))
+            .order_by(comments::Column::Sticky, sea_orm::Order::Desc)
             .order_by(column, order)
-            .limit(q.limit)
-            .all(&self.db)
+            .paginate(&self.db, q.limit)
+            .fetch_page(offset)
             .await
             .context("find root comments failed")?;
 
-        let rids = root_comments.iter().map(|c| c.id).collect_vec();
+        let comments = if q.rid == 0 {
+            // root comments to find children
+            let rids = root_comments.iter().map(|c| c.id).collect_vec();
 
-        let children = Comments::find()
-            .filter(filter.and(comments::Column::Rid.is_in(rids)))
-            .all(&self.db)
-            .await
-            .context("find children comments failed")?;
+            let children = Comments::find()
+                .filter(filter.and(comments::Column::Rid.is_in(rids)))
+                .all(&self.db)
+                .await
+                .context("find children comments failed")?;
 
-        let comments = vec![children, root_comments.clone()].concat();
-
+            vec![children, root_comments.clone()].concat()
+        } else {
+            root_comments.clone()
+        };
         let uids = comments.iter().filter_map(|c| c.user_id).collect_vec();
         let users = Users::find()
             .filter(users::Column::Id.is_in(uids))
@@ -214,6 +218,7 @@ impl CommentService {
 
         Ok(ListResp {
             count,
+            total_pages: count / q.limit,
             data: self
                 .compute_comments(root_comments, &comments, &users, claims)
                 .await,

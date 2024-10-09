@@ -45,13 +45,14 @@ pub struct ListCommentQuery {
     pub path: String,
     #[serde(default = "comments::root_comment_id")]
     pub rid: i32,
-    #[validate(range(max = 200, message = "查询数据过多"))]
+    #[validate(range(min = 1, max = 200, message = "查询数据过多"))]
     #[serde_as(as = "DisplayFromStr")]
     pub limit: u64,
     #[serde(flatten)]
     pub sort_by: OrderBy,
 }
 
+/// 写在这里面方便后期数据量过大时，将limit pagination改造为keyset pagination
 #[serde_as]
 #[derive(Debug, Clone, Deserialize)]
 #[serde(tag = "sortBy")]
@@ -60,20 +61,36 @@ pub enum OrderBy {
     Like {
         #[serde(default)]
         #[serde_as(as = "DisplayFromStr")]
-        offset: i64,
+        offset: u64,
     },
     #[serde(rename = "insertedAt_asc")]
     CreatedAtAsc {
         #[serde(default)]
         #[serde_as(as = "DisplayFromStr")]
-        offset: i64,
+        offset: u64,
     },
     #[serde(rename = "insertedAt_desc")]
     CreatedAtDesc {
         #[serde(default)]
         #[serde_as(as = "DisplayFromStr")]
-        offset: i64,
+        offset: u64,
     },
+}
+
+impl OrderBy {
+    pub fn into_column_order(self) -> ((crate::model::comments::Column, Order), u64) {
+        match self {
+            Self::Like { offset } => ((crate::model::comments::Column::Star, Order::Desc), offset),
+            Self::CreatedAtAsc { offset } => (
+                (crate::model::comments::Column::CreatedAt, Order::Asc),
+                offset,
+            ),
+            Self::CreatedAtDesc { offset } => (
+                (crate::model::comments::Column::CreatedAt, Order::Desc),
+                offset,
+            ),
+        }
+    }
 }
 
 #[serde_as]
@@ -116,22 +133,6 @@ pub enum Owner {
     Mine,
 }
 
-impl OrderBy {
-    pub fn into_column_order(self) -> ((crate::model::comments::Column, Order), i64) {
-        match self {
-            Self::Like { offset } => ((crate::model::comments::Column::Star, Order::Desc), offset),
-            Self::CreatedAtAsc { offset } => (
-                (crate::model::comments::Column::CreatedAt, Order::Asc),
-                offset,
-            ),
-            Self::CreatedAtDesc { offset } => (
-                (crate::model::comments::Column::CreatedAt, Order::Desc),
-                offset,
-            ),
-        }
-    }
-}
-
 #[derive(Debug, Serialize, From)]
 #[serde(untagged)]
 pub enum CommentQueryResp {
@@ -142,8 +143,10 @@ pub enum CommentQueryResp {
 }
 
 #[derive(Debug, Default, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ListResp {
     pub count: u64,
+    pub total_pages: u64,
     pub data: Vec<CommentResp>,
 }
 

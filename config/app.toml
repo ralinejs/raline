@@ -17,6 +17,7 @@ from = "hff1996723@163.com"
 
 [sea-orm]
 uri = "postgres://postgres:xudjf23adj213@localhost:5432/raline"
+enable_logging = true
 
 [sea-orm-web]
 one_indexed = true

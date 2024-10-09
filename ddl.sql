@@ -16,7 +16,7 @@ create table page_view_counter (
     updated_at timestamp not null default current_timestamp
 );
 --- path字段创建唯一索引，叶子节点包含id针对频繁根据path查询id，避免回表
--- create unique index if not exists pvc_uk_path on page_view_counter(path) include (id);
+create unique index if not exists page_view_counter_uk_path on page_view_counter(path) include (id);
 --- 评论状态
 create type comment_status as enum('waiting', 'approved', 'spam');
 --- 用户评论
@@ -38,9 +38,7 @@ create table comments (
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
---- keyset pagination索引，叶子节点包含status、user_id是为了索引覆盖过滤查询
--- create index if not exists cmt_pgid_rid_created_id_sticky on comments(page_id, rid, sticky, created_at, id) include (status, user_id);
--- create index if not exists cmt_pgid_rid_star_id_sticky on comments(page_id, rid, sticky, star, id) include (status, user_id);
+create index if not exists comments_idx_pgid_rid_sticky_created on comments(page_id, rid, sticky, created_at) include (star, status, user_id);
 --- 用户类型
 create type user_type as enum('admin', 'normal');
 create type user_gender as enum('unknown', 'male', 'female');
