@@ -3,6 +3,10 @@ pub use super::_entities::comments::*;
 use sea_orm::{sqlx::types::chrono::Local, ActiveModelBehavior, ConnectionTrait, DbErr, Set};
 use spring::async_trait;
 
+pub fn root_comment_id() -> i32 {
+    0
+}
+
 #[async_trait]
 impl ActiveModelBehavior for ActiveModel {
     async fn before_save<C>(mut self, _db: &C, insert: bool) -> Result<Self, DbErr>

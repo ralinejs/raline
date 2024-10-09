@@ -43,6 +43,8 @@ pub struct CountCommentQuery {
 #[derive(Debug, Validate, Deserialize)]
 pub struct ListCommentQuery {
     pub path: String,
+    #[serde(default = "comments::root_comment_id")]
+    pub rid: i32,
     #[validate(range(max = 200, message = "查询数据过多"))]
     #[serde_as(as = "DisplayFromStr")]
     pub limit: u64,

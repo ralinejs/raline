@@ -188,7 +188,7 @@ impl CommentService {
         let filter = filter.and(comments::Column::Id.gt(offset));
 
         let root_comments = Comments::find()
-            .filter(filter.clone().and(comments::Column::Rid.eq(0)))
+            .filter(filter.clone().and(comments::Column::Rid.eq(q.rid)))
             .order_by(column, order)
             .limit(q.limit)
             .all(&self.db)
