@@ -38,7 +38,7 @@ create table comments (
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
-create index if not exists comments_idx_pgid_rid_sticky_created on comments(page_id, rid, sticky, created_at) include (star, status, user_id);
+create index if not exists comments_idx_pgid_rid_sticky_created on comments(page_id, rid, sticky desc, created_at desc) include (star, status, user_id);
 create index if not exists comments_idx_rid on comments(rid);
 create index if not exists comments_idx_pid on comments(pid);
 --- 用户类型
