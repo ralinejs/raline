@@ -31,6 +31,7 @@ server_url = "http://localhost:8080"
 
 [logger]
 pretty_backtrace = false
+override_filter = "info,sea_orm=trace"
 
 [auth]
 qq = { client_id = "", client_secret = "" }
