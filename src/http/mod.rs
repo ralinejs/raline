@@ -18,6 +18,7 @@ use spring_web::{
     extractor::{rejection::QueryRejection, Config, FromRequestParts, Query, Request},
     get, routes, Router,
 };
+use tracing::Level;
 
 use crate::config::RalineConfig;
 
@@ -25,6 +26,7 @@ pub fn router() -> Router {
     spring_web::handler::auto_router()
         .layer(middleware::from_fn(problem_middleware))
         .layer(SecureClientIpSource::ConnectInfo.into_extension())
+        .layer(spring_opentelemetry::middlewares::tracing::HttpLayer::server(Level::INFO))
 }
 
 async fn problem_middleware(request: Request, next: Next) -> Response {
