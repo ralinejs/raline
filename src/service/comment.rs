@@ -87,7 +87,10 @@ impl CommentService {
     ) -> Result<AdminListResp> {
         let claims = match &**optional_claims {
             None => return Err(KnownWebError::forbidden("没有权限"))?,
-            Some(claims) => claims,
+            Some(claims) => match claims.ty == UserType::Admin {
+                true => claims,
+                false => Err(KnownWebError::forbidden("没有权限"))?,
+            },
         };
         let mut filter = comments::Column::Status.eq(q.status.clone());
         filter = match q.owner {
