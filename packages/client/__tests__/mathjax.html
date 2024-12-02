@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>raline MathJax 案例</title>
+    <link rel="stylesheet" href="../dist/raline.css" />
+    <script src="https://unpkg.com/mathjax@v3/es5/tex-svg.js"></script>
+  </head>
+  <body>
+    <div id="raline" style="max-width: 800px; margin: 0 auto"></div>
+    <script type="module">
+      import { init } from '../dist/raline.js';
+
+      init({
+        el: '#raline',
+        serverURL: 'https://raline.vercel.app',
+        path: '/',
+        lang: 'en-US',
+        texRenderer: (blockmode, tex) =>
+          window.MathJax.startup.adaptor.outerHTML(
+            window.MathJax.tex2svg(tex, {
+              display: blockmode,
+            }),
+          ),
+      });
+    </script>
+  </body>
+</html>

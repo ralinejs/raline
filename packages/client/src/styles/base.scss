@@ -1,0 +1,66 @@
+.wl-btn {
+  display: inline-block;
+  vertical-align: middle;
+
+  min-width: 2.5em;
+  margin-bottom: 0;
+  padding: 0.5em 1em;
+  border: 1px solid var(--raline-border-color);
+  border-radius: 0.5em;
+
+  background: transparent;
+  color: var(--raline-color);
+
+  font-weight: 400;
+  font-size: 0.75em;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+
+  transition-duration: 0.4s;
+
+  &:hover,
+  &:active {
+    border-color: var(--raline-theme-color);
+    color: var(--raline-theme-color);
+  }
+
+  &:disabled {
+    border-color: var(--raline-border-color);
+    background: var(--raline-disable-bg-color);
+    color: var(--raline-disable-color);
+    cursor: not-allowed;
+  }
+
+  &.primary {
+    border-color: var(--raline-theme-color);
+    background: var(--raline-theme-color);
+    color: var(--raline-white);
+
+    &:hover,
+    &:active {
+      border-color: var(--raline-active-color);
+      background: var(--raline-active-color);
+      color: var(--raline-white);
+    }
+
+    &:disabled {
+      border-color: var(--raline-border-color);
+      background: var(--raline-disable-bg-color);
+      color: var(--raline-disable-color);
+      cursor: not-allowed;
+    }
+  }
+}
+
+.wl-loading {
+  text-align: center;
+
+  svg {
+    margin: 0 auto;
+  }
+}

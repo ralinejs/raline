@@ -1,0 +1,73 @@
+{
+  "name": "@raline/admin",
+  "version": "0.25.3",
+  "description": "management system for raline",
+  "keywords": [
+    "raline",
+    "valine",
+    "comment",
+    "management",
+    "system"
+  ],
+  "homepage": "https://github.com/ralinejs/raline#readme",
+  "bugs": {
+    "url": "https://github.com/ralinejs/raline/issues"
+  },
+  "repository": {
+    "url": "https://github.com/ralinejs/raline.git",
+    "directory": "packages/admin"
+  },
+  "license": "MIT",
+  "author": "lizheming <i@imnerd.org>",
+  "type": "module",
+  "exports": "./dist/admin.js",
+  "main": "dist/admin.js",
+  "browser": "dist/admin.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "NODE_ENV=production vite build",
+    "clean": "rimraf ./dist",
+    "dev": "vite",
+    "prepublishOnly": "pnpm build"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not ie 11",
+      "not op_mini all",
+      "last 2 years"
+    ],
+    "development": [
+      "last 2 chrome version",
+      "last 2 firefox version",
+      "last 2 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@rematch/core": "2.2.0",
+    "vite": "5.4.3",
+    "vite-plugin-svgr": "4.2.0",
+    "vite-plugin-css-injected-by-js": "3.5.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "base-icon": "2.3.2",
+    "classnames": "2.5.1",
+    "i18next": "23.14.0",
+    "i18next-browser-languagedetector": "8.0.0",
+    "md5": "2.3.0",
+    "qrcode.react": "4.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-i18next": "15.0.1",
+    "react-redux": "9.1.2",
+    "react-router-dom": "6.26.1",
+    "redux": "5.0.1",
+    "sass": "1.78.0",
+    "typescript": "5.5.4"
+  },
+  "publishConfig": {
+    "provenance": true
+  }
+}

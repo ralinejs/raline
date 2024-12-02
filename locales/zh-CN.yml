@@ -1,0 +1,9 @@
+_version: 1
+user_registered: "用户已注册"
+expired_code: "验证码已过期"
+error_code: "验证码错误"
+user_not_exists: "用户不存在"
+no_permission: "没有权限"
+not_found: "数据不存在"
+error_password: "密码错误"
+not_password: "该账号未初始化密码，请尝试其他方式登录"

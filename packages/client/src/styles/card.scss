@@ -1,0 +1,258 @@
+.wl-cards {
+  .wl-user {
+    --avatar-size: var(--raline-avatar-size);
+
+    position: relative;
+    margin-inline-end: 0.75em;
+
+    @media (max-width: 720px) {
+      --avatar-size: var(--raline-m-avatar-size);
+    }
+
+    .wl-user-avatar {
+      width: var(--avatar-size);
+      height: var(--avatar-size);
+      border-radius: var(--raline-avatar-radius);
+      box-shadow: var(--raline-box-shadow);
+    }
+
+    .verified-icon {
+      position: absolute;
+      inset-inline-start: calc(var(--avatar-size) * 3 / 4);
+      top: calc(var(--avatar-size) * 3 / 4);
+
+      border-radius: 50%;
+
+      background: var(--raline-bg-color);
+      box-shadow: var(--raline-box-shadow);
+    }
+  }
+}
+
+.wl-card-item {
+  position: relative;
+  display: flex;
+  padding: 0.5em;
+
+  .wl-card-item {
+    padding-inline-end: 0;
+  }
+}
+
+.wl-card {
+  flex: 1;
+  width: 0;
+  padding-bottom: 0.5em;
+  border-bottom: 1px dashed var(--raline-border-color);
+
+  &:first-child {
+    margin-inline-start: 1em;
+  }
+
+  .wl-card-item:last-child > & {
+    border-bottom: none;
+  }
+
+  .wl-nick {
+    svg {
+      position: relative;
+      bottom: -0.125em;
+      line-height: 1;
+    }
+  }
+
+  .wl-head {
+    // bfc to fix https://github.com/ralinejs/raline/issues/1415
+    overflow: hidden;
+    line-height: 1.5;
+
+    .wl-nick {
+      position: relative;
+
+      display: inline-block;
+
+      margin-inline-end: 0.5em;
+
+      font-weight: bold;
+      font-size: 0.875em;
+      line-height: 1;
+      text-decoration: none;
+    }
+  }
+
+  span.wl-nick {
+    color: var(--raline-dark-grey);
+  }
+
+  .wl-badge {
+    display: inline-block;
+
+    margin-inline-end: 1em;
+    padding: 0 0.3em;
+    border: 1px solid var(--raline-badge-color);
+    border-radius: 4px;
+
+    color: var(--raline-badge-color);
+
+    font-size: var(--raline-badge-font-size);
+  }
+
+  .wl-time {
+    margin-inline-end: 0.875em;
+    color: var(--raline-info-color);
+    font-size: 0.75em;
+  }
+
+  .wl-meta {
+    position: relative;
+    line-height: 1;
+
+    > span {
+      display: inline-block;
+
+      margin-inline-end: 0.25em;
+      padding: 2px 4px;
+      border-radius: 0.2em;
+
+      background: var(--raline-info-bg-color);
+      color: var(--raline-info-color);
+
+      font-size: var(--raline-info-font-size);
+      line-height: 1.5;
+
+      &:empty {
+        display: none;
+      }
+    }
+  }
+
+  .wl-comment-actions {
+    float: right;
+    line-height: 1;
+
+    [dir='rtl'] & {
+      float: left;
+    }
+  }
+
+  .wl-delete,
+  .wl-like,
+  .wl-reply,
+  .wl-edit {
+    display: inline-flex;
+    align-items: center;
+
+    // padding: 4px;
+    border: none;
+
+    background: transparent;
+    color: var(--raline-color);
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--raline-theme-color);
+    }
+
+    &.active {
+      color: var(--raline-active-color);
+    }
+  }
+
+  .wl-content {
+    position: relative;
+
+    margin-bottom: 0.75em;
+    padding-top: 0.625em;
+
+    font-size: 0.875em;
+    line-height: 2;
+    word-wrap: break-word;
+
+    &.expand {
+      overflow: hidden;
+      max-height: 8em;
+      cursor: pointer;
+
+      &::before {
+        content: '';
+
+        position: absolute;
+        inset-inline-start: 0;
+        top: 0;
+        bottom: 3.15em;
+        z-index: 999;
+
+        display: block;
+
+        width: 100%;
+
+        background: linear-gradient(180deg, #000, rgb(255 255 255 / 90%));
+      }
+
+      &::after {
+        content: attr(data-expand);
+
+        position: absolute;
+        inset-inline-start: 0;
+        bottom: 0;
+        z-index: 999;
+
+        display: block;
+
+        width: 100%;
+        height: 3.15em;
+
+        background: rgb(255 255 255 / 90%);
+        color: #828586;
+
+        line-height: 3.15em;
+        text-align: center;
+      }
+    }
+
+    > *:first-child {
+      margin-top: 0;
+    }
+
+    > *:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .wl-admin-actions {
+    margin: 8px 0;
+    font-size: 12px;
+    text-align: right;
+  }
+
+  .wl-comment-status {
+    margin: 0 8px;
+
+    .wl-btn {
+      border-radius: 0;
+
+      &:first-child {
+        border-inline-end: 0;
+        border-radius: 0.5em 0 0 0.5em;
+      }
+
+      &:last-child {
+        border-inline-start: 0;
+        border-radius: 0 0.5em 0.5em 0;
+      }
+    }
+  }
+
+  .wl-quote {
+    border-inline-start: 1px dashed rgb(237 237 237 / 50%);
+
+    .wl-user {
+      --avatar-size: var(--raline-m-avatar-size);
+    }
+  }
+}

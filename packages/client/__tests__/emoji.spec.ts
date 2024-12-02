@@ -1,0 +1,31 @@
+import { describe, expect, it } from 'vitest';
+
+import { emojiMaps } from './__fixtures__/emojiMap.js';
+import { parseEmoji } from '../src/utils/markdown.js';
+
+describe('Emoji test', () => {
+  it('Should not parse', () => {
+    const content = 'raline is a good framework. Note: It works with backend';
+
+    expect(parseEmoji(content, emojiMaps)).toEqual(content);
+  });
+
+  it("Should not parse emoji it don't know", () => {
+    const content = 'raline is a good framework. :heart:';
+
+    expect(parseEmoji(content, emojiMaps)).toEqual(content);
+  });
+
+  it('Should parse emoji', () => {
+    expect(
+      parseEmoji('raline is a good framework. :bb_doge:', emojiMaps),
+    ).toEqual(
+      'raline is a good framework. <img class="wl-emoji" src="https://cdn.jsdelivr.net/gh/ralinejs/emojis/bilibili/bb_doge.png" alt="bb_doge">',
+    );
+  });
+
+  it('Should not throw errors', () => {
+    expect(() => parseEmoji()).not.toThrowError();
+    expect(() => parseEmoji('')).not.toThrowError();
+  });
+});

@@ -1,0 +1,9 @@
+_version: 1
+user_registered: "使用者已註冊"
+expired_code: "驗證碼已過期"
+error_code: "驗證碼錯誤"
+user_not_exists: "使用者不存在"
+no_permission: "沒有權限"
+not_found: "資料不存在"
+error_password: "密碼錯誤"
+not_password: "該帳號未初始化密碼，請嘗試其他方式登入"

@@ -1,0 +1,52 @@
+:root {
+  // font-size
+  --raline-font-size: 1rem;
+
+  // regular colors
+  --raline-white: #fff;
+  --raline-light-grey: #999;
+  --raline-dark-grey: #666;
+
+  // theme colors
+  --raline-theme-color: #27ae60;
+  --raline-active-color: #2ecc71;
+
+  // layout colors
+  --raline-color: #444;
+  --raline-bg-color: #fff;
+  --raline-bg-color-light: #f8f8f8;
+  --raline-bg-color-hover: #f0f0f0;
+  --raline-border-color: #ddd;
+  --raline-disable-bg-color: #f8f8f8;
+  --raline-disable-color: #000;
+  --raline-code-bg-color: #282c34;
+
+  // special colors
+  --raline-bq-color: #f0f0f0;
+
+  // avatar
+  --raline-avatar-size: 3.25rem;
+  --raline-m-avatar-size: calc(var(--raline-avatar-size) * 9 / 13);
+
+  // badge
+  --raline-badge-color: #3498db;
+  --raline-badge-font-size: 0.75em;
+
+  // info
+  --raline-info-bg-color: #f8f8f8;
+  --raline-info-color: #999;
+  --raline-info-font-size: 0.625em;
+
+  // ====render choices====
+  //   ** using border **
+  --raline-border: 1px solid var(--raline-border-color);
+  --raline-avatar-radius: 50%;
+  --raline-box-shadow: none;
+
+  // ** using box-shadow **
+  // --raline-border: none;
+  // Light:
+  // --raline-box-shadow: 0 12px 40px rgb(134 151 168 / 25%);
+  // Dark:
+  // --raline-box-shadow: 0 12px 40px #0f0e0d
+}

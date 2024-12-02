@@ -1,0 +1,72 @@
+.wl-gif-popup {
+  position: absolute;
+  inset-inline-start: 1.25em;
+  top: 100%;
+  z-index: 10;
+
+  width: calc(100% - 3em);
+  padding: 0.75em 0.75em 0.25em;
+  border: var(--raline-border);
+  border-radius: 6px;
+
+  background: var(--raline-bg-color);
+  box-shadow: var(--raline-box-shadow);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    transform 0.2s ease-out,
+    opacity 0.2s ease-out;
+
+  transform: scale(0.9, 0.9);
+  transform-origin: 0 0;
+
+  &.display {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 3px 5px;
+    border: var(--raline-border);
+  }
+
+  img {
+    display: block;
+
+    box-sizing: border-box;
+    width: 100%;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #fff;
+
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--raline-theme-color);
+      border-radius: 2px;
+    }
+  }
+}
+
+.wl-gallery {
+  display: flex;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+.wl-gallery-column {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  // stylelint-disable
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
+}

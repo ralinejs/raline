@@ -1,0 +1,9 @@
+_version: 1
+user_registered: "User registered"
+expired_code: "Verification code expired"
+error_code: "Verification code error"
+user_not_exists: "User does not exist"
+no_permission: "No permission"
+not_found: "Data does not exist"
+error_password: "Wrong password"
+not_password: "The password of this account has not been initialized. Please try another way to log in"

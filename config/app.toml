@@ -1,0 +1,42 @@
+[web]
+port = 8080
+connect_info = true
+graceful = true
+
+[web.middlewares]
+static = { enable = true, uri = "/static", path = "static", precompressed = true, fallback = "index.html" }
+
+[mail]
+host = "smtp.163.com"                                                      # SMTP mail server address,
+port = 465                                                                 # SMTP server port number
+secure = true                                                              # Response timeout, in milliseconds
+auth = { user = "hff1996723@163.com", password = "${MAIL_AUTH_PASSWORD}" } # Authentication information
+stub = true
+
+[email]
+from = "hff1996723@163.com"
+
+[sea-orm]
+uri = "${DATABASE_URL}"
+#enable_logging = true
+
+[sea-orm-web]
+one_indexed = true
+
+[redis]
+uri = "redis://127.0.0.1/"
+
+[raline]
+site_url = "${RALINE_SITE_URL}"
+server_url = "${RALINE_SITE_URL}"
+
+[logger]
+pretty_backtrace = true
+override_filter = "info,sea_orm=trace"
+
+[auth]
+qq = { client_id = "", client_secret = "" }
+weibo = { client_id = "", client_secret = "" }
+wechat = { client_id = "${WECHAT_CLIENT_ID}", client_secret = "${WECHAT_CLIENT_SECRET}" }
+github = { client_id = "", client_secret = "" }
+twitter = { client_id = "", client_secret = "" }

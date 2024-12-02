@@ -1,0 +1,6 @@
+static/
+/target
+node_modules/
+dist/
+.DS_Store
+data/openobserve/

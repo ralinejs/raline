@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../dist/raline.css" />
+    <title>raline widget test</title>
+  </head>
+  <body>
+    <h2>Recent Comments</h2>
+    <div id="recent-comment" />
+
+    <h2>User List</h2>
+    <div id="user-list" />
+    <h2>User Wall</h2>
+    <div id="user-wall" />
+
+    <script type="module">
+      import { RecentComments, UserList } from '../dist/raline.js';
+
+      RecentComments({
+        el: '#recent-comment',
+        // serverURL: 'https://ralinejs.comment.lithub.cc',
+        count: 10,
+      });
+
+      UserList({
+        el: '#user-list',
+        // serverURL: 'https://ralinejs.comment.lithub.cc',
+        count: 10,
+      });
+
+      UserList({
+        el: '#user-wall',
+        // serverURL: 'https://ralinejs.comment.lithub.cc',
+        count: 50,
+        mode: 'wall',
+      });
+    </script>
+  </body>
+</html>

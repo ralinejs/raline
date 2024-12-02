@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>raline commentview test</title>
+  </head>
+  <body>
+    评论数: <span id="/" class="raline-comment-count"></span>
+    <script type="module">
+      import { commentCount } from '../dist/comment.js';
+
+      commentCount({
+        // serverURL: 'https://ralinejs.comment.lithub.cc',
+        path: '/',
+      });
+    </script>
+  </body>
+</html>
