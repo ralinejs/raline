@@ -2,6 +2,7 @@ pub mod akismet;
 pub mod comrak;
 pub mod mail;
 pub mod auth;
+pub mod ip2region;
 
 use serde::Deserialize;
 use spring::config::Configurable;
