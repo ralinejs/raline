@@ -1,6 +1,16 @@
+create table if not exists website (
+    id serial primary key,
+    domain varchar(255) not null,
+    name varchar(255) not null,
+    config jsonb not null,
+    created_at timestamp not null default current_timestamp,
+    updated_at timestamp not null default current_timestamp,
+    deleted_at timestamp default null
+);
 --- 浏览量
 create table if not exists page_view_counter (
     id serial primary key,
+    site_id int not null,
     path varchar(255) not null,
     times int not null default 0,
     reaction0 int not null default 0,
@@ -15,8 +25,8 @@ create table if not exists page_view_counter (
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
 );
---- path字段创建唯一索引，叶子节点包含id针对频繁根据path查询id，避免回表
-create unique index if not exists page_view_counter_uk_path on page_view_counter(path) include (id);
+--- site_id, path字段创建唯一索引，叶子节点包含id针对频繁根据path查询id，避免回表，同时redis也要做好缓存
+create unique index if not exists page_view_counter_uk_site_path on page_view_counter(site_id, path) include (id);
 --- 评论状态
 create type comment_status as enum('waiting', 'approved', 'spam');
 --- 用户评论
@@ -32,7 +42,8 @@ create table if not exists comments (
     rid int not null default 0,
     sticky boolean not null default 'false',
     status comment_status not null,
-    star int not null default 0,
+    vote_up int not null default 0,
+    vote_down int not null default 0,
     ip varchar(255) not null,
     ua text not null,
     created_at timestamp not null default current_timestamp,
